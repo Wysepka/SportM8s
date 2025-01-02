@@ -21,26 +21,30 @@ class AuthService {
   // Sign in with email and password
   Future<AuthResult> signInWithEmailPassword(String email, String password) async {
     try {
-      final result = await _auth.signInWithEmailAndPassword(
+      final userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      return AuthResult(user: result.user);
+      return AuthResult(user: userCredential.user);
     } on FirebaseAuthException catch (e) {
-      return AuthResult.error(_getErrorMessage(e.code));
+      return AuthResult(error: getSignInErrorMessage(e.code));
+    } catch (e) {
+      return AuthResult(error: 'An error occurred. Please try again.');
     }
   }
 
   // Sign up with email and password
   Future<AuthResult> signUpWithEmailPassword(String email, String password) async {
     try {
-      await _auth.createUserWithEmailAndPassword(
+      final userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-      return AuthResult();
+      return AuthResult(user: userCredential.user);
+    } on FirebaseAuthException catch (e) {
+      return AuthResult(error: getSignUpErrorMessage(e.code));
     } catch (e) {
-      return AuthResult(error: e.toString());
+      return AuthResult(error: 'An error occurred. Please try again.');
     }
   }
 
@@ -126,6 +130,58 @@ class AuthService {
       default:
         print('Unhandled platform error code: $code'); // For debugging
         return 'An error occurred during sign in ($code)';
+    }
+  }
+
+  Future<void> signOutGoogle() async {
+    await _googleSignIn.signOut();
+    await _auth.signOut();
+  }
+
+  String getSignInErrorMessage(String code) {
+    switch (code) {
+      case 'invalid-email':
+        return 'The email address is not valid.';
+      case 'user-disabled':
+        return 'This user account has been disabled.';
+      case 'user-not-found':
+        return 'No user found with this email address.';
+      case 'wrong-password':
+        return 'Incorrect password. Please try again.';
+      case 'too-many-requests':
+        return 'Too many attempts. Please try again later.';
+      case 'network-request-failed':
+        return 'Network error. Please check your connection.';
+      case 'user-token-expired':
+        return 'Your session has expired. Please sign in again.';
+      case 'INVALID_LOGIN_CREDENTIALS':
+      case 'invalid-credential':
+        return 'Invalid login credentials. Please check your email and password.';
+      case 'operation-not-allowed':
+        return 'Email/password sign-in is not enabled. Please contact support.';
+      default:
+        return 'An error occurred. Please try again.';
+    }
+  }
+
+  String getSignUpErrorMessage(String code) {
+    switch (code) {
+      case 'email-already-in-use':
+        return 'An account already exists with this email address.';
+      case 'invalid-email':
+        return 'The email address is not valid.';
+      case 'operation-not-allowed':
+        return 'Email/password accounts are not enabled. Please contact support.';
+      case 'weak-password':
+        return 'The password is not strong enough.';
+      case 'network-request-failed':
+        return 'Network error. Please check your connection.';
+      case 'too-many-requests':
+        return 'Too many attempts. Please try again later.';
+      case 'user-token-expired':
+        return 'Your session has expired. Please try again.';
+      default:
+        return 'An error occurred. Please try again.';
     }
   }
 }
