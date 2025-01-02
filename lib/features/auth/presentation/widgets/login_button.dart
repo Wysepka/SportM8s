@@ -1,36 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import '../../../../shared/widgets/platform_aware_widget.dart';
-import '../../../../core/platform/platform_service.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/services/auth_service.dart';
 
-class LoginButton extends PlatformAwareWidget {
-  final VoidCallback onPressed;
-  final String text;
+class LoginButton extends ConsumerWidget {
+  final VoidCallback? onSuccess;
+  final VoidCallback? onError;
 
   const LoginButton({
     Key? key,
-    required this.onPressed,
-    required this.text,
-    required PlatformService platformService,
-  }) : super(key: key, platformService: platformService);
+    this.onSuccess,
+    this.onError,
+  }) : super(key: key);
 
   @override
-  Widget buildAndroidWidget(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return ElevatedButton(
-      onPressed: onPressed,
-      child: Text(text),
-      style: ElevatedButton.styleFrom(
-        // Android-specific styling
-      ),
-    );
-  }
-
-  @override
-  Widget buildIOSWidget(BuildContext context) {
-    return CupertinoButton(
-      onPressed: onPressed,
-      child: Text(text),
-      // iOS-specific styling
+      onPressed: () async {
+        try {
+          final result = await ref.read(authServiceProvider).signInWithGoogle();
+          if (result.error == null) {
+            onSuccess?.call();
+          } else {
+            onError?.call();
+          }
+        } catch (e) {
+          onError?.call();
+        }
+      },
+      child: const Text('Sign in with Google'),
     );
   }
 } 
