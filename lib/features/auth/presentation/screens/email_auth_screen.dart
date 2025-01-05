@@ -68,7 +68,7 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
                         );
                       }
                       if (mounted) {
-                        Navigator.pushReplacementNamed(context, '/home');
+                        Navigator.pushReplacementNamed(context, '/aggreements');
                       }
                     } catch (e) {
                       if (mounted) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../../core/services/auth_service.dart';
 import 'email_sign_in_screen.dart';
 import 'email_sign_up_screen.dart';
@@ -11,6 +12,7 @@ class LoginScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authService = ref.read(authServiceProvider);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: Center(
@@ -19,37 +21,23 @@ class LoginScreen extends ConsumerWidget {
           children: [
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const EmailSignInScreen(),
-                  ),
-                );
+                Navigator.pushReplacementNamed(context , "/email-signin");
               },
-              child: const Text('Sign In with Email'),
+              child: Text(l10n?.signInWithEmail ?? "Sign in with Email"),
             ),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const EmailSignUpScreen(),
-                  ),
-                );
+                Navigator.pushReplacementNamed(context , "/email-signup");
               },
-              child: const Text('Sign Up with Email'),
+              child: Text(l10n?.signUpWithEmail ?? 'Sign Up with Email'),
             ),
             const SizedBox(height: 16),
             ElevatedButton.icon(
               onPressed: () async {
                 final result = await authService.signInWithGoogle();
                 if (result.user != null && context.mounted) {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const HomePage(),
-                    ),
+                  Navigator.pushReplacementNamed(context, "/aggreements"
                   );
                 } else if (result.error != null && context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -61,7 +49,7 @@ class LoginScreen extends ConsumerWidget {
                 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_"G"_logo.svg/1200px-Google_"G"_logo.svg.png',
                 height: 24,
               ),
-              label: const Text('Continue with Google'),
+              label: Text(l10n?.continueWithGoogle ?? 'Continue with Google'),
             ),
           ],
         ),

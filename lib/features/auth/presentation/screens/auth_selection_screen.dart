@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../../core/services/auth_service.dart';
 
 class AuthSelectionScreen extends ConsumerWidget {
@@ -9,9 +12,11 @@ class AuthSelectionScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(isSignIn ? 'Sign In' : 'Sign Up'),
+        title: Text(isSignIn ? l10n?.signIn ??  'Sign In' : l10n?.signUp ?? 'Sign Up'),
       ),
       body: Center(
         child: Column(
@@ -24,7 +29,7 @@ class AuthSelectionScreen extends ConsumerWidget {
                   isSignIn ? '/email-signin' : '/email-signup',
                 );
               },
-              child: Text('Continue with Email'),
+              child: Text(l10n?.continueWithEmail ?? "Continue with Email"),
             ),
             const SizedBox(height: 16),
             ElevatedButton(
@@ -32,7 +37,7 @@ class AuthSelectionScreen extends ConsumerWidget {
                 try {
                   await ref.read(authServiceProvider).signInWithGoogle();
                   if (context.mounted) {
-                    Navigator.pushReplacementNamed(context, '/home');
+                    Navigator.pushReplacementNamed(context, '/aggreements');
                   }
                 } catch (e) {
                   if (context.mounted) {
@@ -42,7 +47,7 @@ class AuthSelectionScreen extends ConsumerWidget {
                   }
                 }
               },
-              child: Text('Continue with Google'),
+              child: Text(l10n?.continueWithGoogle ?? "Continue with Google"),
             ),
           ],
         ),

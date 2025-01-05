@@ -1,6 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sportm8s/features/auth/presentation/screens/privacy_policy_screen.dart';
+import "package:flutter_localizations/flutter_localizations.dart";
+import "package:flutter_gen/gen_l10n/app_localizations.dart";
 import 'firebase_options.dart';
 import 'features/auth/presentation/screens/login_screen.dart';
 import 'features/auth/presentation/screens/home_page.dart';
@@ -51,7 +54,18 @@ class MyApp extends ConsumerWidget {
         '/home': (context) => const HomePage(),
         '/email-signin': (context) => const EmailAuthScreen(isSignIn: true),
         '/email-signup': (context) => const EmailAuthScreen(isSignIn: false),
+        '/aggreements': (context) => const PrivacyPolicyScreen(),
       },
+      localizationsDelegates: const[
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale("en"),
+        Locale("pl"),
+      ],
     );
   }
 }
