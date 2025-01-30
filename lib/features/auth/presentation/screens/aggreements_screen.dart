@@ -7,6 +7,7 @@ import 'package:sportm8s/core/enums/enums_container.dart';
 import 'package:sportm8s/core/services/storage_service.dart';
 import 'package:sportm8s/features/auth/presentation/screens/privacy_policy_screen.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:sportm8s/core/logger/logger_service.dart';
 
 class AggreementsScreen extends ConsumerStatefulWidget
 {
@@ -26,19 +27,24 @@ class _AggreementsScreenState extends ConsumerState<AggreementsScreen>{
     AggreementType.ConsentForDataCollection: false
   };
 
+  final LoggerService _logger = LoggerService();
+
   Future<bool> hasAcceptedPrivacyPolicy() async
   {
     StorageService instance = await StorageService.getInstance();
+    _logger.debug('Checking if privacy policy is accepted');
     return instance.hasPrivacyPolicyAccepted;
   }
 
   Future<String> getPrivacyPolicyHtml() async
   {
+    _logger.debug('Loading privacy policy HTML content');
     return await rootBundle.loadString('assets/text/privacyPolicyAndroidExample.txt');
   }
 
   Future<String> getTermsOfServiceHtml() async
   {
+    _logger.debug('Loading terms of service HTML content');
     return await rootBundle.loadString('assets/text/termsOfServiceExample.txt');
   }
 
@@ -87,30 +93,33 @@ class _AggreementsScreenState extends ConsumerState<AggreementsScreen>{
     final storageService = ref.watch(storageServiceInitializerProvider);
     storageService.when(
       data: (storageService) {
+        _logger.info('Applying agreement: ${aggreementType.toString()}');
         switch (aggreementType) {
           case AggreementType.PrivacyPolicy:
             storageService.setPrivacyPolicyAccepted(true);
+            _logger.debug('Privacy Policy accepted');
             break;
           case AggreementType.TermsOfService:
             storageService.setTermsOfServiceAccepted(true);
+            _logger.debug('Terms of Service accepted');
             break;
           case AggreementType.EndUserLicense:
             storageService.setEndUserLicenseAccepted(true);
+            _logger.debug('End User License accepted');
             break;
           case AggreementType.ConsentForDataCollection:
             storageService.setDataCollectionConsentAccepted(true);
+            _logger.debug('Data Collection Consent accepted');
             break;
         }
         // Trigger a rebuild to show the next agreement if needed
         setState(() {});
       },
       error: (Object error, StackTrace stackTrace) {
-        // Handle error case
-        debugPrint('Error setting agreement: $error');
+        _logger.error('Error setting agreement', error, stackTrace);
       },
       loading: () {
-        // Handle loading state
-        debugPrint('Storage service is loading');
+        _logger.debug('Storage service is loading');
       }
     );
   }
@@ -119,20 +128,23 @@ class _AggreementsScreenState extends ConsumerState<AggreementsScreen>{
   Widget build(BuildContext context) {
     final storageService = ref.watch(storageServiceInitializerProvider);
 
-    return storageService.when(data: (storageService) {
-      if (!storageService.hasPrivacyPolicyAccepted) {
-        return PrivacyPolicyScreen(
-          aggrementNameKey: "aggreementPrivacyPolicy",
-          useHtmlMarking: true,
-          aggreementType: AggreementType.PrivacyPolicy,
-          aggreementTypeCallback: onAggreementApplied,
-          loadAggrementHtmlText: getPrivacyPolicyHtml,
-          textHtmlStyle: _getPrivacyPolicyHtmlStyles(),
-          consentTextKey: "consentPrivacyPolicy",
-        );
-      }
-      if(!storageService.hasTermsOfServiceAccepted){
-        return PrivacyPolicyScreen(
+    return storageService.when(
+      data: (storageService) {
+        if (!storageService.hasPrivacyPolicyAccepted) {
+          _logger.debug('Showing Privacy Policy screen');
+          return PrivacyPolicyScreen(
+            aggrementNameKey: "aggreementPrivacyPolicy",
+            useHtmlMarking: true,
+            aggreementType: AggreementType.PrivacyPolicy,
+            aggreementTypeCallback: onAggreementApplied,
+            loadAggrementHtmlText: getPrivacyPolicyHtml,
+            textHtmlStyle: _getPrivacyPolicyHtmlStyles(),
+            consentTextKey: "consentPrivacyPolicy",
+          );
+        }
+        if(!storageService.hasTermsOfServiceAccepted){
+          _logger.debug('Showing Terms of Service screen');
+          return PrivacyPolicyScreen(
             aggrementNameKey: "aggreementTermsOfService",
             useHtmlMarking: true,
             aggreementType: AggreementType.TermsOfService,
@@ -140,25 +152,29 @@ class _AggreementsScreenState extends ConsumerState<AggreementsScreen>{
             loadAggrementHtmlText: getTermsOfServiceHtml,
             textHtmlStyle: _getHtmlStylesTermsOfService(),
             consentTextKey: "consentTermsOfService",
+          );
+        }
+        if(context.mounted) {
+          _logger.info('All agreements accepted, navigating to home screen');
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Navigator.pushReplacementNamed(context, '/home');
+          });
+        }
+        return const Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
         );
+      },
+      error: (error, stack) {
+        _logger.error('Failed to load Storage Service', error, stack);
+        return Scaffold(body: Center(child: Text(
+            "Loading Service Storage Failed Excp: $error ")));
+      },
+      loading: () {
+        _logger.debug('Loading Storage Service');
+        return const Scaffold(body: Center(child: CircularProgressIndicator()));
       }
-      // Schedule navigation for the next frame
-      if(context.mounted) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          Navigator.pushReplacementNamed(context, '/home');
-        });
-      }
-      // Return a loading screen while we wait for navigation
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    },
-        error: (error, stack) => Scaffold(body: Center(child: Text(
-            "Loading Service Storage Failed Excp: $error "))),
-        loading: () =>
-        const Scaffold(body: Center(child: CircularProgressIndicator()))
     );
   }
 

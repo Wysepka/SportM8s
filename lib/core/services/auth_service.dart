@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
+import '../logger/logger_config.dart';
 
 class AuthResult {
   final User? user;
@@ -25,10 +26,13 @@ class AuthService {
         email: email,
         password: password,
       );
+      this.log.i('User signed in successfully with email');
       return AuthResult(user: userCredential.user);
     } on FirebaseAuthException catch (e) {
+      this.log.e('Firebase Auth Exception during email sign-in', error: e);
       return AuthResult(error: getSignInErrorMessage(e.code));
     } catch (e) {
+      this.log.e('Unexpected error during email sign-in', error: e);
       return AuthResult(error: 'An error occurred. Please try again.');
     }
   }
@@ -40,10 +44,13 @@ class AuthService {
         email: email,
         password: password,
       );
+      this.log.i('New user created successfully with email');
       return AuthResult(user: userCredential.user);
     } on FirebaseAuthException catch (e) {
+      this.log.e('Firebase Auth Exception during sign-up', error: e);
       return AuthResult(error: getSignUpErrorMessage(e.code));
     } catch (e) {
+      this.log.e('Unexpected error during sign-up', error: e);
       return AuthResult(error: 'An error occurred. Please try again.');
     }
   }
@@ -54,9 +61,11 @@ class AuthService {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       
       if (googleUser == null) {
+        this.log.w('Google sign-in was cancelled by user');
         return AuthResult.error('Sign in was cancelled');
       }
 
+      this.log.d('Google sign-in successful, getting auth details');
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
@@ -64,16 +73,14 @@ class AuthService {
       );
 
       final userCredential = await _auth.signInWithCredential(credential);
+      this.log.i('User successfully signed in with Google');
       return AuthResult(user: userCredential.user);
       
     } on PlatformException catch (e) {
-      print('Sign-in error details:');
-      print('Code: ${e.code}');
-      print('Message: ${e.message}');
-      print('Details: ${e.details}');
+      this.log.e('Platform Exception during Google sign-in', error: e);
       return AuthResult.error(_getPlatformErrorMessage(e.code));
     } catch (e) {
-      print('Unexpected error: $e');
+      this.log.e('Unexpected error during Google sign-in', error: e);
       return AuthResult.error('An unexpected error occurred');
     }
   }
@@ -83,7 +90,9 @@ class AuthService {
     try {
       await _auth.signOut();
       await GoogleSignIn().signOut();
+      this.log.i('User signed out successfully');
     } catch (e) {
+      this.log.e('Error during sign-out', error: e);
       throw Exception('Failed to sign out: $e');
     }
   }

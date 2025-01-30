@@ -10,22 +10,29 @@ import 'features/auth/presentation/screens/login_screen.dart';
 import 'features/auth/presentation/screens/home_page.dart';
 import 'core/services/auth_service.dart';
 import 'features/auth/presentation/screens/email_auth_screen.dart';
+import 'core/logger/logger_config.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Add error logging
+  // Initialize logger before running the app
+  LoggerConfig.initialize(
+    isDevelopment: const bool.fromEnvironment('dart.vm.product') == false,
+  );
+  
+  // Add error logging using the new logger
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.presentError(details);
-    debugPrint('Flutter Error: ${details.toString()}');
+    LoggerConfig.logger.e('Flutter Error', error: details.exception, stackTrace: details.stack);
   };
   
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-  } catch (e) {
-    debugPrint('Firebase initialization error: $e');
+    LoggerConfig.logger.i('Firebase initialized successfully');
+  } catch (e, stackTrace) {
+    LoggerConfig.logger.e('Firebase initialization error', error: e, stackTrace: stackTrace);
   }
   
   debugPrintRebuildDirtyWidgets = true;

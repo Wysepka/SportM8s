@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../logger/logger_config.dart';
 
 final storageServiceInitializerProvider = FutureProvider<StorageService>((ref) async {
   return await StorageService.getInstance();
@@ -33,17 +34,24 @@ class StorageService
 
   // Debug method to reset all agreements
   Future<void> debugResetAllAgreements() async {
-    await _sharedPreferences?.setBool(PrivacyPolicyKey, false);
-    await _sharedPreferences?.setBool(TermsOfServiceKey, false);
-    await _sharedPreferences?.setBool(EndUserLicenseKey, false);
-    await _sharedPreferences?.setBool(DataCollectionConsentKey, false);
+    try {
+      await _sharedPreferences?.setBool(PrivacyPolicyKey, false);
+      await _sharedPreferences?.setBool(TermsOfServiceKey, false);
+      await _sharedPreferences?.setBool(EndUserLicenseKey, false);
+      await _sharedPreferences?.setBool(DataCollectionConsentKey, false);
+      this.log.d('All agreements have been reset');
+    } catch (e) {
+      this.log.e('Error resetting agreements', error: e);
+    }
   }
 
   // Optional: Debug method to print current agreement states
   void debugPrintAgreementStates() {
-    print('Privacy Policy Accepted: $hasPrivacyPolicyAccepted');
-    print('Terms of Service Accepted: $hasTermsOfServiceAccepted');
-    print('End User License Accepted: $hasEndUserLicenseAccepted');
-    print('Data Collection Consent Accepted: $hasDataCollectionConsentAccepted');
+    this.log.d('''Agreement States:
+      Privacy Policy Accepted: $hasPrivacyPolicyAccepted
+      Terms of Service Accepted: $hasTermsOfServiceAccepted
+      End User License Accepted: $hasEndUserLicenseAccepted
+      Data Collection Consent Accepted: $hasDataCollectionConsentAccepted
+    ''');
   }
 }

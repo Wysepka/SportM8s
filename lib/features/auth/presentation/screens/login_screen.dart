@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../../core/services/auth_service.dart';
 import '../../../../services/server_service.dart';
+import '../../../../core/logger/logger_config.dart';
 
 class LoginScreen extends ConsumerWidget {
   const LoginScreen({super.key});
@@ -14,6 +15,7 @@ class LoginScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
 
     void showErrorSnackBar(BuildContext context, String message) {
+      this.log.e('Login Error: $message');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(message),
@@ -49,21 +51,23 @@ class LoginScreen extends ConsumerWidget {
                   if (!context.mounted) return;
 
                   if (result.user != null) {
+                    this.log.i('User successfully signed in with Google');
                     // Try to connect to server after successful Google sign-in
                     final connected = await serverService.connectToServer();
                     if (!context.mounted) return;
 
                     if (!connected) {
+                      this.log.e('Failed to connect to server');
                       showErrorSnackBar(
                         context, 
                         'Failed to connect to server (Error ID: SERVER_CONNECTION_FAILED). Please try again later.'
                       );
-                      // Return early to prevent navigation
                       return;
                     }
-                    // Only navigate if server connection was successful
+                    this.log.i('Successfully connected to server');
                     Navigator.pushReplacementNamed(context, "/aggreements");
                   } else if (result.error != null) {
+                    this.log.e('Google sign-in error: ${result.error}');
                     // Handle specific authentication errors
                     String errorMessage = switch (result.error) {
                       'user-disabled' => 'This account has been disabled',
@@ -77,6 +81,7 @@ class LoginScreen extends ConsumerWidget {
                     showErrorSnackBar(context, errorMessage);
                   }
                 } catch (e) {
+                  this.log.e('Unexpected error during login', error: e);
                   if (!context.mounted) return;
                   showErrorSnackBar(
                     context, 
