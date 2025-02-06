@@ -8,6 +8,9 @@ import 'package:sportm8s/core/services/storage_service.dart';
 import 'package:sportm8s/features/auth/presentation/screens/privacy_policy_screen.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:sportm8s/core/logger/logger_service.dart';
+import 'package:sportm8s/core/logger/logger_config.dart';
+import 'package:sportm8s/services/server_user_service.dart';
+import 'package:sportm8s/core/models/server_response.dart';
 
 class AggreementsScreen extends ConsumerStatefulWidget
 {
@@ -20,21 +23,27 @@ class AggreementsScreen extends ConsumerStatefulWidget
 
 class _AggreementsScreenState extends ConsumerState<AggreementsScreen>{
 
-  final Map<AggreementType , bool> _acceptedAggreements = {
-    AggreementType.PrivacyPolicy: false,
-    AggreementType.TermsOfService: false,
-    AggreementType.EndUserLicense: false,
-    AggreementType.ConsentForDataCollection: false
-  };
-
   final LoggerService _logger = LoggerService();
+  bool _isLoading = false;
+  bool _termsAccepted = false;
+  bool _privacyAccepted = false;
+  bool _marketingAccepted = false;
+  late final ServerUserService _serverUserService;
 
+  @override
+  void initState() {
+    super.initState();
+    _serverUserService = ref.read(serverUserServiceProvider);
+  }
+
+  /*
   Future<bool> hasAcceptedPrivacyPolicy() async
   {
     StorageService instance = await StorageService.getInstance();
     _logger.debug('Checking if privacy policy is accepted');
     return instance.hasPrivacyPolicyAccepted;
   }
+  */
 
   Future<String> getPrivacyPolicyHtml() async
   {
@@ -96,19 +105,19 @@ class _AggreementsScreenState extends ConsumerState<AggreementsScreen>{
         _logger.info('Applying agreement: ${aggreementType.toString()}');
         switch (aggreementType) {
           case AggreementType.PrivacyPolicy:
-            storageService.setPrivacyPolicyAccepted(true);
+            storageService.setPrivacyPolicyAccepted(ref, true);
             _logger.debug('Privacy Policy accepted');
             break;
           case AggreementType.TermsOfService:
-            storageService.setTermsOfServiceAccepted(true);
+            storageService.setTermsOfServiceAccepted(ref, true);
             _logger.debug('Terms of Service accepted');
             break;
           case AggreementType.EndUserLicense:
-            storageService.setEndUserLicenseAccepted(true);
+            storageService.setEndUserLicenseAccepted(ref, true);
             _logger.debug('End User License accepted');
             break;
           case AggreementType.ConsentForDataCollection:
-            storageService.setDataCollectionConsentAccepted(true);
+            storageService.setDataCollectionConsentAccepted(ref, true);
             _logger.debug('Data Collection Consent accepted');
             break;
         }
@@ -130,40 +139,64 @@ class _AggreementsScreenState extends ConsumerState<AggreementsScreen>{
 
     return storageService.when(
       data: (storageService) {
-        if (!storageService.hasPrivacyPolicyAccepted) {
-          _logger.debug('Showing Privacy Policy screen');
-          return PrivacyPolicyScreen(
-            aggrementNameKey: "aggreementPrivacyPolicy",
-            useHtmlMarking: true,
-            aggreementType: AggreementType.PrivacyPolicy,
-            aggreementTypeCallback: onAggreementApplied,
-            loadAggrementHtmlText: getPrivacyPolicyHtml,
-            textHtmlStyle: _getPrivacyPolicyHtmlStyles(),
-            consentTextKey: "consentPrivacyPolicy",
-          );
-        }
-        if(!storageService.hasTermsOfServiceAccepted){
-          _logger.debug('Showing Terms of Service screen');
-          return PrivacyPolicyScreen(
-            aggrementNameKey: "aggreementTermsOfService",
-            useHtmlMarking: true,
-            aggreementType: AggreementType.TermsOfService,
-            aggreementTypeCallback: onAggreementApplied,
-            loadAggrementHtmlText: getTermsOfServiceHtml,
-            textHtmlStyle: _getHtmlStylesTermsOfService(),
-            consentTextKey: "consentTermsOfService",
-          );
-        }
-        if(context.mounted) {
-          _logger.info('All agreements accepted, navigating to home screen');
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            Navigator.pushReplacementNamed(context, '/home');
-          });
-        }
-        return const Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(),
-          ),
+        return FutureBuilder<bool>(
+          future: storageService.hasPrivacyPolicyAccepted(ref),
+          builder: (context, privacySnapshot) {
+            if (privacySnapshot.connectionState == ConnectionState.waiting) {
+              return const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            if (!privacySnapshot.data!) {
+              _logger.debug('Showing Privacy Policy screen');
+              return PrivacyPolicyScreen(
+                aggrementNameKey: "aggreementPrivacyPolicy",
+                useHtmlMarking: true,
+                aggreementType: AggreementType.PrivacyPolicy,
+                aggreementTypeCallback: onAggreementApplied,
+                loadAggrementHtmlText: getPrivacyPolicyHtml,
+                textHtmlStyle: _getPrivacyPolicyHtmlStyles(),
+                consentTextKey: "consentPrivacyPolicy",
+              );
+            }
+
+            return FutureBuilder<bool>(
+              future: storageService.hasTermsOfServiceAccepted(ref),
+              builder: (context, termsSnapshot) {
+                if (termsSnapshot.connectionState == ConnectionState.waiting) {
+                  return const Scaffold(
+                    body: Center(child: CircularProgressIndicator()),
+                  );
+                }
+
+                if (!termsSnapshot.data!) {
+                  _logger.debug('Showing Terms of Service screen');
+                  return PrivacyPolicyScreen(
+                    aggrementNameKey: "aggreementTermsOfService",
+                    useHtmlMarking: true,
+                    aggreementType: AggreementType.TermsOfService,
+                    aggreementTypeCallback: onAggreementApplied,
+                    loadAggrementHtmlText: getTermsOfServiceHtml,
+                    textHtmlStyle: _getHtmlStylesTermsOfService(),
+                    consentTextKey: "consentTermsOfService",
+                  );
+                }
+
+                if(context.mounted) {
+                  _logger.info('All agreements accepted, navigating to home screen');
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    Navigator.pushReplacementNamed(context, '/home');
+                  });
+                }
+                return const Scaffold(
+                  body: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              }
+            );
+          }
         );
       },
       error: (error, stack) {

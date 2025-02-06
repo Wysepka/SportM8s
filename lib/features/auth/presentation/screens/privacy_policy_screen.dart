@@ -46,10 +46,10 @@ class PrivacyPolicyScreen extends ConsumerWidget {
     aggreementTypeCallback.call(aggreementType);
   }
 
-  Future<bool> hasAcceptedPrivacyPolicy() async
+  Future<bool> hasAcceptedPrivacyPolicy(WidgetRef ref) async
   {
     StorageService instance = await StorageService.getInstance();
-    return instance.hasPrivacyPolicyAccepted;
+    return await instance.hasPrivacyPolicyAccepted(ref);
   }
 
   Future<String> getPrivacyPolicyHtml() async

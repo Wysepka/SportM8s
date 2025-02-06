@@ -44,18 +44,35 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authStateProvider);
-
     return MaterialApp(
       title: 'SportM8s',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: authState.when(
-        data: (user) => user != null ? const HomePage() : const LoginScreen(),
-        loading: () => const CircularProgressIndicator(),
-        error: (_, __) => const LoginScreen(),
+      home: Consumer(
+        builder: (context, ref, child) {
+          final authState = ref.watch(authStateProvider);
+          return authState.when(
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stack) => Scaffold(
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Error: ${error.toString()}'),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Go Back'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            data: (user) => const LoginScreen(),
+          );
+        },
       ),
       routes: {
         '/login': (context) => const LoginScreen(),

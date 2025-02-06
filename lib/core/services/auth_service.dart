@@ -88,14 +88,25 @@ class AuthService {
   // Sign out
   Future<void> signOut() async {
     try {
+      // Sign out from Firebase
       await _auth.signOut();
-      await GoogleSignIn().signOut();
+
+      // Sign out from Google
+      if (await _googleSignIn.isSignedIn()) {
+        await _googleSignIn.disconnect();  // Revokes access
+        await _googleSignIn.signOut();
+      }
+
+      // Clear any web storage/cache if running on web
+      await _auth.setPersistence(Persistence.NONE);
+
       this.log.i('User signed out successfully');
     } catch (e) {
       this.log.e('Error during sign-out', error: e);
       throw Exception('Failed to sign out: $e');
     }
   }
+
 
   // Get current user
   User? get currentUser => _auth.currentUser;

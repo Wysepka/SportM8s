@@ -11,7 +11,7 @@ class LoginScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authService = ref.read(authServiceProvider);
-    final serverService = ServerService();
+    final serverService = ref.read(serverServiceProvider);
     final l10n = AppLocalizations.of(context);
 
     void showErrorSnackBar(BuildContext context, String message) {
