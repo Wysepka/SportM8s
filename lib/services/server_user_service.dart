@@ -65,6 +65,16 @@ class ServerUserService {
     }
   }
 
+  Future<void> resetAllAgreements() async{
+    try {
+      await _serverService.post(
+        'User/agreementsReset',
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<bool> checkAgreementStatus(String agreementName) async {
     try {
       final response = await _serverService.get('user/agreement/$agreementName');

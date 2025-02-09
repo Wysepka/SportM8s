@@ -16,7 +16,7 @@ class HomePage extends ConsumerWidget {
             icon: const Icon(Icons.delete_forever),
             onPressed: () async {
               final storageService = await ref.read(storageServiceInitializerProvider.future);
-              await storageService.debugResetAllAgreements();
+              await storageService.debugResetAllAgreements(ref);
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('All agreements reset')),

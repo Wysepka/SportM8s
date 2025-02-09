@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
@@ -97,8 +98,10 @@ class AuthService {
         await _googleSignIn.signOut();
       }
 
-      // Clear any web storage/cache if running on web
-      await _auth.setPersistence(Persistence.NONE);
+      if(kIsWeb) {
+        // Clear any web storage/cache if running on web
+        await _auth.setPersistence(Persistence.NONE);
+      }
 
       this.log.i('User signed out successfully');
     } catch (e) {
