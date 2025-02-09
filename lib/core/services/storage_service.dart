@@ -24,6 +24,16 @@ class AgreementUpdateNotifier {
       rethrow;
     }
   }
+
+  Future<void> notifyAllAgreementsReset() async{
+    final serverUserService = ref.read(serverUserServiceProvider);
+    try {
+      await serverUserService.resetAllAgreements();
+    } catch (e) {
+      // Handle or rethrow error as needed
+      rethrow;
+    }
+  }
 }
 
 final storageServiceInitializerProvider = FutureProvider<StorageService>((ref) async {
@@ -125,12 +135,13 @@ class StorageService
   }
 
   // Debug method to reset all agreements
-  Future<void> debugResetAllAgreements() async {
+  Future<void> debugResetAllAgreements(WidgetRef ref) async {
     try {
       await _sharedPreferences?.setBool(PrivacyPolicyKey, false);
       await _sharedPreferences?.setBool(TermsOfServiceKey, false);
       await _sharedPreferences?.setBool(EndUserLicenseKey, false);
       await _sharedPreferences?.setBool(DataCollectionConsentKey, false);
+      await ref.read(agreementUpdateProvider).notifyAllAgreementsReset();
       _logger.debug('All agreements have been reset');
     } catch (e) {
       _logger.error('Error resetting agreements', e);

@@ -98,45 +98,65 @@ class _AggreementsScreenState extends ConsumerState<AggreementsScreen>{
     };
   }
 
-  void onAggreementApplied(AggreementType aggreementType) {
-    final storageService = ref.watch(storageServiceInitializerProvider);
-    storageService.when(
-      data: (storageService) {
-        _logger.info('Applying agreement: ${aggreementType.toString()}');
-        switch (aggreementType) {
-          case AggreementType.PrivacyPolicy:
-            storageService.setPrivacyPolicyAccepted(ref, true);
-            _logger.debug('Privacy Policy accepted');
-            break;
-          case AggreementType.TermsOfService:
-            storageService.setTermsOfServiceAccepted(ref, true);
-            _logger.debug('Terms of Service accepted');
-            break;
-          case AggreementType.EndUserLicense:
-            storageService.setEndUserLicenseAccepted(ref, true);
-            _logger.debug('End User License accepted');
-            break;
-          case AggreementType.ConsentForDataCollection:
-            storageService.setDataCollectionConsentAccepted(ref, true);
-            _logger.debug('Data Collection Consent accepted');
-            break;
-        }
-        // Trigger a rebuild to show the next agreement if needed
-        setState(() {});
-      },
-      error: (Object error, StackTrace stackTrace) {
-        _logger.error('Error setting agreement', error, stackTrace);
-      },
-      loading: () {
-        _logger.debug('Storage service is loading');
+  void onAggreementApplied(AggreementType aggreementType) async{
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      final storageService = ref.watch(storageServiceInitializerProvider);
+      storageService.when(
+          data: (storageService) async {
+            _logger.info('Applying agreement: ${aggreementType.toString()}');
+            switch (aggreementType) {
+              case AggreementType.PrivacyPolicy:
+                await storageService.setPrivacyPolicyAccepted(ref, true);
+                _logger.debug('Privacy Policy accepted');
+                break;
+              case AggreementType.TermsOfService:
+                await storageService.setTermsOfServiceAccepted(ref, true);
+                _logger.debug('Terms of Service accepted');
+                break;
+              case AggreementType.EndUserLicense:
+                await storageService.setEndUserLicenseAccepted(ref, true);
+                _logger.debug('End User License accepted');
+                break;
+              case AggreementType.ConsentForDataCollection:
+                await storageService.setDataCollectionConsentAccepted(ref, true);
+                _logger.debug('Data Collection Consent accepted');
+                break;
+            }
+            // Trigger a rebuild to show the next agreement if needed
+            setState(() {_isLoading = false;});
+          },
+          error: (Object error, StackTrace stackTrace) {
+            _logger.error('Error setting agreement', error, stackTrace);
+          },
+          loading: () {
+            _logger.debug('Storage service is loading');
+          }
+      );
+    }
+    catch(error, stacktrace){
+      _logger.error("Error setting Agreement Applied variable in server ! E: $error , ST: $stacktrace");
+      if(mounted){
+        setState(() {
+          _isLoading = false;
+        });
       }
-    );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final storageService = ref.watch(storageServiceInitializerProvider);
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
 
+    final storageService = ref.watch(storageServiceInitializerProvider);
     return storageService.when(
       data: (storageService) {
         return FutureBuilder<bool>(
