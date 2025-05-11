@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -206,7 +205,7 @@ class _AggreementsScreenState extends ConsumerState<AggreementsScreen>{
                 if(context.mounted) {
                   _logger.info('All agreements accepted, navigating to home screen');
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    Navigator.pushReplacementNamed(context, '/home');
+                    Navigator.pushReplacementNamed(context, '/change-profile-screen');
                   });
                 }
                 return const Scaffold(
