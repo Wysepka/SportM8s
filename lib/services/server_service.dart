@@ -45,7 +45,7 @@ class ServerService {
         if (isEmulator) {
           return 'https://10.0.2.2:32771'; // Android emulator
         }
-        //return 'https://192.168.100.33:32771'; // Physical Android device
+        return 'https://192.168.100.33:32771'; // Physical Android device
         return 'https://192.168.100.33:32783'; // Physical Android device
       }
       // For iOS
@@ -255,7 +255,7 @@ class ServerService {
     }
   }
 
-  Future<Map<String, dynamic>> get(String endpoint) async {
+  Future<Map<String, dynamic>> getDynamicMap(String endpoint) async {
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) {
@@ -292,6 +292,62 @@ class ServerService {
           _logger.error('Authentication error details: $wwwAuthenticate');
         }
         
+        throw HttpException('Authentication failed: ${wwwAuthenticate ?? "Token issuer may be invalid"}');
+      }
+
+      if (response.statusCode != 200) {
+        _logger.error('Request failed with status: ${response.statusCode}');
+        _logger.error('Response body: ${response.body}');
+        throw HttpException('Failed to get data. Status: ${response.statusCode}');
+      }
+
+      return jsonDecode(response.body);
+    } catch (e) {
+      _logger.error('Error in GET request to $endpoint: $e');
+      if (e is HttpException) {
+        rethrow;
+      }
+      throw HttpException('Failed to complete request: $e');
+    }
+  }
+
+  Future<dynamic> getDynamicSimple(String endpoint) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        throw Exception('No authenticated user found');
+      }
+
+      // Add debug logging for token
+      final token = await user.getIdToken();
+      _logger.debug('Token details:');
+      _logger.debug('Token length: ${token!.length}');
+      _logger.debug('Token prefix: ${token.substring(0, math.min(50, token.length))}...');
+
+      final url = '${ServerService.baseUrl}/api/$endpoint';
+      _logger.debug('Making GET request to: $url');
+
+      final response = await _client.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      ).timeout(const Duration(seconds: 10));
+
+      _logger.debug('Response status code: ${response.statusCode}');
+      _logger.debug('Response headers: ${response.headers}');
+
+      if (response.statusCode == 401) {
+        _logger.error('Authentication failed (401)');
+        _logger.error('Response body: ${response.body}');
+
+        // Log the WWW-Authenticate header which contains the error details
+        final wwwAuthenticate = response.headers['www-authenticate'];
+        if (wwwAuthenticate != null) {
+          _logger.error('Authentication error details: $wwwAuthenticate');
+        }
+
         throw HttpException('Authentication failed: ${wwwAuthenticate ?? "Token issuer may be invalid"}');
       }
 

@@ -48,6 +48,7 @@ class StorageService
   static const String TermsOfServiceKey = "TermsOfServiceAccepted";
   static const String EndUserLicenseKey = "EndUserLicenseAccepted";
   static const String DataCollectionConsentKey = "DataCollectionConsentAccepted";
+  static const String ProfileDisplayChanged = "ProfileDisplayChanged";
 
   static StorageService? _storageService;
   static SharedPreferences? _sharedPreferences;
@@ -161,5 +162,30 @@ class StorageService
       End User License Accepted (Server): ${await hasEndUserLicenseAccepted(ref)}
       Data Collection Consent Accepted (Server): ${await hasDataCollectionConsentAccepted(ref)}
     ''');
+  }
+
+  //============================================ PROFILE METHODS ==============================================//
+
+  Future<String> getUserPictureURL(WidgetRef ref) async {
+    try {
+      final serverUserService = ref.read(serverUserServiceProvider);
+      final serverStatus = await serverUserService.getUserProfileURL();
+      return serverStatus;
+    } catch (e , stacktrace) {
+      _logger.error("Error loading UserPictureURL ! E:$e | ST:$stacktrace");
+      return "https://i.sstatic.net/l60Hf.png";
+    }
+  }
+
+  Future<bool> getChangeProfilePictureDisplayStatus(WidgetRef ref) async {
+    try{
+      final serverUserService = ref.read(serverUserServiceProvider);
+      final serverStatus = await serverUserService.getChangeProfilePictureDisplayStatus();
+      return serverStatus;
+    }
+    catch (e , stacktrace){
+      _logger.error("Error loading UserPictureURL ! E:$e | ST:$stacktrace");
+      return false;
+    }
   }
 }

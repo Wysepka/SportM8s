@@ -77,7 +77,7 @@ class ServerUserService {
 
   Future<bool> checkAgreementStatus(String agreementName) async {
     try {
-      final response = await _serverService.get('user/agreement/$agreementName');
+      final response = await _serverService.getDynamicMap('user/agreement/$agreementName');
       return response['isAccepted'] ?? false;
     } catch (e) {
       _logger.error('Error checking agreement status: $agreementName', e);
@@ -130,6 +130,38 @@ class ServerUserService {
         isSuccess: false,
         error: 'Error updating agreements: ${e.toString()}',
       );
+    }
+  }
+
+  Future<String> getUserProfileURL() async {
+    try{
+      final result = await _serverService.getDynamicMap("User/profileUrl");
+      if(result.isNotEmpty){
+        return result.entries.first.value;
+      }
+      else{
+        return "https://i.sstatic.net/l60Hf.png";
+      }
+    }
+    catch(error , stacktrace){
+      _logger.error("There was an error while trying to get ProfileURL | E:$error ||| StackTrace:$stacktrace");
+      return "https://i.sstatic.net/l60Hf.png";
+    }
+  }
+
+  Future<bool> getChangeProfilePictureDisplayStatus() async{
+    try{
+      final result = await _serverService.getDynamicMap("User/profileDisplayChanged");
+      if(result.isNotEmpty){
+        return result["isProfileConfigurable"];
+      }
+      else{
+        return false;
+      }
+    }
+    catch(error , stacktrace){
+      _logger.error("There was an error while trying to get ProfileDisplayChanged | E:$error ||| StackTrace:$stacktrace");
+      return false;
     }
   }
 } 

@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sportm8s/features/auth/presentation/screens/aggreements_screen.dart';
+import 'package:sportm8s/features/auth/presentation/screens/change_display_profile_screen.dart';
 import 'package:sportm8s/features/auth/presentation/screens/privacy_policy_screen.dart';
 import "package:flutter_localizations/flutter_localizations.dart";
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
@@ -80,6 +81,7 @@ class MyApp extends ConsumerWidget {
         '/email-signin': (context) => const EmailAuthScreen(isSignIn: true),
         '/email-signup': (context) => const EmailAuthScreen(isSignIn: false),
         '/aggreements': (context) => const AggreementsScreen(),
+        '/change-profile-screen': (context) => const ChangeDisplayProfileScreen(),
       },
       localizationsDelegates: const[
         AppLocalizations.delegate,
