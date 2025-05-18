@@ -5,4 +5,10 @@ enum AggreementType{
   ConsentForDataCollection,
 }
 
+enum ProfileDisplayPropertyType{
+  Name,
+  Surname,
+  DisplayName,
+}
+
 typedef AggreementTypeCallback = void Function(AggreementType type);

@@ -164,4 +164,63 @@ class ServerUserService {
       return false;
     }
   }
+
+  Future<String> getChangeProfileNameStatus() async{
+    try{
+      final result = await _serverService.getDynamicMap("User/profileName");
+      if(result.isNotEmpty && result.entries.first.value != null){
+        return result.entries.first.value;
+      }
+      else if(result.isNotEmpty && result.entries.first.value == null){
+        return "Profile Name is null";
+      }
+      else{
+        return "Error while loading data";
+      }
+    }
+    catch(error , stacktrace){
+      _logger.error("There was an error while trying to get getChangeProfileNameStatus | E:$error ||| StackTrace:$stacktrace");
+      return "Error while loading data";
+    }
+  }
+
+  Future<String> getChangeProfileSurnameStatus() async
+  {
+    try{
+      final result = await _serverService.getDynamicMap("User/profileSurname");
+      if(result.isNotEmpty && result.entries.first.value != null){
+        return result.entries.first.value;
+      }
+      else if(result.isNotEmpty && result.entries.first.value == null){
+        return "Profile Name is null";
+      }
+      else{
+        return "Error while loading data";
+      }
+    }
+    catch(error , stacktrace){
+      _logger.error("There was an error while trying to get getChangeProfileSurnameStatus | E:$error ||| StackTrace:$stacktrace");
+      return "Error while loading data";
+    }
+  }
+
+  Future<String> getChangeProfileDisplayNameStatus() async
+  {
+    try{
+      final result = await _serverService.getDynamicMap("User/profileDisplayName");
+      if(result.isNotEmpty && result.entries.first.value != null){
+        return result.entries.first.value;
+      }
+      else if(result.isNotEmpty && result.entries.first.value == null){
+        return "Profile Name is null";
+      }
+      else{
+        return "Error while loading data";
+      }
+    }
+    catch(error , stacktrace){
+      _logger.error("There was an error while trying to get getChangeProfileDisplayNameStatus | E:$error ||| StackTrace:$stacktrace");
+      return "Error while loading data";
+    }
+  }
 } 
