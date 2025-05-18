@@ -188,4 +188,43 @@ class StorageService
       return false;
     }
   }
+
+  Future<String> getUserUserName(WidgetRef ref) async
+  {
+    try{
+      final serverUserService = ref.read(serverUserServiceProvider);
+      final serverStatus = await serverUserService.getChangeProfileNameStatus();
+      return serverStatus;
+    }
+    catch (e , stacktrace){
+      _logger.error("Error loading UserPictureURL ! E:$e | ST:$stacktrace");
+      return "Error";
+    }
+  }
+
+  Future<String> getUserSurname(WidgetRef ref) async
+  {
+    try{
+      final serverUserService = ref.read(serverUserServiceProvider);
+      final serverStatus = await serverUserService.getChangeProfileSurnameStatus();
+      return serverStatus;
+    }
+    catch (e , stacktrace){
+      _logger.error("Error loading UserPictureURL ! E:$e | ST:$stacktrace");
+      return "Error";
+    }
+  }
+
+  Future<String> getUserDisplayName(WidgetRef ref) async
+  {
+    try{
+      final serverUserService = ref.read(serverUserServiceProvider);
+      final serverStatus = await serverUserService.getChangeProfileDisplayNameStatus();
+      return serverStatus;
+    }
+    catch (e , stacktrace){
+      _logger.error("Error loading UserPictureURL ! E:$e | ST:$stacktrace");
+      return "Error";
+    }
+  }
 }
