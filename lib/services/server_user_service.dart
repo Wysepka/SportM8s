@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/io_client.dart';
+import 'package:sportm8s/core/enums/enums_container.dart';
 import 'package:sportm8s/core/logger/logger_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/models/server_response.dart';
@@ -222,5 +223,16 @@ class ServerUserService {
       _logger.error("There was an error while trying to get getChangeProfileDisplayNameStatus | E:$error ||| StackTrace:$stacktrace");
       return "Error while loading data";
     }
+  }
+
+  Future<bool> setProfileDisplayParam(String value, ProfileDisplayPropertyType type) async{
+    try{
+      //final result = await _serverService.post("")
+    }
+    catch(e , stacktrace){
+      
+    }
+
+    return true;
   }
 } 

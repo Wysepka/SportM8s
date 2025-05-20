@@ -21,6 +21,10 @@ class _ChangeDisplayProfileScreen extends ConsumerState<ChangeDisplayProfileScre
   final LoggerService _logger = LoggerService();
   late final StorageService _serverUserService;
 
+  late TextField nameTextField;
+  late TextField surnameTextField;
+  late TextField displayNameTextField;
+
   @override
   void initState() {
     super.initState();
@@ -42,6 +46,12 @@ class _ChangeDisplayProfileScreen extends ConsumerState<ChangeDisplayProfileScre
                 _buildUserPropTypeWidget(storageServiceAsync, ProfileDisplayPropertyType.Name),
                 _buildUserPropTypeWidget(storageServiceAsync, ProfileDisplayPropertyType.Surname),
                 _buildUserPropTypeWidget(storageServiceAsync, ProfileDisplayPropertyType.DisplayName),
+                TextButton(
+                    onPressed: ()
+                    {
+
+                    },
+                    child: Text("Apply"))
               ],
             )
         )
@@ -72,14 +82,21 @@ class _ChangeDisplayProfileScreen extends ConsumerState<ChangeDisplayProfileScre
           } else if (snapshot.hasError || !snapshot.hasData) {
             return const Center(child: Text("Error loading user name"));
           }
-          if(type == ProfileDisplayPropertyType.DisplayName)
+          var widget = TextField(decoration: InputDecoration(hintText: snapshot.data));
+
+          if(type == ProfileDisplayPropertyType.Name)
           {
-            return TextField(decoration: InputDecoration(hintText: snapshot.data));
+            nameTextField = widget;
           }
-          else
+          else if(type == ProfileDisplayPropertyType.Surname)
           {
-            return Text(snapshot.data!);
+            surnameTextField = widget;
           }
+          else if(type == ProfileDisplayPropertyType.DisplayName)
+          {
+            displayNameTextField = widget;
+          }
+          return widget;
         },
       ),
       loading: () => const Center(child: CircularProgressIndicator()),

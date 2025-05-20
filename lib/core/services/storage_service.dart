@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sportm8s/core/enums/enums_container.dart';
 import '../logger/logger_config.dart';
 import '../../services/server_user_service.dart';
 import '../logger/logger_service.dart';
@@ -226,5 +227,17 @@ class StorageService
       _logger.error("Error loading UserPictureURL ! E:$e | ST:$stacktrace");
       return "Error";
     }
+  }
+
+  bool setUserDisplayProfileParam(WidgetRef ref, String value, ProfileDisplayPropertyType type){
+    try{
+      final serverUserService = ref.read(serverUserServiceProvider);
+      return true;
+    }
+    catch(e , stacktrace){
+      return true;
+    }
+
+    return true;
   }
 }
