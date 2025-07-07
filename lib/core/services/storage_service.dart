@@ -229,13 +229,18 @@ class StorageService
     }
   }
 
-  bool setUserDisplayProfileParam(WidgetRef ref, String value, ProfileDisplayPropertyType type){
+  Future<bool> setUserDisplayProfileParam(WidgetRef ref, String value, ProfileDisplayPropertyType type) async {
     try{
       final serverUserService = ref.read(serverUserServiceProvider);
-      return true;
+      final profileDisplayChangeResult = await serverUserService.setProfileDisplayParam(value, type);
+      if(profileDisplayChangeResult){
+        await _sharedPreferences?.setBool(ProfileDisplayChanged, true);
+      }
+      return profileDisplayChangeResult;
     }
     catch(e , stacktrace){
-      return true;
+      _logger.error("Error sending ProfileDisplayData to server ! E: $e | StackTrace: $stacktrace");
+      return false;
     }
 
     return true;

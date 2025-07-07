@@ -22,8 +22,11 @@ class _ChangeDisplayProfileScreen extends ConsumerState<ChangeDisplayProfileScre
   late final StorageService _serverUserService;
 
   late TextField nameTextField;
+  final TextEditingController nameTextController = TextEditingController();
   late TextField surnameTextField;
+  final TextEditingController surnameTextController = TextEditingController();
   late TextField displayNameTextField;
+  final TextEditingController displayNameTextController = TextEditingController();
 
   @override
   void initState() {
@@ -49,7 +52,24 @@ class _ChangeDisplayProfileScreen extends ConsumerState<ChangeDisplayProfileScre
                 TextButton(
                     onPressed: ()
                     {
-
+                      storageServiceAsync.when(
+                          data: (storageServiceData)  {
+                            storageServiceData.setUserDisplayProfileParam(ref,nameTextController.text , ProfileDisplayPropertyType.Name);
+                            storageServiceData.setUserDisplayProfileParam(ref,surnameTextController.text , ProfileDisplayPropertyType.Surname);
+                            storageServiceData.setUserDisplayProfileParam(ref,displayNameTextController.text , ProfileDisplayPropertyType.DisplayName);
+                          },
+                          error: (err, stack) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              //TODO replace string value with loc key
+                              SnackBar(
+                                content: Text("Could not send ProfileDisplayData to server"),
+                                backgroundColor: Colors.red,
+                                duration: const Duration(seconds: 3),
+                              )
+                            );
+                          },
+                          loading: () => CircularProgressIndicator(),
+                      );
                     },
                     child: Text("Apply"))
               ],
@@ -82,21 +102,34 @@ class _ChangeDisplayProfileScreen extends ConsumerState<ChangeDisplayProfileScre
           } else if (snapshot.hasError || !snapshot.hasData) {
             return const Center(child: Text("Error loading user name"));
           }
-          var widget = TextField(decoration: InputDecoration(hintText: snapshot.data));
+
+          late TextField widgetTextField;
 
           if(type == ProfileDisplayPropertyType.Name)
           {
-            nameTextField = widget;
+            widgetTextField = TextField(
+              decoration: InputDecoration(hintText: snapshot.data),
+              controller: nameTextController,
+            );
+            nameTextField = widgetTextField;
           }
           else if(type == ProfileDisplayPropertyType.Surname)
           {
-            surnameTextField = widget;
+            widgetTextField = TextField(
+              decoration: InputDecoration(hintText: snapshot.data),
+              controller: surnameTextController,
+            );
+            surnameTextField = widgetTextField;
           }
           else if(type == ProfileDisplayPropertyType.DisplayName)
           {
-            displayNameTextField = widget;
+            widgetTextField = TextField(
+              decoration: InputDecoration(hintText: snapshot.data),
+              controller: displayNameTextController,
+            );
+            displayNameTextField = widgetTextField;
           }
-          return widget;
+          return widgetTextField;
         },
       ),
       loading: () => const Center(child: CircularProgressIndicator()),

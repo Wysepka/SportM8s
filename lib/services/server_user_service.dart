@@ -29,6 +29,8 @@ class ServerUserService {
         'lastUpdated': DateTime.now().toIso8601String(),
       };
 
+      //TODO replace client with _serverService method for constistency
+      //it need to be changed because the api endpoint prefix is confusing with other similar methods
       final response = await client.post(
         Uri.parse('${ServerService.baseUrl}/api/user/update'),
         headers: {
@@ -225,14 +227,28 @@ class ServerUserService {
     }
   }
 
-  Future<bool> setProfileDisplayParam(String value, ProfileDisplayPropertyType type) async{
+  Future<bool> setProfileDisplayParam(String value, ProfileDisplayPropertyType type) async {
     try{
-      //final result = await _serverService.post("")
+      final typeString = type.name;
+      final result = await _serverService.post("User/setProfileDisplayParam/$typeString" ,
+        body: {
+          'Value': value,
+          'Type': typeString,
+        },);
+      int resultResponseCode = result['statusCode'];
+      if(resultResponseCode == 200){
+        _logger.info("Successfully updated ProfileDisplayParam with Value: $value with type: $type");
+        return true;
+      }
+      else{
+        _logger.error("Could not update ProfileDisplayParam with Value: $value with type: $type , response code: $resultResponseCode");
+        return false;
+      }
     }
     catch(e , stacktrace){
-      
+      _logger.error("There was an error while trying to get setProfileDisplayParam | E:$e  ||| StackTrace:$stacktrace");
+      return false;
     }
 
-    return true;
   }
 } 
