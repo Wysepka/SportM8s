@@ -1,0 +1,6 @@
+1.Add localization features everywhere
+2.Replace tile server with my own server on commercial ready product
+3.Add latlng data get from user phone
+4.Change server auth to check boolean from AppConsts
+5.Add backend for getting markers from server
+6.Add check in ChangeDisplayProfileScreen about not all results being sent to server

@@ -53,10 +53,20 @@ class _ChangeDisplayProfileScreen extends ConsumerState<ChangeDisplayProfileScre
                     onPressed: ()
                     {
                       storageServiceAsync.when(
-                          data: (storageServiceData)  {
-                            storageServiceData.setUserDisplayProfileParam(ref,nameTextController.text , ProfileDisplayPropertyType.Name);
-                            storageServiceData.setUserDisplayProfileParam(ref,surnameTextController.text , ProfileDisplayPropertyType.Surname);
-                            storageServiceData.setUserDisplayProfileParam(ref,displayNameTextController.text , ProfileDisplayPropertyType.DisplayName);
+                          data: (storageServiceData)  async {
+                            final resultName = storageServiceData.setUserDisplayProfileParam(ref,nameTextController.text , ProfileDisplayPropertyType.Name);
+                            final resultSurname = storageServiceData.setUserDisplayProfileParam(ref,surnameTextController.text , ProfileDisplayPropertyType.Surname);
+                            final resultDisplayName = storageServiceData.setUserDisplayProfileParam(ref,displayNameTextController.text , ProfileDisplayPropertyType.DisplayName);
+
+                            await Future.wait([resultName, resultSurname , resultDisplayName]);
+
+                            //TODO ADD SOME SNACKBAR INFO ABOUT NOT ALL RESULTS SENT
+                            if(context.mounted) {
+                              _logger.info('All Profile Params sent ! Navigating to MapRootScreen');
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                Navigator.pushReplacementNamed(context, '/map-root-screen');
+                              });
+                            }
                           },
                           error: (err, stack) {
                             ScaffoldMessenger.of(context).showSnackBar(
