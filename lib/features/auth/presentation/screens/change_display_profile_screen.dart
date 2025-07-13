@@ -100,7 +100,7 @@ class _ChangeDisplayProfileScreen extends ConsumerState<ChangeDisplayProfileScre
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError || !snapshot.hasData) {
-            return const Center(child: Text("Error loading user name"));
+            return const Center(child: Text("Error loading user profile data"));
           }
 
           late TextField widgetTextField;
