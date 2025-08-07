@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:sportm8s/app_consts.dart';
+import 'package:sportm8s/core/utility/random_utility.dart';
 
 class MapSideView extends StatelessWidget{
   const MapSideView({super.key});
@@ -36,22 +37,22 @@ List<Marker> _getMarkers_Test(){
     
     markersList.add(Marker(
       point: LatLng( 52.337049, 21.117532),
-      width: 10,
-      height: 10,
+      width: 120,
+      height: 120,
       child: _getMarkerChild(),
     ));
 
     markersList.add(Marker(
       point: LatLng( 52.537049, 21.227532),
-      width: 10,
-      height: 10,
+      width: 120,
+      height: 120,
       child: _getMarkerChild(),
     ));
 
     markersList.add(Marker(
       point: LatLng( 52.427049, 21.25532),
-      width: 10,
-      height: 10,
+      width: 120,
+      height: 120,
       child: _getMarkerChild(),
     ));
 
@@ -59,19 +60,28 @@ List<Marker> _getMarkers_Test(){
 }
 
 Widget _getMarkerChild(){
+    String randomString = RandomUtility.randomString(10, 30);
     return GestureDetector(
       onTap: () => print("Marker tapped!"),
-      child: Column(
+      child:
+      Column(
         children: [
-          const Icon(Icons.location_on, size: 20, color: Colors.red),
-          Container(
-            padding: const EdgeInsets.all(4),
-            color: Colors.white,
-            child: const Text("Event A", style: TextStyle(fontSize: 12)),
-          ),
+          //Expanded(
+          //    flex: 1,
+          /*  child: */ const Icon(Icons.location_on, size: 40, color: Colors.red),
+          //),
+          //Expanded(
+          //  flex: 3,
+          /*  child: */ Container(
+              padding: const EdgeInsets.all(4),
+              color: Colors.white,
+              constraints: BoxConstraints(minWidth:  10 , maxWidth:  120 ,minHeight:  10 ,maxHeight:  120),
+              child: Text(randomString, style: TextStyle(fontSize: 20) , textAlign: TextAlign.center,),
+            ),
+          //)
         ],
       ),
     );
 }
-  
+
 }
