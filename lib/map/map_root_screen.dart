@@ -9,9 +9,12 @@ class MapRootScreen extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Scaffold(
-      drawer: MapRootDrawer(),
-      body: MapSideView(),
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(),
+        drawer: MapRootDrawer(),
+        body: MapSideView(),
+      ),
     );
   }
 

@@ -11,6 +11,10 @@ class MapRootDrawer extends StatelessWidget{
           title: Text("Map"),
         ),
         ListTile(
+          title: TextButton(onPressed: () {  },
+          child: Text("Create Event")),
+        ),
+        ListTile(
           title: Text("Profile"),
         ),
         ListTile(

@@ -4,3 +4,4 @@
 4.Change server auth to check boolean from AppConsts
 5.Add backend for getting markers from server
 6.Add check in ChangeDisplayProfileScreen about not all results being sent to server
+7. Add different kind of outline border for OSM marker

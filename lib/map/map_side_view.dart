@@ -3,7 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:logger/logger.dart';
 import 'package:sportm8s/app_consts.dart';
+import 'package:sportm8s/core/logger/logger_config.dart';
 import 'package:sportm8s/core/utility/random_utility.dart';
 
 class MapSideView extends StatelessWidget{
@@ -16,18 +18,20 @@ class MapSideView extends StatelessWidget{
     }
     else {
       // TODO: implement build
-      return FlutterMap(
-          options: MapOptions(
-            //TODO add LatLng info getting from phone localization
-            initialCenter: LatLng(52.237049, 21.017532),
-            initialZoom: 13.0,
-          ),
-          children: [
-            TileLayer(
-              urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+      return GestureDetector(
+        child: FlutterMap(
+            options: MapOptions(
+              //TODO add LatLng info getting from phone localization
+              initialCenter: LatLng(52.237049, 21.017532),
+              initialZoom: 13.0,
             ),
-            MarkerLayer(markers: _getMarkers_Test())
-        ]
+            children: [
+              TileLayer(
+                urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+              ),
+              MarkerLayer(markers: _getMarkers_Test())
+          ]
+        ),
       );
     }
   }
@@ -38,21 +42,21 @@ List<Marker> _getMarkers_Test(){
     markersList.add(Marker(
       point: LatLng( 52.337049, 21.117532),
       width: 120,
-      height: 120,
+      height: 180,
       child: _getMarkerChild(),
     ));
 
     markersList.add(Marker(
       point: LatLng( 52.537049, 21.227532),
       width: 120,
-      height: 120,
+      height: 180,
       child: _getMarkerChild(),
     ));
 
     markersList.add(Marker(
       point: LatLng( 52.427049, 21.25532),
       width: 120,
-      height: 120,
+      height: 180,
       child: _getMarkerChild(),
     ));
 
@@ -62,23 +66,20 @@ List<Marker> _getMarkers_Test(){
 Widget _getMarkerChild(){
     String randomString = RandomUtility.randomString(10, 30);
     return GestureDetector(
-      onTap: () => print("Marker tapped!"),
+      //onTap: () => LoggerConfig.logger.log(level: Level.debug , message: "On GestureDetector Tapped");
+      onTap: () => log.d("Gesture Detector tapped"),
       child:
       Column(
         children: [
-          //Expanded(
-          //    flex: 1,
-          /*  child: */ const Icon(Icons.location_on, size: 40, color: Colors.red),
-          //),
-          //Expanded(
-          //  flex: 3,
-          /*  child: */ Container(
-              padding: const EdgeInsets.all(4),
-              color: Colors.white,
-              constraints: BoxConstraints(minWidth:  10 , maxWidth:  120 ,minHeight:  10 ,maxHeight:  120),
-              child: Text(randomString, style: TextStyle(fontSize: 20) , textAlign: TextAlign.center,),
-            ),
-          //)
+          const Icon(Icons.location_on, size: 40, color: Colors.red),
+           ClipRRect(
+              borderRadius: BorderRadius.circular(25),
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                constraints: BoxConstraints(minWidth:  10 , maxWidth:  120 ,minHeight:  10 ,maxHeight:  140),
+                child: Text(randomString, style: TextStyle(fontSize: 20) , textAlign: TextAlign.center,),
+                decoration: BoxDecoration(color: Colors.white , borderRadius: BorderRadius.circular(25) , border: Border.all(color: Colors.cyan ,width:  10)),
+          )),
         ],
       ),
     );
