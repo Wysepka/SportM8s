@@ -5,3 +5,6 @@
 5.Add backend for getting markers from server
 6.Add check in ChangeDisplayProfileScreen about not all results being sent to server
 7. Add different kind of outline border for OSM marker
+8. Check app code styling with Cursor
+9. Check navigation between sites, and replace pushReplacementNamed with pushNamed
+10. ListTile can have a onTap method instead of inserting Button in it

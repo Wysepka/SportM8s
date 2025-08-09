@@ -32,14 +32,14 @@ class LoginScreen extends ConsumerWidget {
           children: [
             ElevatedButton(
               onPressed: () {
-                Navigator.pushReplacementNamed(context, "/email-signin");
+                Navigator.pushNamed(context, "/email-signin");
               },
               child: Text(l10n?.signInWithEmail ?? "Sign in with Email"),
             ),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushReplacementNamed(context, "/email-signup");
+                Navigator.pushNamed(context, "/email-signup");
               },
               child: Text(l10n?.signUpWithEmail ?? 'Sign Up with Email'),
             ),

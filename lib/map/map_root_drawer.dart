@@ -1,7 +1,11 @@
 
 import 'package:flutter/material.dart';
+import 'package:sportm8s/events/map_create_event.dart';
 
 class MapRootDrawer extends StatelessWidget{
+  final VoidCallback onCreateEventCallback;
+  const MapRootDrawer({super.key , required this.onCreateEventCallback});
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -11,7 +15,7 @@ class MapRootDrawer extends StatelessWidget{
           title: Text("Map"),
         ),
         ListTile(
-          title: TextButton(onPressed: () {  },
+          title: TextButton(onPressed: () { onCreateEventCallback(); },
           child: Text("Create Event")),
         ),
         ListTile(
