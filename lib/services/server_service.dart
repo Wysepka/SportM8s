@@ -45,8 +45,8 @@ class ServerService {
         if (isEmulator) {
           return 'https://10.0.2.2:32771'; // Android emulator
         }
-        return 'https://192.168.100.33:32771'; // Physical Android device
-        return 'https://192.168.100.33:32783'; // Physical Android device
+        return 'https://192.168.33.11:32771'; // Physical Android device
+        return 'https://192.168.33.11:32783'; // Physical Android device
       }
       // For iOS
       if (Platform.isIOS) {

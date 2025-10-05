@@ -7,9 +7,17 @@ import 'package:logger/logger.dart';
 import 'package:sportm8s/app_consts.dart';
 import 'package:sportm8s/core/logger/logger_config.dart';
 import 'package:sportm8s/core/utility/random_utility.dart';
+import 'package:sportm8s/map/map_icon.dart';
 
-class MapSideView extends StatelessWidget{
-  const MapSideView({super.key});
+class MapSideView extends StatefulWidget{
+  @override
+  State<StatefulWidget> createState() => _MapSideView();
+}
+
+class _MapSideView extends State<MapSideView>{
+  //_MapSideView({super.key});
+  final MapController mapController = new MapController();
+  double zoomValue = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -20,43 +28,74 @@ class MapSideView extends StatelessWidget{
       // TODO: implement build
       return GestureDetector(
         child: FlutterMap(
+            mapController: mapController,
             options: MapOptions(
               //TODO add LatLng info getting from phone localization
               initialCenter: LatLng(52.237049, 21.017532),
               initialZoom: 13.0,
+              onMapEvent: (event) {
+                if(event is MapEventDoubleTapZoomEnd || event is MapEventDoubleTapZoomStart
+                || event is MapEventMoveStart || event is MapEventMoveEnd){
+                  setState(() {
+                    zoomValue = event.camera.zoom;
+                  });
+                }
+              }
             ),
             children: [
               TileLayer(
                 urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
               ),
-              MarkerLayer(markers: _getMarkers_Test())
+              //MarkerLayer(markers: RandomUtility.getMarkers_Test(_getMarkerWidth, _getMarkerHeight, _getMapIcon , _getZoomMultiplier))
+              MarkerLayer(markers: RandomUtility.getMarkers_TestEvents(_getMarkerWidth, _getMarkerHeight, _getMapIconEvent))
           ]
         ),
       );
     }
   }
 
+  Widget _getMapIconEvent(){
+    return MapIcon(_getZoomMultiplier);
+  }
+
+  Widget _getMapIcon(double zoomMultiplier){
+    return MapIcon(_getZoomMultiplier);
+  }
+
+  double _getMarkerWidth(){
+    return 120 * _getZoomMultiplier();
+  }
+
+  double _getMarkerHeight(){
+    return 180 * _getZoomMultiplier();
+  }
+
+  double _getZoomMultiplier(){
+    return zoomValue * 0.05;
+  }
+/*
+
 List<Marker> _getMarkers_Test(){
     List<Marker> markersList = [];
     
     markersList.add(Marker(
       point: LatLng( 52.337049, 21.117532),
-      width: 120,
-      height: 180,
+      width: _getMarkerWidth(),
+      height: _getMarkerHeight(),
       child: _getMarkerChild(),
     ));
 
     markersList.add(Marker(
       point: LatLng( 52.537049, 21.227532),
-      width: 120,
-      height: 180,
+      width: _getMarkerWidth(),
+      height: _getMarkerHeight(),
       child: _getMarkerChild(),
     ));
 
     markersList.add(Marker(
       point: LatLng( 52.427049, 21.25532),
-      width: 120,
-      height: 180,
+      width: _getMarkerWidth(),
+      height: _getMarkerHeight(),
       child: _getMarkerChild(),
     ));
 
@@ -71,18 +110,19 @@ Widget _getMarkerChild(){
       child:
       Column(
         children: [
-          const Icon(Icons.location_on, size: 40, color: Colors.red),
+          Icon(Icons.location_on, size: 40 * _getZoomMultiplier(), color: Colors.red),
            ClipRRect(
-              borderRadius: BorderRadius.circular(25),
+              borderRadius: BorderRadius.circular(25 * _getZoomMultiplier()),
               child: Container(
-                padding: const EdgeInsets.all(4),
-                constraints: BoxConstraints(minWidth:  10 , maxWidth:  120 ,minHeight:  10 ,maxHeight:  140),
-                child: Text(randomString, style: TextStyle(fontSize: 20) , textAlign: TextAlign.center,),
-                decoration: BoxDecoration(color: Colors.white , borderRadius: BorderRadius.circular(25) , border: Border.all(color: Colors.cyan ,width:  10)),
+                padding: EdgeInsets.all(4 * _getZoomMultiplier()),
+                constraints: BoxConstraints(minWidth:  10 * _getZoomMultiplier() , maxWidth:  120 * _getZoomMultiplier() ,minHeight:  10 * _getZoomMultiplier(),maxHeight:  140 * _getZoomMultiplier()),
+                child: Text(randomString, style: TextStyle(fontSize: 20 * _getZoomMultiplier()) , textAlign: TextAlign.center,),
+                decoration: BoxDecoration(color: Colors.white , borderRadius: BorderRadius.circular(25 * _getZoomMultiplier()) , border: Border.all(color: Colors.cyan ,width:  10 * _getZoomMultiplier())),
           )),
         ],
       ),
     );
 }
+*/
 
 }
