@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:latlong2/latlong.dart';
 
 import '../../core/enums/enums_container.dart';
@@ -10,7 +12,18 @@ class MapEventData
   final LatLng position;
   final int maxParticipants;
   final int currentParticipants;
+  final String eventID;
+  final String creatorID;
+  final List<String> participantsIDs;
 
-  const MapEventData(this.eventName, this.eventDescription , this.sportEventType, this.position ,
-      this.maxParticipants , this.currentParticipants);
+  const MapEventData({
+      required this.eventName,
+      required this.eventDescription ,
+      required this.sportEventType,
+      required this.position ,
+      required this.maxParticipants ,
+      required this.currentParticipants,
+      required this.eventID,
+      required this.creatorID,
+      required this.participantsIDs});
 }

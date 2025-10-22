@@ -2,12 +2,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:logger/logger.dart';
 import 'package:sportm8s/app_consts.dart';
 import 'package:sportm8s/core/logger/logger_config.dart';
 import 'package:sportm8s/core/utility/random_utility.dart';
+import 'package:sportm8s/map/engine/sport_event_controller.dart';
+import 'package:sportm8s/map/engine/sport_event_repository.dart';
 import 'package:sportm8s/map/map_icon.dart';
+import 'package:sportm8s/map/models/map_event_data.dart';
+import 'package:sportm8s/services/server_service.dart';
+import 'package:sportm8s/services/server_sport_service.dart';
+
+import 'engine/sport_event_engine.dart';
+
 
 class MapSideView extends StatefulWidget{
   @override
@@ -17,7 +26,23 @@ class MapSideView extends StatefulWidget{
 class _MapSideView extends State<MapSideView>{
   //_MapSideView({super.key});
   final MapController mapController = new MapController();
+  late SportEventEngine sportEventEngine;
   double zoomValue = 0;
+
+  @override void initState() {
+    // TODO: implement initState
+    super.initState();
+    final serverServiceContainer = ProviderScope.containerOf(context , listen: false);
+    final serverService = serverServiceContainer.read(serverServiceProvider);
+    sportEventEngine = SportEventEngine(SportEventController(), ServerSportService(serverService), FakeSportEventRepository());
+    OSMMarkerData markerData = OSMMarkerData(_getMapIconEvent, _getMarkerWidth, _getMarkerHeight, _getZoomMultiplier);
+    sportEventEngine.eventController.addListener(onSportEventsChanged);
+    sportEventEngine.initialize(markerData);
+  }
+
+  void onSportEventsChanged(){
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,39 +52,43 @@ class _MapSideView extends State<MapSideView>{
     else {
       // TODO: implement build
       return GestureDetector(
-        child: FlutterMap(
-            mapController: mapController,
-            options: MapOptions(
-              //TODO add LatLng info getting from phone localization
-              initialCenter: LatLng(52.237049, 21.017532),
-              initialZoom: 13.0,
-              onMapEvent: (event) {
-                if(event is MapEventDoubleTapZoomEnd || event is MapEventDoubleTapZoomStart
-                || event is MapEventMoveStart || event is MapEventMoveEnd){
-                  setState(() {
-                    zoomValue = event.camera.zoom;
-                  });
+          child: FlutterMap(
+              mapController: mapController,
+              options: MapOptions(
+                //TODO add LatLng info getting from phone localization
+                initialCenter: LatLng(52.237049, 21.017532),
+                initialZoom: 13.0,
+                onMapEvent: (event) {
+                  if(event is MapEventDoubleTapZoomEnd || event is MapEventDoubleTapZoomStart
+                  || event is MapEventMoveStart || event is MapEventMoveEnd){
+                    setState(() {
+                      zoomValue = event.camera.zoom;
+                    });
+                  }
                 }
-              }
-            ),
-            children: [
-              TileLayer(
-                urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
               ),
-              //MarkerLayer(markers: RandomUtility.getMarkers_Test(_getMarkerWidth, _getMarkerHeight, _getMapIcon , _getZoomMultiplier))
-              MarkerLayer(markers: RandomUtility.getMarkers_TestEvents(_getMarkerWidth, _getMarkerHeight, _getMapIconEvent))
-          ]
-        ),
-      );
+              children: [
+                TileLayer(
+                  urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                ),
+                //MarkerLayer(markers: RandomUtility.getMarkers_Test(_getMarkerWidth, _getMarkerHeight, _getMapIcon , _getZoomMultiplier))
+                MarkerLayer(markers: sportEventEngine.eventRepository.getOSMMarkers())
+            ]
+          ),
+        );
     }
   }
 
-  Widget _getMapIconEvent(){
-    return MapIcon(_getZoomMultiplier);
+
+  Widget _getMapIconEvent(MapEventData mapEventData){
+    MapIcon mapIcon = MapIcon(_getZoomMultiplier);
+    mapIcon.mapEventData = mapEventData;
+    return mapIcon;
   }
 
   Widget _getMapIcon(double zoomMultiplier){
-    return MapIcon(_getZoomMultiplier);
+    MapIcon mapIcon = MapIcon(_getZoomMultiplier);
+    return mapIcon;
   }
 
   double _getMarkerWidth(){
@@ -124,5 +153,16 @@ Widget _getMarkerChild(){
     );
 }
 */
+
+}
+
+class OSMMarkerData{
+
+  Widget Function(MapEventData mapEventData) mapIconEvent;
+  double Function() markerWidth;
+  double Function() markerHeight;
+  double Function() zoomValue;
+
+  OSMMarkerData(this.mapIconEvent , this.markerWidth , this.markerHeight , this.zoomValue);
 
 }
