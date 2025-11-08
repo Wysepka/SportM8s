@@ -34,7 +34,10 @@ class _MapSideView extends State<MapSideView>{
     super.initState();
     final serverServiceContainer = ProviderScope.containerOf(context , listen: false);
     final serverService = serverServiceContainer.read(serverServiceProvider);
-    sportEventEngine = SportEventEngine(SportEventController(), ServerSportService(serverService), FakeSportEventRepository());
+    final sportEventController = SportEventController();
+    sportEventController.addListener(refreshMarkers);
+
+    sportEventEngine = SportEventEngine(sportEventController, ServerSportService(serverService), FakeSportEventRepository());
     OSMMarkerData markerData = OSMMarkerData(_getMapIconEvent, _getMarkerWidth, _getMarkerHeight, _getZoomMultiplier);
     sportEventEngine.eventController.addListener(onSportEventsChanged);
     sportEventEngine.initialize(markerData);
@@ -79,6 +82,10 @@ class _MapSideView extends State<MapSideView>{
     }
   }
 
+  void refreshMarkers(){
+    setState(() {});
+  }
+
 
   Widget _getMapIconEvent(MapEventData mapEventData){
     MapIcon mapIcon = MapIcon(_getZoomMultiplier);
@@ -100,7 +107,10 @@ class _MapSideView extends State<MapSideView>{
   }
 
   double _getZoomMultiplier(){
-    return zoomValue * 0.05;
+    return zoomValue * 0.1;
+    //zoomValue
+    //10 is very close
+    //1 is very far
   }
 /*
 

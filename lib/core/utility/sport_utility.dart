@@ -1,4 +1,8 @@
 import 'dart:math';
+import 'dart:ui';
+
+import 'package:flutter/material.dart';
+import 'package:sportm8s/gen/assets.gen.dart';
 
 import '../enums/enums_container.dart';
 
@@ -21,6 +25,13 @@ class SportEventUtils {
     }
   }
 
+  static SportEventType parseIntToSportEvenType(int value){
+    if (value < 0 || value >= SportEventType.values.length) {
+      return SportEventType.Invalid;
+    }
+    return SportEventType.values[value];
+  }
+
   /// Generates a random pair (min, max) of participants for the given sport.
   static (int min, int max) getRandomParticipants(SportEventType type) {
     final random = Random(0);
@@ -40,6 +51,26 @@ class SportEventUtils {
         return (random.nextInt(1) + 1, random.nextInt(50) + 30); // 1-2 min, 30–79 max
       case SportEventType.Invalid:
         return (random.nextInt(2) + 2, random.nextInt(20) + 5);   // 2–3 min, 5–24 max
+    }
+  }
+
+  static AssetImage getIconBasedOnSportEventType(SportEventType sportEventType,double size)
+  {
+    switch(sportEventType){
+      case SportEventType.Soccer:
+        return AssetImage(Assets.icons.sportIconsFixed.iconSoccer.path); Assets.icons.sportIconsFixed.iconCycling;
+      case SportEventType.Basketball:
+        return AssetImage(Assets.icons.sportIconsFixed.iconBasketball.path); Assets.icons.sportIconsFixed.iconCycling;
+      case SportEventType.Tennis:
+        return AssetImage(Assets.icons.sportIconsFixed.iconTennis.path); Assets.icons.sportIconsFixed.iconCycling;
+      case SportEventType.Volleyball:
+        return AssetImage(Assets.icons.sportIconsFixed.iconVoleyball.path); Assets.icons.sportIconsFixed.iconCycling;
+      case SportEventType.Running:
+        return AssetImage(Assets.icons.sportIconsFixed.iconRunning.path); Assets.icons.sportIconsFixed.iconCycling;
+      case SportEventType.Cycling:
+        return AssetImage(Assets.icons.sportIconsFixed.iconCycling.path); Assets.icons.sportIconsFixed.iconCycling;
+      case SportEventType.Invalid:
+        return AssetImage(Assets.icons.sportIconsFixed.iconSports.path); Assets.icons.sportIconsFixed.iconCycling;
     }
   }
 }

@@ -1,0 +1,220 @@
+// dart format width=80
+
+/// GENERATED CODE - DO NOT MODIFY BY HAND
+/// *****************************************************
+///  FlutterGen
+/// *****************************************************
+
+// coverage:ignore-file
+// ignore_for_file: type=lint
+// ignore_for_file: deprecated_member_use,directives_ordering,implicit_dynamic_list_literal,unnecessary_import
+
+import 'package:flutter/widgets.dart';
+
+class $AssetsIconsGen {
+  const $AssetsIconsGen();
+
+  /// Directory path: assets/icons/sport_icons_fixed
+  $AssetsIconsSportIconsFixedGen get sportIconsFixed =>
+      const $AssetsIconsSportIconsFixedGen();
+}
+
+class $AssetsTextGen {
+  const $AssetsTextGen();
+
+  /// File path: assets/text/privacyPolicyAndroidExample.txt
+  String get privacyPolicyAndroidExample =>
+      'assets/text/privacyPolicyAndroidExample.txt';
+
+  /// File path: assets/text/termsOfServiceExample.txt
+  String get termsOfServiceExample => 'assets/text/termsOfServiceExample.txt';
+
+  /// List of all assets
+  List<String> get values =>
+      [privacyPolicyAndroidExample, termsOfServiceExample];
+}
+
+class $AssetsIconsSportIconsFixedGen {
+  const $AssetsIconsSportIconsFixedGen();
+
+  /// File path: assets/icons/sport_icons_fixed/Icon_Badminton.png
+  AssetGenImage get iconBadminton =>
+      const AssetGenImage('assets/icons/sport_icons_fixed/Icon_Badminton.png');
+
+  /// File path: assets/icons/sport_icons_fixed/Icon_Baseball.png
+  AssetGenImage get iconBaseball =>
+      const AssetGenImage('assets/icons/sport_icons_fixed/Icon_Baseball.png');
+
+  /// File path: assets/icons/sport_icons_fixed/Icon_Basketball.png
+  AssetGenImage get iconBasketball =>
+      const AssetGenImage('assets/icons/sport_icons_fixed/Icon_Basketball.png');
+
+  /// File path: assets/icons/sport_icons_fixed/Icon_Billard.png
+  AssetGenImage get iconBillard =>
+      const AssetGenImage('assets/icons/sport_icons_fixed/Icon_Billard.png');
+
+  /// File path: assets/icons/sport_icons_fixed/Icon_Bowling.png
+  AssetGenImage get iconBowling =>
+      const AssetGenImage('assets/icons/sport_icons_fixed/Icon_Bowling.png');
+
+  /// File path: assets/icons/sport_icons_fixed/Icon_Cycling.png
+  AssetGenImage get iconCycling =>
+      const AssetGenImage('assets/icons/sport_icons_fixed/Icon_Cycling.png');
+
+  /// File path: assets/icons/sport_icons_fixed/Icon_Golf.png
+  AssetGenImage get iconGolf =>
+      const AssetGenImage('assets/icons/sport_icons_fixed/Icon_Golf.png');
+
+  /// File path: assets/icons/sport_icons_fixed/Icon_Gym.png
+  AssetGenImage get iconGym =>
+      const AssetGenImage('assets/icons/sport_icons_fixed/Icon_Gym.png');
+
+  /// File path: assets/icons/sport_icons_fixed/Icon_PingPong.png
+  AssetGenImage get iconPingPong =>
+      const AssetGenImage('assets/icons/sport_icons_fixed/Icon_PingPong.png');
+
+  /// File path: assets/icons/sport_icons_fixed/Icon_Rugby.png
+  AssetGenImage get iconRugby =>
+      const AssetGenImage('assets/icons/sport_icons_fixed/Icon_Rugby.png');
+
+  /// File path: assets/icons/sport_icons_fixed/Icon_Running.png
+  AssetGenImage get iconRunning =>
+      const AssetGenImage('assets/icons/sport_icons_fixed/Icon_Running.png');
+
+  /// File path: assets/icons/sport_icons_fixed/Icon_Soccer.png
+  AssetGenImage get iconSoccer =>
+      const AssetGenImage('assets/icons/sport_icons_fixed/Icon_Soccer.png');
+
+  /// File path: assets/icons/sport_icons_fixed/Icon_Sports.png
+  AssetGenImage get iconSports =>
+      const AssetGenImage('assets/icons/sport_icons_fixed/Icon_Sports.png');
+
+  /// File path: assets/icons/sport_icons_fixed/Icon_Tennis.png
+  AssetGenImage get iconTennis =>
+      const AssetGenImage('assets/icons/sport_icons_fixed/Icon_Tennis.png');
+
+  /// File path: assets/icons/sport_icons_fixed/Icon_Voleyball.png
+  AssetGenImage get iconVoleyball =>
+      const AssetGenImage('assets/icons/sport_icons_fixed/Icon_Voleyball.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [
+        iconBadminton,
+        iconBaseball,
+        iconBasketball,
+        iconBillard,
+        iconBowling,
+        iconCycling,
+        iconGolf,
+        iconGym,
+        iconPingPong,
+        iconRugby,
+        iconRunning,
+        iconSoccer,
+        iconSports,
+        iconTennis,
+        iconVoleyball
+      ];
+}
+
+class Assets {
+  const Assets._();
+
+  static const $AssetsIconsGen icons = $AssetsIconsGen();
+  static const $AssetsTextGen text = $AssetsTextGen();
+}
+
+class AssetGenImage {
+  const AssetGenImage(
+    this._assetName, {
+    this.size,
+    this.flavors = const {},
+    this.animation,
+  });
+
+  final String _assetName;
+
+  final Size? size;
+  final Set<String> flavors;
+  final AssetGenImageAnimation? animation;
+
+  Image image({
+    Key? key,
+    AssetBundle? bundle,
+    ImageFrameBuilder? frameBuilder,
+    ImageErrorWidgetBuilder? errorBuilder,
+    String? semanticLabel,
+    bool excludeFromSemantics = false,
+    double? scale,
+    double? width,
+    double? height,
+    Color? color,
+    Animation<double>? opacity,
+    BlendMode? colorBlendMode,
+    BoxFit? fit,
+    AlignmentGeometry alignment = Alignment.center,
+    ImageRepeat repeat = ImageRepeat.noRepeat,
+    Rect? centerSlice,
+    bool matchTextDirection = false,
+    bool gaplessPlayback = true,
+    bool isAntiAlias = false,
+    String? package,
+    FilterQuality filterQuality = FilterQuality.medium,
+    int? cacheWidth,
+    int? cacheHeight,
+  }) {
+    return Image.asset(
+      _assetName,
+      key: key,
+      bundle: bundle,
+      frameBuilder: frameBuilder,
+      errorBuilder: errorBuilder,
+      semanticLabel: semanticLabel,
+      excludeFromSemantics: excludeFromSemantics,
+      scale: scale,
+      width: width,
+      height: height,
+      color: color,
+      opacity: opacity,
+      colorBlendMode: colorBlendMode,
+      fit: fit,
+      alignment: alignment,
+      repeat: repeat,
+      centerSlice: centerSlice,
+      matchTextDirection: matchTextDirection,
+      gaplessPlayback: gaplessPlayback,
+      isAntiAlias: isAntiAlias,
+      package: package,
+      filterQuality: filterQuality,
+      cacheWidth: cacheWidth,
+      cacheHeight: cacheHeight,
+    );
+  }
+
+  ImageProvider provider({
+    AssetBundle? bundle,
+    String? package,
+  }) {
+    return AssetImage(
+      _assetName,
+      bundle: bundle,
+      package: package,
+    );
+  }
+
+  String get path => _assetName;
+
+  String get keyName => _assetName;
+}
+
+class AssetGenImageAnimation {
+  const AssetGenImageAnimation({
+    required this.isAnimation,
+    required this.duration,
+    required this.frames,
+  });
+
+  final bool isAnimation;
+  final Duration duration;
+  final int frames;
+}

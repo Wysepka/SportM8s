@@ -8,3 +8,9 @@
 8. Check app code styling with Cursor
 9. Check navigation between sites, and replace pushReplacementNamed with pushNamed
 10. ListTile can have a onTap method instead of inserting Button in it
+
+CREDITS
+1. https://unblast.com/12-free-sport-icons-ai-sketch ai icons give credtis
+2. https://www.flaticon.com/free-icon/run_4357645?term=running&page=1&position=10&origin=search&related_id=4357645
+3. https://www.flaticon.com/free-icon/cycling_3601647?term=cycling&page=1&position=10&origin=search&related_id=3601647
+4. https://www.flaticon.com/free-icon/balls-sports_5540420?term=sport&page=1&position=19&origin=search&related_id=5540420

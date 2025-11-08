@@ -15,10 +15,10 @@ class MapSportEventData
   factory MapSportEventData.fromJson(Map<String,dynamic> value , OSMMarkerData markerData){
     MapSportEventData mapSportEventDataParsed;
     
-    LatLng position = LatLng(value['positionLatitude'], value['positionLongitude']);
-    SportEventType sportEventType = SportEventUtils.getTypeBasedOnRandomTitle(value['sportEventType']);
+    LatLng position = LatLng(value['positionLatitude'] as double, value['positionLongitude'] as double);
+    SportEventType sportEventType = SportEventUtils.parseIntToSportEvenType(value['sportEventType']);
 
-    List<String> participantsIDs = value['participantsIDs'] as List<String>;
+    List<String> participantsIDs = List<String>.from(value['participantsIDs'] ?? []);
 
     MapEventData eventData = MapEventData(
         eventName: value['eventName'] as String,
@@ -32,7 +32,7 @@ class MapSportEventData
         participantsIDs: participantsIDs,
     );
 
-    Marker marker = Marker(point: position, child: markerData.mapIconEvent(eventData));
+    Marker marker = Marker(point: position, child: markerData.mapIconEvent(eventData) , width: 160, height: 360);
 
     mapSportEventDataParsed = MapSportEventData(marker, eventData);
 

@@ -24,19 +24,19 @@ class ServerSportService
 
   Future<List<MapSportEventData>> fetchUpdate() async {
     logger.info("Started Checking Update from ServerSportService");
-    serverService.getDynamicMap("");
-    String? continuationToken;
+    //serverService.getDynamicMap("");
+    String continuationToken = "";
     int pageSize = 50;
 
-    List<MapSportEventData> events = await getSportEventsFromServer(50, continuationToken);
+    List<MapSportEventData> events = await getSportEventsFromServer(pageSize, continuationToken);
 
     return events;
   }
 
-  Future<List<MapSportEventData>> getSportEventsFromServer(int pageSize ,  String? continuationToken) async {
+  Future<List<MapSportEventData>> getSportEventsFromServer(int pageSize ,  String continuationToken) async {
     bool firstRun = true;
     List<MapSportEventData> eventsList = [];
-    while(firstRun || continuationToken!.isNotEmpty) {
+    while(firstRun || continuationToken.isNotEmpty) {
       // ✅ Send GET request
       final response = await serverService.getDynamicMapPaginated(
           "SportMap/getSportEvents", pageSize: 50,
@@ -49,8 +49,12 @@ class ServerSportService
           eventsList.add(event);
       }
 
-      continuationToken = response['continuationToken'];
-
+      if(response["continuationToken"] != null) {
+        continuationToken = response['continuationToken'];
+      }
+      else{
+        continuationToken = "";
+      }
 
       firstRun = false;
     }

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sportm8s/core/logger/logger_config.dart';
+import 'package:sportm8s/core/utility/sport_utility.dart';
 import 'package:sportm8s/map/models/map_event_data.dart';
 
 import '../core/utility/random_utility.dart';
@@ -22,37 +23,40 @@ class MapIcon extends GestureDetector{
     }
   }
 
+
   Widget _getMarkerChild_SportEvent(double Function() getZoomMultiplier){
     return GestureDetector(
       child:
       Column(
         children: [
-          Icon(Icons.location_on, size: 40 * getZoomMultiplier(),
-              color: Colors.red),
+          ImageIcon(SportEventUtils.getIconBasedOnSportEventType(mapEventData!.sportEventType, 40)),
           ClipRRect(
-              borderRadius: BorderRadius.circular(25 * getZoomMultiplier()),
+              borderRadius: BorderRadius.circular(10 * getZoomMultiplier()),
               child: Container(
                 padding: EdgeInsets.all(4 * getZoomMultiplier()),
                 constraints: BoxConstraints(
-                    minWidth: 10 * getZoomMultiplier(),
-                    maxWidth: 120 * getZoomMultiplier(),
-                    minHeight: 10 * getZoomMultiplier(),
-                    maxHeight: 140 * getZoomMultiplier()),
+                    minWidth: 120 * getZoomMultiplier(),
+                    maxWidth: 160 * getZoomMultiplier(),
+                    minHeight: 200 * getZoomMultiplier(),
+                    maxHeight: 360 * getZoomMultiplier()),
                 decoration: BoxDecoration(color: Colors.white,
                     borderRadius: BorderRadius.circular(
-                        25 * getZoomMultiplier()),
+                        8 * getZoomMultiplier()),
                     border: Border.all(
-                        color: Colors.cyan, width: 10 * getZoomMultiplier())),
+                        color: Colors.cyan, width: 8 * getZoomMultiplier())),
                 child: Column(
                     children: [
-                      Text(mapEventData!.eventName,
+                      Text("Name: ${mapEventData!.eventName}",
                         style: TextStyle(fontSize: 20 * getZoomMultiplier()),
                         textAlign: TextAlign.center,),
-                      Text(mapEventData!.eventDescription,
+                      Text("Description: ${mapEventData!.eventDescription}",
                         style: TextStyle(fontSize: 15 * getZoomMultiplier()),
                         textAlign: TextAlign.center,),
-                      Text('${mapEventData!.currentParticipants}/${mapEventData
+                      Text("Participants: " '${mapEventData!.currentParticipants}/${mapEventData
                           !.maxParticipants}',
+                        style: TextStyle(fontSize: 20 * getZoomMultiplier()),
+                        textAlign: TextAlign.center,),
+                      Text("Type: ${SportEventUtils.parseIntToSportEvenType(mapEventData!.sportEventType.index)}",
                         style: TextStyle(fontSize: 20 * getZoomMultiplier()),
                         textAlign: TextAlign.center,),
                     ]),
