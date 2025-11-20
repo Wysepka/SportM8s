@@ -12,3 +12,20 @@ enum ProfileDisplayPropertyType{
 }
 
 typedef AggreementTypeCallback = void Function(AggreementType type);
+
+enum SportEventType{
+  Invalid,
+  Soccer,
+  Volleyball,
+  Basketball,
+  Tennis,
+  Running,
+  Cycling,
+}
+
+enum EventParamType{
+  EventName,
+  EventDescription,
+  EventParticipants,
+  EventDate,
+}

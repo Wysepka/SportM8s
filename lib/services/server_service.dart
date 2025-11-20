@@ -43,20 +43,20 @@ class ServerService {
       // For Android
       if (Platform.isAndroid) {
         if (isEmulator) {
-          return 'https://10.0.2.2:32771'; // Android emulator
+          return 'http://10.0.2.2:32771'; // Android emulator
         }
-        return 'https://192.168.100.33:32771'; // Physical Android device
-        return 'https://192.168.100.33:32783'; // Physical Android device
+        //return 'http://192.168.33.11:44354'; // Physical Android device
+        return 'http://192.168.33.11:32783'; // Physical Android device
       }
       // For iOS
       if (Platform.isIOS) {
         if (isEmulator) {
-          return 'https://localhost:32771'; // iOS simulator
+          return 'http://localhost:32771'; // iOS simulator
         }
-        return 'https://192.168.100.33:32771'; // Physical iOS device
+        return 'http://192.168.100.33:32771'; // Physical iOS device
       }
       // Default to local network IP
-      return 'https://192.168.100.33:32771';
+      return 'http://192.168.100.33:32771';
     }
     // Production URL
     return 'https://sportm8s-server.politedune-52601b72.westeurope.azurecontainerapps.io';
@@ -302,6 +302,74 @@ class ServerService {
       }
 
       return jsonDecode(response.body);
+    } catch (e) {
+      _logger.error('Error in GET request to $endpoint: $e');
+      if (e is HttpException) {
+        rethrow;
+      }
+      throw HttpException('Failed to complete request: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>> getDynamicMapPaginated(String endpoint ,{ String? continuationToken , int pageSize = 50}) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        throw Exception('No authenticated user found');
+      }
+
+      // Add debug logging for token
+      final token = await user.getIdToken();
+      _logger.debug('Token details:');
+      _logger.debug('Token length: ${token!.length}');
+      _logger.debug('Token prefix: ${token.substring(0, math.min(50, token.length))}...');
+
+      final url = '${ServerService.baseUrl}/api/$endpoint';
+      _logger.debug('Making GET request to: $url');
+
+      final response = await _client.get(
+        Uri.parse(url).replace(
+          queryParameters: {
+            'pageSize': pageSize.toString(),
+            if(continuationToken != null) 'continuationToken' : continuationToken,
+          },
+        ),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      ).timeout(const Duration(seconds: 10));
+
+      _logger.debug('Response status code: ${response.statusCode}');
+      _logger.debug('Response headers: ${response.headers}');
+
+      if (response.statusCode == 401) {
+        _logger.error('Authentication failed (401)');
+        _logger.error('Response body: ${response.body}');
+
+        // Log the WWW-Authenticate header which contains the error details
+        final wwwAuthenticate = response.headers['www-authenticate'];
+        if (wwwAuthenticate != null) {
+          _logger.error('Authentication error details: $wwwAuthenticate');
+        }
+
+        throw HttpException('Authentication failed: ${wwwAuthenticate ?? "Token issuer may be invalid"}');
+      }
+
+      if (response.statusCode != 200) {
+        _logger.error('Request failed with status: ${response.statusCode}');
+        _logger.error('Response body: ${response.body}');
+        throw HttpException('Failed to get data. Status: ${response.statusCode}');
+      }
+
+      final data = jsonDecode(response.body);
+
+      final nextToken = data["x-ms-continuation"];
+
+      return {
+        'items' : data['items'],
+        'continuationToken': nextToken ?? data['x-ms-continuation']
+      };
     } catch (e) {
       _logger.error('Error in GET request to $endpoint: $e');
       if (e is HttpException) {
