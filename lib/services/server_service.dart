@@ -43,20 +43,20 @@ class ServerService {
       // For Android
       if (Platform.isAndroid) {
         if (isEmulator) {
-          return 'https://10.0.2.2:32771'; // Android emulator
+          return 'http://10.0.2.2:32771'; // Android emulator
         }
-        //return 'https://192.168.33.11:32771'; // Physical Android device
-        return 'https://192.168.33.11:32783'; // Physical Android device
+        //return 'http://192.168.33.11:44354'; // Physical Android device
+        return 'http://192.168.33.11:32783'; // Physical Android device
       }
       // For iOS
       if (Platform.isIOS) {
         if (isEmulator) {
-          return 'https://localhost:32771'; // iOS simulator
+          return 'http://localhost:32771'; // iOS simulator
         }
-        return 'https://192.168.100.33:32771'; // Physical iOS device
+        return 'http://192.168.100.33:32771'; // Physical iOS device
       }
       // Default to local network IP
-      return 'https://192.168.100.33:32771';
+      return 'http://192.168.100.33:32771';
     }
     // Production URL
     return 'https://sportm8s-server.politedune-52601b72.westeurope.azurecontainerapps.io';

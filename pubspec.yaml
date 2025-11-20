@@ -113,3 +113,5 @@ flutter:
     - assets/text/privacyPolicyAndroidExample.txt
     - assets/text/termsOfServiceExample.txt
     - assets/icons/sport_icons_fixed/
+    - assets/icons/sport_icons_fixed_transparent_v2/
+    - assets/icons/events/

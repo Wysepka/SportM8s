@@ -22,3 +22,10 @@ enum SportEventType{
   Running,
   Cycling,
 }
+
+enum EventParamType{
+  EventName,
+  EventDescription,
+  EventParticipants,
+  EventDate,
+}

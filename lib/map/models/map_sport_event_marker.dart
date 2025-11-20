@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:sportm8s/core/enums/enums_container.dart';
@@ -16,7 +17,7 @@ class MapSportEventData
     MapSportEventData mapSportEventDataParsed;
     
     LatLng position = LatLng(value['positionLatitude'] as double, value['positionLongitude'] as double);
-    SportEventType sportEventType = SportEventUtils.parseIntToSportEvenType(value['sportEventType']);
+    SportEventType sportEventType = SportEventUtils.parseIntToSportEventType(value['sportEventType']);
 
     List<String> participantsIDs = List<String>.from(value['participantsIDs'] ?? []);
 
@@ -32,7 +33,7 @@ class MapSportEventData
         participantsIDs: participantsIDs,
     );
 
-    Marker marker = Marker(point: position, child: markerData.mapIconEvent(eventData) , width: 160, height: 360);
+    Marker marker = Marker(point: position, child: markerData.mapIconEvent(eventData) , width: 160, height: 360 , alignment: Alignment.bottomCenter);
 
     mapSportEventDataParsed = MapSportEventData(marker, eventData);
 

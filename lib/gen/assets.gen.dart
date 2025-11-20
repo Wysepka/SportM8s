@@ -14,9 +14,17 @@ import 'package:flutter/widgets.dart';
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
+  /// Directory path: assets/icons/events
+  $AssetsIconsEventsGen get events => const $AssetsIconsEventsGen();
+
   /// Directory path: assets/icons/sport_icons_fixed
   $AssetsIconsSportIconsFixedGen get sportIconsFixed =>
       const $AssetsIconsSportIconsFixedGen();
+
+  /// Directory path: assets/icons/sport_icons_fixed_transparent_v2
+  $AssetsIconsSportIconsFixedTransparentV2Gen
+      get sportIconsFixedTransparentV2 =>
+          const $AssetsIconsSportIconsFixedTransparentV2Gen();
 }
 
 class $AssetsTextGen {
@@ -32,6 +40,30 @@ class $AssetsTextGen {
   /// List of all assets
   List<String> get values =>
       [privacyPolicyAndroidExample, termsOfServiceExample];
+}
+
+class $AssetsIconsEventsGen {
+  const $AssetsIconsEventsGen();
+
+  /// File path: assets/icons/events/Icons_Calendar.png
+  AssetGenImage get iconsCalendar =>
+      const AssetGenImage('assets/icons/events/Icons_Calendar.png');
+
+  /// File path: assets/icons/events/Icons_EventDescription.png
+  AssetGenImage get iconsEventDescription =>
+      const AssetGenImage('assets/icons/events/Icons_EventDescription.png');
+
+  /// File path: assets/icons/events/Icons_EventName.png
+  AssetGenImage get iconsEventName =>
+      const AssetGenImage('assets/icons/events/Icons_EventName.png');
+
+  /// File path: assets/icons/events/Icons_SportPeople.png
+  AssetGenImage get iconsSportPeople =>
+      const AssetGenImage('assets/icons/events/Icons_SportPeople.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values =>
+      [iconsCalendar, iconsEventDescription, iconsEventName, iconsSportPeople];
 }
 
 class $AssetsIconsSportIconsFixedGen {
@@ -114,6 +146,94 @@ class $AssetsIconsSportIconsFixedGen {
         iconSports,
         iconTennis,
         iconVoleyball
+      ];
+}
+
+class $AssetsIconsSportIconsFixedTransparentV2Gen {
+  const $AssetsIconsSportIconsFixedTransparentV2Gen();
+
+  /// File path: assets/icons/sport_icons_fixed_transparent_v2/Icon_Badminton.png
+  AssetGenImage get iconBadminton => const AssetGenImage(
+      'assets/icons/sport_icons_fixed_transparent_v2/Icon_Badminton.png');
+
+  /// File path: assets/icons/sport_icons_fixed_transparent_v2/Icon_Baseball.png
+  AssetGenImage get iconBaseball => const AssetGenImage(
+      'assets/icons/sport_icons_fixed_transparent_v2/Icon_Baseball.png');
+
+  /// File path: assets/icons/sport_icons_fixed_transparent_v2/Icon_Basketball.png
+  AssetGenImage get iconBasketball => const AssetGenImage(
+      'assets/icons/sport_icons_fixed_transparent_v2/Icon_Basketball.png');
+
+  /// File path: assets/icons/sport_icons_fixed_transparent_v2/Icon_Billard.png
+  AssetGenImage get iconBillard => const AssetGenImage(
+      'assets/icons/sport_icons_fixed_transparent_v2/Icon_Billard.png');
+
+  /// File path: assets/icons/sport_icons_fixed_transparent_v2/Icon_Bowling.png
+  AssetGenImage get iconBowling => const AssetGenImage(
+      'assets/icons/sport_icons_fixed_transparent_v2/Icon_Bowling.png');
+
+  /// File path: assets/icons/sport_icons_fixed_transparent_v2/Icon_Cycling.png
+  AssetGenImage get iconCycling => const AssetGenImage(
+      'assets/icons/sport_icons_fixed_transparent_v2/Icon_Cycling.png');
+
+  /// File path: assets/icons/sport_icons_fixed_transparent_v2/Icon_Golf.png
+  AssetGenImage get iconGolf => const AssetGenImage(
+      'assets/icons/sport_icons_fixed_transparent_v2/Icon_Golf.png');
+
+  /// File path: assets/icons/sport_icons_fixed_transparent_v2/Icon_Gym.png
+  AssetGenImage get iconGym => const AssetGenImage(
+      'assets/icons/sport_icons_fixed_transparent_v2/Icon_Gym.png');
+
+  /// File path: assets/icons/sport_icons_fixed_transparent_v2/Icon_PingPong.png
+  AssetGenImage get iconPingPong => const AssetGenImage(
+      'assets/icons/sport_icons_fixed_transparent_v2/Icon_PingPong.png');
+
+  /// File path: assets/icons/sport_icons_fixed_transparent_v2/Icon_Rugby.png
+  AssetGenImage get iconRugby => const AssetGenImage(
+      'assets/icons/sport_icons_fixed_transparent_v2/Icon_Rugby.png');
+
+  /// File path: assets/icons/sport_icons_fixed_transparent_v2/Icon_Running.png
+  AssetGenImage get iconRunning => const AssetGenImage(
+      'assets/icons/sport_icons_fixed_transparent_v2/Icon_Running.png');
+
+  /// File path: assets/icons/sport_icons_fixed_transparent_v2/Icon_Soccer.png
+  AssetGenImage get iconSoccer => const AssetGenImage(
+      'assets/icons/sport_icons_fixed_transparent_v2/Icon_Soccer.png');
+
+  /// File path: assets/icons/sport_icons_fixed_transparent_v2/Icon_Sports.png
+  AssetGenImage get iconSports => const AssetGenImage(
+      'assets/icons/sport_icons_fixed_transparent_v2/Icon_Sports.png');
+
+  /// File path: assets/icons/sport_icons_fixed_transparent_v2/Icon_Tennis.png
+  AssetGenImage get iconTennis => const AssetGenImage(
+      'assets/icons/sport_icons_fixed_transparent_v2/Icon_Tennis.png');
+
+  /// File path: assets/icons/sport_icons_fixed_transparent_v2/Icon_Voleyball.png
+  AssetGenImage get iconVoleyball => const AssetGenImage(
+      'assets/icons/sport_icons_fixed_transparent_v2/Icon_Voleyball.png');
+
+  /// File path: assets/icons/sport_icons_fixed_transparent_v2/Icons_SportPeople.png
+  AssetGenImage get iconsSportPeople => const AssetGenImage(
+      'assets/icons/sport_icons_fixed_transparent_v2/Icons_SportPeople.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [
+        iconBadminton,
+        iconBaseball,
+        iconBasketball,
+        iconBillard,
+        iconBowling,
+        iconCycling,
+        iconGolf,
+        iconGym,
+        iconPingPong,
+        iconRugby,
+        iconRunning,
+        iconSoccer,
+        iconSports,
+        iconTennis,
+        iconVoleyball,
+        iconsSportPeople
       ];
 }
 

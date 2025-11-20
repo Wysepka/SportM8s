@@ -86,17 +86,23 @@ class _MapSideView extends State<MapSideView>{
     setState(() {});
   }
 
+  void onPanelGeometryChanged(String mapIconID, Rect mapIconRect){
+
+  }
+
 
   Widget _getMapIconEvent(MapEventData mapEventData){
-    MapIcon mapIcon = MapIcon(_getZoomMultiplier);
+    MapIcon mapIcon = MapIcon(_getZoomMultiplier , onPanelGeometryChanged);
     mapIcon.mapEventData = mapEventData;
     return mapIcon;
   }
 
+  /*
   Widget _getMapIcon(double zoomMultiplier){
     MapIcon mapIcon = MapIcon(_getZoomMultiplier);
     return mapIcon;
   }
+   */
 
   double _getMarkerWidth(){
     return 120 * _getZoomMultiplier();
