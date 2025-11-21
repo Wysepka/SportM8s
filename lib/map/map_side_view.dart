@@ -8,10 +8,13 @@ import 'package:logger/logger.dart';
 import 'package:sportm8s/app_consts.dart';
 import 'package:sportm8s/core/logger/logger_config.dart';
 import 'package:sportm8s/core/utility/random_utility.dart';
+import 'package:sportm8s/map/engine/sport_event_calculator.dart';
 import 'package:sportm8s/map/engine/sport_event_controller.dart';
 import 'package:sportm8s/map/engine/sport_event_repository.dart';
-import 'package:sportm8s/map/map_icon.dart';
+import 'package:sportm8s/map/icon/map_icon.dart';
+import 'package:sportm8s/map/icon/map_icon_controller.dart';
 import 'package:sportm8s/map/models/map_event_data.dart';
+import 'package:sportm8s/map/models/map_marker_rect.dart';
 import 'package:sportm8s/services/server_service.dart';
 import 'package:sportm8s/services/server_sport_service.dart';
 
@@ -27,6 +30,7 @@ class _MapSideView extends State<MapSideView>{
   //_MapSideView({super.key});
   final MapController mapController = new MapController();
   late SportEventEngine sportEventEngine;
+  late SportEventCalculator sportEventCalculator;
   double zoomValue = 0;
 
   @override void initState() {
@@ -35,9 +39,10 @@ class _MapSideView extends State<MapSideView>{
     final serverServiceContainer = ProviderScope.containerOf(context , listen: false);
     final serverService = serverServiceContainer.read(serverServiceProvider);
     final sportEventController = SportEventController();
+    sportEventCalculator = SportEventCalculator();
     sportEventController.addListener(refreshMarkers);
 
-    sportEventEngine = SportEventEngine(sportEventController, ServerSportService(serverService), FakeSportEventRepository());
+    sportEventEngine = SportEventEngine(sportEventController, ServerSportService(serverService), FakeSportEventRepository() ,sportEventCalculator);
     OSMMarkerData markerData = OSMMarkerData(_getMapIconEvent, _getMarkerWidth, _getMarkerHeight, _getZoomMultiplier);
     sportEventEngine.eventController.addListener(onSportEventsChanged);
     sportEventEngine.initialize(markerData);
@@ -66,6 +71,7 @@ class _MapSideView extends State<MapSideView>{
                   || event is MapEventMoveStart || event is MapEventMoveEnd){
                     setState(() {
                       zoomValue = event.camera.zoom;
+                      sportEventEngine.updateRectsNoAddition();
                     });
                   }
                 }
@@ -75,10 +81,24 @@ class _MapSideView extends State<MapSideView>{
                   urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 ),
                 //MarkerLayer(markers: RandomUtility.getMarkers_Test(_getMarkerWidth, _getMarkerHeight, _getMapIcon , _getZoomMultiplier))
-                MarkerLayer(markers: sportEventEngine.eventRepository.getOSMMarkers())
+                MarkerLayer(markers:_getMarkers())
             ]
           ),
         );
+    }
+  }
+
+  List<Marker> _getMarkers(){
+    List<Marker> markers = sportEventEngine.eventRepository.getOSMMarkers();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => recalculateMarkersRects(markers));
+
+    return markers;
+  }
+
+  void recalculateMarkersRects(List<Marker> markers){
+    for(int i = 0; i < markers.length; i++){
+      (markers[i].child as MapIcon).controller.recalculateRects();
     }
   }
 
@@ -86,14 +106,12 @@ class _MapSideView extends State<MapSideView>{
     setState(() {});
   }
 
-  void onPanelGeometryChanged(String mapIconID, Rect mapIconRect){
-
+  void onPanelGeometryChanged(MapMarkerRect mapMarkerRect){
+    sportEventEngine.updateRects(mapMarkerRect);
   }
 
-
   Widget _getMapIconEvent(MapEventData mapEventData){
-    MapIcon mapIcon = MapIcon(_getZoomMultiplier , onPanelGeometryChanged);
-    mapIcon.mapEventData = mapEventData;
+    MapIcon mapIcon = MapIcon(_getZoomMultiplier , onPanelGeometryChanged , MapIconController() , mapEventData);
     return mapIcon;
   }
 

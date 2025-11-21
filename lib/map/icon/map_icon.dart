@@ -1,23 +1,27 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:sportm8s/core/enums/enums_container.dart';
 import 'package:sportm8s/core/logger/logger_config.dart';
 import 'package:sportm8s/core/utility/event_utility.dart';
 import 'package:sportm8s/core/utility/sport_utility.dart';
 import 'package:sportm8s/map/models/map_event_data.dart';
 import 'package:sportm8s/map/marker_info_row.dart';
+import 'package:sportm8s/map/models/map_marker_rect.dart';
 import 'package:sportm8s/map/models/map_sport_event_marker.dart';
 
-import '../core/utility/random_utility.dart';
+import '../../core/utility/random_utility.dart';
+import 'map_icon_controller.dart';
 
 class MapIcon extends StatefulWidget{
 
   final double Function() zoomMultiplierFunc;
-  late MapEventData? mapEventData;
+  final MapIconController controller;
+  final MapEventData mapEventData;
 
-  final void Function(String id, Rect rect)? onPanelGeometryChanged;
+  final void Function(MapMarkerRect mapMarkerRect)? onPanelGeometryChanged;
 
-  MapIcon(this.zoomMultiplierFunc,this.onPanelGeometryChanged);
+  MapIcon(this.zoomMultiplierFunc,this.onPanelGeometryChanged, this.controller, this.mapEventData);
 
   @override
   State<StatefulWidget> createState() => _MapIcon();
@@ -27,30 +31,51 @@ class _MapIcon extends State<MapIcon>{
 
   final GlobalKey _textContainerKey = GlobalKey();
 
+  MapIconController get mapIconController => widget.controller;
+
   @override
-  void didChangeDependencies() {
+  void initState() {
     // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _measurePanel());
+    super.initState();
+    mapIconController.addListener(_onControllerChanged);
+    WidgetsBinding.instance.addPostFrameCallback((_) => measurePanel());
   }
 
   @override
   void didUpdateWidget(covariant MapIcon oldWidget) {
     // TODO: implement didUpdateWidget
     super.didUpdateWidget(oldWidget);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _measurePanel());
+
+    if(oldWidget.controller != widget.controller){
+      oldWidget.controller.removeListener(_onControllerChanged);
+      widget.controller.addListener(_onControllerChanged);
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => measurePanel());
   }
 
   @override
   Widget build(BuildContext context) {
-    if(widget.mapEventData == null) {
-      return _getMarkerChild_Test(widget.zoomMultiplierFunc);
-    }
-    else{
-      return _getMarkerChild_SportEventV2(widget.zoomMultiplierFunc);
-    }
+      return _getMarkerChild_SportEventV2(widget.zoomMultiplierFunc , context);
   }
 
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    widget.controller.removeListener(_onControllerChanged);
+  }
+
+  void _onControllerChanged()
+  {
+    if(!mounted){return;}
+
+    setState(() {
+
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => measurePanel());
+  }
 
   Widget _getMarkerChild_SportEvent(double Function() getZoomMultiplier){
     double sportIconSize = 60 * getZoomMultiplier();
@@ -137,11 +162,11 @@ class _MapIcon extends State<MapIcon>{
   }
 
 
-  Widget _getMarkerChild_SportEventV2(double Function() getZoomMultiplier) {
+  Widget _getMarkerChild_SportEventV2(double Function() getZoomMultiplier , BuildContext context) {
     final zoom = getZoomMultiplier();
     final double sportIconSize = 60 * zoom;
-    MapEventData? mapEventData = widget.mapEventData;
-    final sportType = mapEventData!.sportEventType;
+    final sportType = widget.mapEventData.sportEventType;
+    MapEventData mapEventData = widget.mapEventData;
 
     final Image sportEventAssetImage =
     SportEventUtils.getTransparentIconBasedOnSportEventType(
@@ -164,95 +189,102 @@ class _MapIcon extends State<MapIcon>{
           SizedBox(height: 4 * zoom),
 
           // PANEL
-          Container(
-            padding: EdgeInsets.all(6 * zoom),
-            constraints: const BoxConstraints(
-              minWidth: 120,
-              maxWidth: 180,   // good for marker, not too wide
-              minHeight: 80,
-              maxHeight: 260,  // keep it reasonable on map
-            ),
-            decoration: BoxDecoration(
-              color: SportEventUtils.getSportEventBackgroundColor(sportType),
-              borderRadius: BorderRadius.circular(10 * zoom),
-              border: Border.all(
-                color: SportEventUtils.getSportEventColor(sportType),
-                width: 3 * zoom,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  blurRadius: 4 * zoom,
-                  offset: Offset(0, 2 * zoom),
-                  color: Colors.black.withOpacity(0.2),
+          IgnorePointer(
+            ignoring: mapIconController.isColliding,
+            child: Opacity(
+              opacity: mapIconController.isColliding ? 0 : 1,
+              child: Container(
+                key: _textContainerKey,
+                padding: EdgeInsets.all(6 * zoom),
+                constraints: const BoxConstraints(
+                  minWidth: 120,
+                  maxWidth: 180,   // good for marker, not too wide
+                  minHeight: 80,
+                  maxHeight: 260,  // keep it reasonable on map
                 ),
-              ],
-            ),
-            child: DefaultTextStyle(
-              style: TextStyle(
-                fontSize: 12 * zoom,
-                color: Colors.black,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // EVENT NAME (title)
-                  MarkerInfoRow(
-                    zoom: zoom,
-                    icon: EventUtility.GetEventIconBasedOnEventParam(
-                      EventParamType.EventName,
-                      18,
-                      18,
-                    ),
-                    text: mapEventData!.eventName,
-                    maxLines: 1,
-                    isTitle: true,
+                decoration: BoxDecoration(
+                  color: SportEventUtils.getSportEventBackgroundColor(sportType),
+                  borderRadius: BorderRadius.circular(10 * zoom),
+                  border: Border.all(
+                    color: SportEventUtils.getSportEventColor(sportType),
+                    width: 3 * zoom,
                   ),
-
-                  SizedBox(height: 2 * zoom),
-
-                  // DESCRIPTION
-                  MarkerInfoRow(
-                    zoom: zoom,
-                    icon: EventUtility.GetEventIconBasedOnEventParam(
-                      EventParamType.EventDescription,
-                      18,
-                      18,
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 4 * zoom,
+                      offset: Offset(0, 2 * zoom),
+                      color: Colors.black.withOpacity(0.2),
                     ),
-                    text: mapEventData!.eventDescription,
-                    maxLines: 2, // description can be a bit longer
+                  ],
+                ),
+                child: DefaultTextStyle(
+                  style: TextStyle(
+                    fontSize: 12 * zoom,
+                    color: Colors.black,
                   ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // EVENT NAME (title)
+                      MarkerInfoRow(
+                        zoom: zoom,
+                        icon: EventUtility.GetEventIconBasedOnEventParam(
+                          EventParamType.EventName,
+                          18,
+                          18,
+                        ),
+                        text: mapEventData!.eventName,
+                        maxLines: 1,
+                        isTitle: true,
+                      ),
 
-                  SizedBox(height: 2 * zoom),
+                      SizedBox(height: 2 * zoom),
 
-                  // PARTICIPANTS
-                  MarkerInfoRow(
-                    zoom: zoom,
-                    icon: EventUtility.GetEventIconBasedOnEventParam(
-                      EventParamType.EventParticipants,
-                      18,
-                      18,
-                    ),
-                    text:
-                    '${mapEventData!.currentParticipants}/${mapEventData!.maxParticipants}',
-                    maxLines: 1,
+                      // DESCRIPTION
+                      MarkerInfoRow(
+                        zoom: zoom,
+                        icon: EventUtility.GetEventIconBasedOnEventParam(
+                          EventParamType.EventDescription,
+                          18,
+                          18,
+                        ),
+                        text: mapEventData!.eventDescription,
+                        maxLines: 2, // description can be a bit longer
+                      ),
+
+                      SizedBox(height: 2 * zoom),
+
+                      // PARTICIPANTS
+                      MarkerInfoRow(
+                        zoom: zoom,
+                        icon: EventUtility.GetEventIconBasedOnEventParam(
+                          EventParamType.EventParticipants,
+                          18,
+                          18,
+                        ),
+                        text:
+                        '${mapEventData!.currentParticipants}/${mapEventData!.maxParticipants}',
+                        maxLines: 1,
+                      ),
+
+                      SizedBox(height: 2 * zoom),
+
+                      // SPORT TYPE
+                      MarkerInfoRow(
+                        zoom: zoom,
+                        icon: SportEventUtils.getTransparentIconBasedOnSportEventType(
+                          sportType,
+                          18,
+                          18,
+                        ),
+                        text: SportEventUtils
+                            .getSportNameLocalisedBasedOnSportEventType(sportType),
+                        maxLines: 1,
+                      ),
+                    ],
                   ),
-
-                  SizedBox(height: 2 * zoom),
-
-                  // SPORT TYPE
-                  MarkerInfoRow(
-                    zoom: zoom,
-                    icon: SportEventUtils.getTransparentIconBasedOnSportEventType(
-                      sportType,
-                      18,
-                      18,
-                    ),
-                    text: SportEventUtils
-                        .getSportNameLocalisedBasedOnSportEventType(sportType),
-                    maxLines: 1,
-                  ),
-                ],
+                ),
               ),
             ),
           ),
@@ -261,7 +293,7 @@ class _MapIcon extends State<MapIcon>{
     );
   }
 
-  void _measurePanel() {
+  void measurePanel() {
     final ctx = _textContainerKey.currentContext;
     if (ctx == null) return;
 
@@ -280,7 +312,7 @@ class _MapIcon extends State<MapIcon>{
     );
 
     // callback to parent
-    widget.onPanelGeometryChanged!.call(widget.mapEventData!.eventID, rect);
+    widget.onPanelGeometryChanged!.call(MapMarkerRect(widget.mapEventData.eventID, rect , widget));
   }
 
 
