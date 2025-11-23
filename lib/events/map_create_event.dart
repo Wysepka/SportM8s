@@ -2,6 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sportm8s/core/utility/sport_utility.dart';
 
 import '../map/models/map_event_data.dart';
 
@@ -73,10 +74,7 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
                           ),
                           keyboardType: TextInputType.number,
                         ),
-                        DropdownButton(
-                            items: items,
-                            onChanged: onChanged
-                        )
+                        SportEventUtils.getSportTypeDropdownButton(_onDropdownSportEventTypeChanged),
                         Text("data"),
                         Text("data"),
                         Text("data"),
@@ -111,6 +109,10 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
   void _onAppliedCreateEvent(){
 
     //widget.onApplyClicked();
+  }
+
+  void _onDropdownSportEventTypeChanged(String? value){
+
   }
 
 }

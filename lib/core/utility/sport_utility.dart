@@ -165,20 +165,36 @@ class SportEventUtils {
 
   //TODO Add localisation
   static DropdownButton<String> getSportTypeDropdownButton(Function(String?)? onChanged){
-    List<DropdownMenuItem<SportEventType>> items = [];
     return DropdownButton<String>(
       items: [
         DropdownMenuItem(
             value: "Soccer",
             child: Row(
               children: [
-
+                getTransparentIconBasedOnSportEventType(SportEventType.Soccer , 10, 10),
+                Text("Soccer")
               ],
             )
-        )
-      ], onChanged: () => onChanged(),
-    )
-    
-    return items;
+        ),
+        DropdownMenuItem(
+            value: "Volleyball",
+            child: Row(
+              children: [
+                getTransparentIconBasedOnSportEventType(SportEventType.Volleyball , 10, 10),
+                Text("Volleyball")
+              ],
+            )
+        ),
+        DropdownMenuItem(
+            value: "Basketball",
+            child: Row(
+              children: [
+                getTransparentIconBasedOnSportEventType(SportEventType.Basketball , 10, 10),
+                Text("Basketball")
+              ],
+            )
+        ),
+      ], onChanged: (x) => onChanged!(x),
+    );
   }
 }
