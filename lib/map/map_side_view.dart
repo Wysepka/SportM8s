@@ -1,4 +1,6 @@
 
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -7,17 +9,20 @@ import 'package:latlong2/latlong.dart';
 import 'package:logger/logger.dart';
 import 'package:sportm8s/app_consts.dart';
 import 'package:sportm8s/core/logger/logger_config.dart';
+import 'package:sportm8s/core/logger/logger_service.dart';
 import 'package:sportm8s/core/utility/random_utility.dart';
 import 'package:sportm8s/map/engine/sport_event_calculator.dart';
 import 'package:sportm8s/map/engine/sport_event_controller.dart';
 import 'package:sportm8s/map/engine/sport_event_repository.dart';
 import 'package:sportm8s/map/icon/map_icon.dart';
 import 'package:sportm8s/map/icon/map_icon_controller.dart';
+import 'package:sportm8s/map/icon/map_icon_create_event.dart';
 import 'package:sportm8s/map/models/map_event_data.dart';
 import 'package:sportm8s/map/models/map_marker_rect.dart';
 import 'package:sportm8s/services/server_service.dart';
 import 'package:sportm8s/services/server_sport_service.dart';
 
+import '../events/map_create_event.dart';
 import 'engine/sport_event_engine.dart';
 
 
@@ -28,10 +33,17 @@ class MapSideView extends StatefulWidget{
 
 class _MapSideView extends State<MapSideView>{
   //_MapSideView({super.key});
+  LoggerService loggerService = LoggerService();
   final MapController mapController = new MapController();
   late SportEventEngine sportEventEngine;
   late SportEventCalculator sportEventCalculator;
+  bool _isCreatingEvent = false;
   double zoomValue = 0;
+  LatLng _currentCenteredPosition = LatLng(0, 0);
+  LatLng _currentMapIconCreateEventPosition = LatLng(0, 0);
+  Point<double> _currentMapPixelsSize = Point(0, 0);
+
+  late MapIconCreateEvent mapIconCreateEvent;
 
   @override void initState() {
     // TODO: implement initState
@@ -59,37 +71,103 @@ class _MapSideView extends State<MapSideView>{
     }
     else {
       // TODO: implement build
-      return GestureDetector(
-          child: FlutterMap(
-              mapController: mapController,
-              options: MapOptions(
-                //TODO add LatLng info getting from phone localization
-                initialCenter: LatLng(52.237049, 21.017532),
-                initialZoom: 13.0,
-                onMapEvent: (event) {
-                  if(event is MapEventDoubleTapZoomEnd || event is MapEventDoubleTapZoomStart
-                  || event is MapEventMoveStart || event is MapEventMoveEnd){
-                    setState(() {
-                      zoomValue = event.camera.zoom;
-                      sportEventEngine.updateRectsNoAddition();
-                    });
-                  }
-                }
-              ),
-              children: [
-                TileLayer(
-                  urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+      return Stack(
+        children: [
+          Positioned.fill(
+            child: FlutterMap(
+                mapController: mapController,
+                options: MapOptions(
+                  //TODO add LatLng info getting from phone localization
+                  initialCenter: LatLng(52.237049, 21.017532),
+                  initialZoom: 13.0,
+                  onMapEvent: (event) {
+                    if(event is MapEventDoubleTapZoomEnd || event is MapEventDoubleTapZoomStart
+                    || event is MapEventMoveStart || event is MapEventMoveEnd){
+                      setState(() {
+                        zoomValue = event.camera.zoom;
+                        sportEventEngine.updateRectsNoAddition();
+                        _currentCenteredPosition = event.camera.center;
+                        _currentMapPixelsSize = event.camera.size;
+                        double offsetByPxInHeight = _currentMapPixelsSize.y * -0.25;
+                        _currentMapIconCreateEventPosition = offsetPositionByPixels(_currentCenteredPosition, 0, offsetByPxInHeight);
+                      });
+                    }
+                  },
                 ),
-                //MarkerLayer(markers: RandomUtility.getMarkers_Test(_getMarkerWidth, _getMarkerHeight, _getMapIcon , _getZoomMultiplier))
-                MarkerLayer(markers:_getMarkers())
-            ]
+                children: [
+                  TileLayer(
+                    urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                  ),
+                  //MarkerLayer(markers: RandomUtility.getMarkers_Test(_getMarkerWidth, _getMarkerHeight, _getMapIcon , _getZoomMultiplier))
+                  MarkerLayer(markers:_getMarkers())
+              ]
+            ),
           ),
-        );
+
+          if(_isCreatingEvent)...[
+            MapCreateEventPanel(_onDismissCreateEvent , _applyCreateEvent),
+          ]
+          else...[
+             Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
+                      ),
+                      foregroundColor: Colors.black,
+                      backgroundColor: Colors.yellow,
+                  ),
+                  icon: Icon(Icons.add, size: 35),
+                  onPressed: _onCreateEventTap,
+                  //TODO Add localisation
+                  label: Text("Create Event")),
+              ),
+            )
+          ]
+        ]
+      );
     }
+  }
+
+  void _onCreateEventTap(){
+    setState(() {
+      _isCreatingEvent = true;
+    });
+  }
+
+  void _onDismissCreateEvent(){
+    setState(() {
+      _isCreatingEvent = false;
+    });
+  }
+
+  void _applyCreateEvent(MapEventData eventData){
+
+  }
+
+  LatLng offsetPositionByPixels(LatLng original, double dxPx, double dyPx) {
+    final camera = mapController.camera;
+
+    final originalPx = camera.project(original);
+    final newPx = Point(originalPx.x + dxPx, originalPx.y + dyPx);
+
+    return camera.unproject(newPx);
   }
 
   List<Marker> _getMarkers(){
     List<Marker> markers = sportEventEngine.eventRepository.getOSMMarkers();
+
+    if(_isCreatingEvent){
+
+      Marker createEventMarker = Marker(point: _currentMapIconCreateEventPosition, child: MapIconCreateEvent());
+      markers.add(createEventMarker);
+    }
 
     WidgetsBinding.instance.addPostFrameCallback((_) => recalculateMarkersRects(markers));
 
@@ -98,7 +176,9 @@ class _MapSideView extends State<MapSideView>{
 
   void recalculateMarkersRects(List<Marker> markers){
     for(int i = 0; i < markers.length; i++){
-      (markers[i].child as MapIcon).controller.recalculateRects();
+      if(markers[i].child is MapIcon) {
+        (markers[i].child as MapIcon).controller.recalculateRects();
+      }
     }
   }
 

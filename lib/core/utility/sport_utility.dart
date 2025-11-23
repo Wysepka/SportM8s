@@ -162,4 +162,23 @@ class SportEventUtils {
         return const Color(0xFFF5F5F5); // near white
     }
   }
+
+  //TODO Add localisation
+  static DropdownButton<String> getSportTypeDropdownButton(Function(String?)? onChanged){
+    List<DropdownMenuItem<SportEventType>> items = [];
+    return DropdownButton<String>(
+      items: [
+        DropdownMenuItem(
+            value: "Soccer",
+            child: Row(
+              children: [
+
+              ],
+            )
+        )
+      ], onChanged: () => onChanged(),
+    )
+    
+    return items;
+  }
 }
