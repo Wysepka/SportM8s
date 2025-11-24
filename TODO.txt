@@ -8,6 +8,7 @@
 8. Check app code styling with Cursor
 9. Check navigation between sites, and replace pushReplacementNamed with pushNamed
 10. ListTile can have a onTap method instead of inserting Button in it
+11. Replace in MapCreateEvent text input values with seperate class widget
 
 CREDITS
 1. https://unblast.com/12-free-sport-icons-ai-sketch ai icons give credtis

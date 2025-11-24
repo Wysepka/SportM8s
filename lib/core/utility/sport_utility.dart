@@ -164,14 +164,20 @@ class SportEventUtils {
   }
 
   //TODO Add localisation
-  static DropdownButton<String> getSportTypeDropdownButton(Function(String?)? onChanged){
+  static DropdownButton<String> getSportTypeDropdownButton(Function(String?)? onChanged , String Function() getValue , double iconSize){
     return DropdownButton<String>(
+      value: getValue(),
+      alignment: Alignment.center,
       items: [
+        DropdownMenuItem(
+          value: "Invalid",
+          child: Text("Select sport"),
+        ),
         DropdownMenuItem(
             value: "Soccer",
             child: Row(
               children: [
-                getTransparentIconBasedOnSportEventType(SportEventType.Soccer , 10, 10),
+                getTransparentIconBasedOnSportEventType(SportEventType.Soccer , iconSize, iconSize),
                 Text("Soccer")
               ],
             )
@@ -180,7 +186,7 @@ class SportEventUtils {
             value: "Volleyball",
             child: Row(
               children: [
-                getTransparentIconBasedOnSportEventType(SportEventType.Volleyball , 10, 10),
+                getTransparentIconBasedOnSportEventType(SportEventType.Volleyball , iconSize, iconSize),
                 Text("Volleyball")
               ],
             )
@@ -189,8 +195,35 @@ class SportEventUtils {
             value: "Basketball",
             child: Row(
               children: [
-                getTransparentIconBasedOnSportEventType(SportEventType.Basketball , 10, 10),
+                getTransparentIconBasedOnSportEventType(SportEventType.Basketball , iconSize, iconSize),
                 Text("Basketball")
+              ],
+            )
+        ),
+        DropdownMenuItem(
+            value: "Tennis",
+            child: Row(
+              children: [
+                getTransparentIconBasedOnSportEventType(SportEventType.Tennis , iconSize, iconSize),
+                Text("Tennis")
+              ],
+            )
+        ),
+        DropdownMenuItem(
+            value: "Running",
+            child: Row(
+              children: [
+                getTransparentIconBasedOnSportEventType(SportEventType.Running , iconSize, iconSize),
+                Text("Running")
+              ],
+            )
+        ),
+        DropdownMenuItem(
+            value: "Cycling",
+            child: Row(
+              children: [
+                getTransparentIconBasedOnSportEventType(SportEventType.Cycling, iconSize, iconSize),
+                Text("Cycling")
               ],
             )
         ),
