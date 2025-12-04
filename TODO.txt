@@ -9,6 +9,9 @@
 9. Check navigation between sites, and replace pushReplacementNamed with pushNamed
 10. ListTile can have a onTap method instead of inserting Button in it
 11. Replace in MapCreateEvent text input values with seperate class widget
+12. Add Animations in starting create event (including shaders)
+12. Add Animations in waiting for event to send to the server (including Shaders)
+13. Add Hero anim when starting to create event
 
 CREDITS
 1. https://unblast.com/12-free-sport-icons-ai-sketch ai icons give credtis

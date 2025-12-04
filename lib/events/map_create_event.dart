@@ -2,19 +2,22 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:sportm8s/core/enums/enums_container.dart';
 import 'package:sportm8s/core/utility/sport_utility.dart';
+import 'package:sportm8s/services/server_sport_service.dart';
 
 import '../map/models/map_event_data.dart';
 
 class MapCreateEventPanel extends StatefulWidget{
   void Function() onDismissClicked;
   void Function(MapEventData) onApplyClicked;
+  ServerSportService serverSportService;
 
   @override
   State<StatefulWidget> createState() => _MapCreateEventPanel();
 
-  MapCreateEventPanel(this.onDismissClicked ,  this.onApplyClicked);
+  MapCreateEventPanel(this.onDismissClicked ,  this.onApplyClicked , this.serverSportService);
 }
 
 class _MapCreateEventPanel extends State<MapCreateEventPanel>{
@@ -140,7 +143,7 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
                             boxShadow:[ BoxShadow(
                               color: Colors.grey.withOpacity(0.5), // shadow color
                               blurRadius: 4,                         // softens the shadow
-                              spreadRadius: 2,                       // extends the shadow
+                              spreadRadius: 0,                       // extends the shadow
                               offset: Offset(1, 2),                  // moves shadow right & down
                             ),],
                           ),
@@ -181,7 +184,7 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
                             boxShadow:[ BoxShadow(
                               color: Colors.grey.withOpacity(0.5), // shadow color
                               blurRadius: 4,                         // softens the shadow
-                              spreadRadius: 2,                       // extends the shadow
+                              spreadRadius: 0,                       // extends the shadow
                               offset: Offset(1, 2),                  // moves shadow right & down
                             ),],
                           ),
@@ -222,7 +225,7 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
                             boxShadow:[ BoxShadow(
                               color: Colors.grey.withOpacity(0.5), // shadow color
                               blurRadius: 4,                         // softens the shadow
-                              spreadRadius: 2,                       // extends the shadow
+                              spreadRadius: 0,                       // extends the shadow
                               offset: Offset(1, 2),                  // moves shadow right & down
                             ),],
                           ),
@@ -263,7 +266,7 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
                             boxShadow:[ BoxShadow(
                               color: Colors.grey.withOpacity(0.5), // shadow color
                               blurRadius: 4,                         // softens the shadow
-                              spreadRadius: 2,                       // extends the shadow
+                              spreadRadius: 0,                       // extends the shadow
                               offset: Offset(1, 2),                  // moves shadow right & down
                             ),],
                           ),
@@ -280,6 +283,34 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
                                   SportEventUtils.getSportTypeDropdownButton(_onDropdownSportEventTypeChanged , _getSelectedSportEventType ,20)
                                 ]
                             ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                                color: Colors.grey ,
+                                width: 2),
+                            boxShadow:[ BoxShadow(
+                              color: Colors.grey.withOpacity(0.5), // shadow color
+                              blurRadius: 4,                         // softens the shadow
+                              spreadRadius: 0,                       // extends the shadow
+                              offset: Offset(1, 2),                  // moves shadow right & down
+                            ),],
+                          ),
+                          child:
+                          Column(
+                              children: [
+                                Text(
+                                  "Event Start Date",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+
+                              ]
+                          ),
                         ),
                         /*
                         Text("data"),
@@ -320,7 +351,19 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
   }
 
   void _onAppliedCreateEvent(){
-
+    MapEventData mapEventData = MapEventData(
+        eventName: eventNameValue,
+        eventDescription: eventDescriptionValue,
+        sportEventType: sportEventTypeValue,
+        //This is zero, but in MapSideView is providing a value
+        position: LatLng(0, 0),
+        maxParticipants: maxParticipantsValue,
+        currentParticipants: 1,
+        eventID: "",
+        creatorID: "",
+        participantsIDs: [],
+    );
+    widget.onApplyClicked(mapEventData);
     //widget.onApplyClicked();
   }
 

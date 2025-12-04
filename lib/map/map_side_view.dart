@@ -10,6 +10,7 @@ import 'package:logger/logger.dart';
 import 'package:sportm8s/app_consts.dart';
 import 'package:sportm8s/core/logger/logger_config.dart';
 import 'package:sportm8s/core/logger/logger_service.dart';
+import 'package:sportm8s/core/models/cosmos_response.dart';
 import 'package:sportm8s/core/utility/random_utility.dart';
 import 'package:sportm8s/map/engine/sport_event_calculator.dart';
 import 'package:sportm8s/map/engine/sport_event_controller.dart';
@@ -22,6 +23,7 @@ import 'package:sportm8s/map/models/map_marker_rect.dart';
 import 'package:sportm8s/services/server_service.dart';
 import 'package:sportm8s/services/server_sport_service.dart';
 
+import '../core/models/server_response.dart';
 import '../events/map_create_event.dart';
 import 'engine/sport_event_engine.dart';
 
@@ -42,6 +44,7 @@ class _MapSideView extends State<MapSideView>{
   LatLng _currentCenteredPosition = LatLng(0, 0);
   LatLng _currentMapIconCreateEventPosition = LatLng(0, 0);
   Point<double> _currentMapPixelsSize = Point(0, 0);
+  bool _isSendingEvent = false;
 
   late MapIconCreateEvent mapIconCreateEvent;
 
@@ -105,7 +108,7 @@ class _MapSideView extends State<MapSideView>{
           ),
 
           if(_isCreatingEvent)...[
-            MapCreateEventPanel(_onDismissCreateEvent , _applyCreateEvent),
+            MapCreateEventPanel(_onDismissCreateEvent , _applyCreateEvent ,sportEventEngine.sportService),
           ]
           else...[
              Positioned(
@@ -129,6 +132,25 @@ class _MapSideView extends State<MapSideView>{
                   label: Text("Create Event")),
               ),
             )
+          ],
+
+          if(_isSendingEvent)...[
+            Positioned.fill(
+                child: IgnorePointer(
+                  ignoring: true,
+                  child: Container(
+                    color: Colors.white38.withOpacity(0.5),
+                    child: Center(
+                      child: Column(
+                        children: [
+                          CircularProgressIndicator(),
+                          Text("Sport Event is send to server")
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+            )
           ]
         ]
       );
@@ -147,8 +169,22 @@ class _MapSideView extends State<MapSideView>{
     });
   }
 
-  void _applyCreateEvent(MapEventData eventData){
-
+  //TODO add check if event is being send and block application while sending
+  void _applyCreateEvent(MapEventData eventData) async {
+    MapEventData dataWithPos = eventData.copyProvidePosition(eventData, _currentMapIconCreateEventPosition);
+    setState(() {
+      _isSendingEvent = true;
+    });
+    CosmosResponse response = await sportEventEngine.sportService.addSportEvent(dataWithPos);
+    setState(() {
+      _isSendingEvent = false;
+    });
+    if(response.result.statusCode < 200 || response.result.statusCode > 299){
+      if(context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Could not send MapEventData E: ${response.result.diagnostics}")));
+      }
+    }
   }
 
   LatLng offsetPositionByPixels(LatLng original, double dxPx, double dyPx) {
