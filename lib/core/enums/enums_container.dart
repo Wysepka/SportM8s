@@ -28,4 +28,5 @@ enum EventParamType{
   EventDescription,
   EventParticipants,
   EventDate,
+  EventTime,
 }

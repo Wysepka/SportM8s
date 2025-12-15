@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:sportm8s/core/enums/enums_container.dart';
 import 'package:sportm8s/core/utility/sport_utility.dart';
+import 'package:sportm8s/events/map_create_event_date_picker.dart';
+import 'package:sportm8s/events/map_event_widget_container.dart';
 import 'package:sportm8s/services/server_sport_service.dart';
 
 import '../map/models/map_event_data.dart';
@@ -25,11 +27,19 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
   TextEditingController eventDescriptionController = TextEditingController();
   TextEditingController eventMaxParticipantsController = TextEditingController();
 
+  bool eventNameSelected = false;
   String eventNameValue = "EventName";
+  bool eventDescriptionSelected = false;
   String eventDescriptionValue = "EventDescription";
   String maxParticipantsStringValue = "MaxParticipants";
+  bool maxParticipantsSelected = false;
   int maxParticipantsValue = 0;
+  bool sportEventTypeSelected = false;
   SportEventType sportEventTypeValue = SportEventType.Invalid;
+  bool eventDataSelected = false;
+  DateTime? eventDate;
+  bool eventTimeSelected = false;
+  TimeOfDay? eventTime;
 
   @override
   void initState() {
@@ -284,34 +294,7 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
                                 ]
                             ),
                         ),
-                        Container(
-                          margin: EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                                color: Colors.grey ,
-                                width: 2),
-                            boxShadow:[ BoxShadow(
-                              color: Colors.grey.withOpacity(0.5), // shadow color
-                              blurRadius: 4,                         // softens the shadow
-                              spreadRadius: 0,                       // extends the shadow
-                              offset: Offset(1, 2),                  // moves shadow right & down
-                            ),],
-                          ),
-                          child:
-                          Column(
-                              children: [
-                                Text(
-                                  "Event Start Date",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-
-                              ]
-                          ),
-                        ),
+                        MapCreateEventDatePicker(_onEventDateTimeSelected, eventDate, _onEventTimeOfDatSelected , eventTime),
                         /*
                         Text("data"),
                         Text("data"),
@@ -351,6 +334,10 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
   }
 
   void _onAppliedCreateEvent(){
+    if(_checkIfMissingSomeData()){
+      return;
+    }
+
     MapEventData mapEventData = MapEventData(
         eventName: eventNameValue,
         eventDescription: eventDescriptionValue,
@@ -362,9 +349,51 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
         eventID: "",
         creatorID: "",
         participantsIDs: [],
+        eventStartDate: eventDate!,
+        eventDuration: eventTime!
     );
     widget.onApplyClicked(mapEventData);
     //widget.onApplyClicked();
+  }
+
+  bool _checkIfMissingSomeData(){
+    if(!eventNameSelected){
+      _showMissingDataSnackbar("Event Name not edited, Write Event Name.");
+      return true;
+    }
+
+    if(!eventDescriptionSelected){
+      _showMissingDataSnackbar("Event Description not edited, Write Event Description");
+      return true;
+    }
+
+    if(!sportEventTypeSelected){
+      _showMissingDataSnackbar("Event Type not selected. Choose activity type");
+      return true;
+    }
+
+    if(!maxParticipantsSelected){
+      _showMissingDataSnackbar("Max Participants not selected , choose how many Sport M8s can join");
+      return true;
+    }
+
+    if(!eventDataSelected){
+      _showMissingDataSnackbar("Event Date not selected. Select Date of this activity");
+      return true;
+    }
+
+    if(!eventTimeSelected){
+      _showMissingDataSnackbar("Event Time not selected. Select time of this Activity");
+      return true;
+    }
+
+    return false;
+  }
+
+  void _showMissingDataSnackbar(String info){
+    if(context.mounted){
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(info)));
+    }
   }
 
   void _onDropdownSportEventTypeChanged(String? value){
@@ -373,6 +402,9 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
         sportEventTypeValue = SportEventType.values.firstWhere(
                 (e) => e.name.toLowerCase() == value.toLowerCase(),
             orElse: () => SportEventType.Invalid);
+        if(sportEventTypeValue != SportEventType.Invalid){
+          sportEventTypeSelected = true;
+        }
       });
     }
   }
@@ -380,12 +412,18 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
   void _onEventNameChanged(){
     setState(() {
       eventNameValue = eventNameController.text;
+      if(eventNameValue.isNotEmpty){
+        eventNameSelected = true;
+      }
     });
   }
 
   void _onEventDescriptionChanged(){
     setState(() {
       eventDescriptionValue = eventNameController.text;
+      if(eventDescriptionValue.isNotEmpty){
+        eventDescriptionSelected = true;
+      }
     });
   }
   void _onEventMaxParticipantsChanged(){
@@ -394,9 +432,25 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
     if(possibleValue != null){
       setState(() {
         maxParticipantsValue = possibleValue;
+        if(maxParticipantsValue > 0){
+          maxParticipantsSelected = true;
+        }
       });
     }
   }
 
+  void _onEventDateTimeSelected(DateTime dateTime){
+    setState(() {
+      eventDataSelected = true;
+      eventDate = dateTime;
+    });
+  }
+
+  void _onEventTimeOfDatSelected(TimeOfDay timeOfDay){
+    setState(() {
+      eventTimeSelected = true;
+      eventTime = timeOfDay;
+    });
+  }
 
 }

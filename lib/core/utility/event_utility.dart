@@ -18,6 +18,27 @@ class EventUtility{
       case EventParamType.EventParticipants:
         // TODO: Handle this case.
         return Image.asset(Assets.icons.events.iconsSportPeople.path, width: width , height: height);
+      case EventParamType.EventTime:
+        return Image.asset(Assets.icons.events.iconsEventClock.path , width: width , height: height);
+    }
+  }
+
+  static String getLocalisedEventParamTypeName(EventParamType eventParamType){
+    switch(eventParamType){
+      case EventParamType.EventDate:
+        return "Event Date";
+      case EventParamType.EventName:
+        // TODO: Handle this case.
+        return "Event Name";
+      case EventParamType.EventDescription:
+        // TODO: Handle this case.
+        return "Event Description";
+      case EventParamType.EventParticipants:
+        // TODO: Handle this case.
+        return "Event Participants";
+      case EventParamType.EventTime:
+        // TODO: Handle this case.
+        return "Event Time";
     }
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:sportm8s/core/enums/enums_container.dart';
@@ -31,6 +32,8 @@ class MapSportEventData
         eventID: value['eventID'],
         creatorID: value['creatorID'],
         participantsIDs: participantsIDs,
+        eventStartDate: DateTime.parse(value["eventDateTime"]),
+        eventDuration: parseTimeOfDay(value["eventTime"]),
     );
 
     Marker marker = Marker(point: position, child: markerData.mapIconEvent(eventData) , width: 160, height: 360 , alignment: Alignment.bottomCenter);
@@ -38,5 +41,12 @@ class MapSportEventData
     mapSportEventDataParsed = MapSportEventData(marker, eventData);
 
     return mapSportEventDataParsed;
+  }
+
+  static TimeOfDay parseTimeOfDay(String timeString) {
+    final parts = timeString.split(':');
+    final hour = int.parse(parts[0]);
+    final minute = int.parse(parts[1]);
+    return TimeOfDay(hour: hour, minute: minute);
   }
 }

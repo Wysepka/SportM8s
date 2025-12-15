@@ -1,5 +1,6 @@
 import 'dart:ffi';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -17,7 +18,7 @@ class MapEventData
   final String creatorID;
   final List<String> participantsIDs;
   final DateTime eventStartDate;
-  final Duration eventDuration;
+  final TimeOfDay eventDuration;
 
   const MapEventData({
       required this.eventName,
@@ -43,6 +44,9 @@ class MapEventData
         currentParticipants: mapEventData.currentParticipants,
         eventID: mapEventData.eventID,
         creatorID: mapEventData.creatorID,
-        participantsIDs: mapEventData.participantsIDs);
+        participantsIDs: mapEventData.participantsIDs,
+        eventStartDate: mapEventData.eventStartDate,
+        eventDuration: mapEventData.eventDuration,
+    );
   }
 }

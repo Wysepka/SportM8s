@@ -12,6 +12,10 @@
 12. Add Animations in starting create event (including shaders)
 12. Add Animations in waiting for event to send to the server (including Shaders)
 13. Add Hero anim when starting to create event
+14. Add Color customization in create event when EventType is selected
+15. Add timeout bigger and renewal when app client is blocked
+
+1. Clone repository on Laptop and check whats missing and poppin
 
 CREDITS
 1. https://unblast.com/12-free-sport-icons-ai-sketch ai icons give credtis
@@ -22,3 +26,4 @@ CREDITS
 6. https://www.flaticon.com/free-icon/calendar_10691802?term=event&page=1&position=52&origin=search&related_id=10691802
 7. https://www.flaticon.com/free-icon/event_9983554?term=event+name&page=1&position=12&origin=search&related_id=9983554
 8. https://www.flaticon.com/free-icon/event_1636027?term=event+description&page=1&position=3&origin=search&related_id=1636027
+9. https://www.flaticon.com/free-icon/clock_2838590?term=hour&page=2&position=66&origin=search&related_id=2838590

@@ -185,6 +185,11 @@ class _MapSideView extends State<MapSideView>{
             content: Text("Could not send MapEventData E: ${response.result.diagnostics}")));
       }
     }
+    else{
+      setState(() {
+        _isCreatingEvent = false;
+      });
+    }
   }
 
   LatLng offsetPositionByPixels(LatLng original, double dxPx, double dyPx) {

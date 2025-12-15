@@ -77,6 +77,9 @@ class ServerSportService
         'positionLongitude': mapEventData.position.longitude,
         'maxParticipants': mapEventData.maxParticipants,
         'currentParticipants': 1,
+        'eventDateTime': mapEventData.eventStartDate.toIso8601String(),
+        'eventTime': '${mapEventData.eventDuration.hour.toString().padLeft(2, '0')}:'
+            '${mapEventData.eventDuration.minute.toString().padLeft(2, '0')}:00',
       },);
     return CosmosResponse.fromJson(response);
   }
