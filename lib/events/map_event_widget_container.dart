@@ -20,9 +20,10 @@ class MapEventWidgetContainer extends StatelessWidget
         boxShadow:[
           BoxShadow(
             color: Colors.grey.withOpacity(0.5), // shadow color
-            blurRadius: 2,                         // softens the shadow
+            //blurRadius: 2,                         // softens the shadow
+            blurRadius: 0,                         // softens the shadow
             spreadRadius: 0,                       // extends the shadow
-            offset: Offset(1, 2),                  // moves shadow right & down
+            //offset: Offset(1, 2),                  // moves shadow right & down
             ),
         ],
       ),

@@ -1,10 +1,11 @@
 import 'dart:ui';
 
+import 'package:flutter_map/flutter_map.dart';
 import 'package:sportm8s/map/engine/sport_event_repository.dart';
 import 'package:sportm8s/map/models/map_marker_rect.dart';
 
 class SportEventCalculator{
-  List<MapMarkerRect> returnSportEventsRectsColliding(List<MapMarkerRect> panelRects) {
+  List<MapMarkerRect> returnSportEventsRectsColliding(List<MapMarkerRect> panelRects , LatLngBounds mapBounds) {
     final ids = panelRects.map((x) => x.iconID).toList();
     late List<MapMarkerRect> collidingMapIcons = [];
 
@@ -22,7 +23,22 @@ class SportEventCalculator{
         final bool aInsideB = _isRectInside(rectA, rectB);
         final bool bInsideA = _isRectInside(rectB, rectA);
 
-        if (overlaps) {
+        bool isARendered = mapBounds.contains(mapIconA.mapIcon.mapEventData.position);
+        bool isBRendered = mapBounds.contains(mapIconB.mapIcon.mapEventData.position);
+
+        if(mapIconA.mapIcon.mapEventData.eventName == "jvyjb" || mapIconB.mapIcon.mapEventData.eventName == "jvyjb"){
+          final s = 's';
+        }
+
+        mapIconA.mapIcon.controller.setRendered(isARendered);
+        mapIconB.mapIcon.controller.setRendered(isBRendered);
+
+        bool mapIconARendered = mapIconA.mapIcon.controller.isRendered;
+        bool mapIconBRendered = mapIconB.mapIcon.controller.isRendered;
+
+        bool anyNotRendered = !mapIconBRendered || !mapIconARendered;
+
+        if (overlaps && !anyNotRendered) {
           if (!collidingMapIcons.contains(idA)) {
             collidingMapIcons.add(mapIconA);
           }
@@ -31,7 +47,7 @@ class SportEventCalculator{
           }
           continue;
         }
-        if (aInsideB) {
+        if (aInsideB && !anyNotRendered) {
           if (!collidingMapIcons.contains(idA)) {
             collidingMapIcons.add(mapIconA);
           }
@@ -40,7 +56,7 @@ class SportEventCalculator{
           }
           continue;
         }
-        if (bInsideA) {
+        if (bInsideA && !anyNotRendered) {
           if (!collidingMapIcons.contains(idA)) {
             collidingMapIcons.add(mapIconA);
           }

@@ -1,6 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sportm8s/core/extensions/string_extensions.dart';
 import 'package:sportm8s/events/map_event_widget_container.dart';
 
 class MapCreateEventDatePicker extends StatefulWidget{
@@ -33,14 +34,28 @@ class _MapCreateEventDatePicker extends State<MapCreateEventDatePicker>{
     return MapEventWidgetContainer(
       child: Column(
         children: [
-          Text(selectedEventDate != null ? selectedEventDate.toString() : ""),
+          Container(
+              child: Text(
+                selectedEventDate != null ? selectedEventDate!.toDate() : "" ,
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16,
+                ),
+              )
+          ),
           ElevatedButton(
               onPressed: _showDatePicker,
               child: Text("Select Date")
           ),
           if(selectedEventDate != null)...
           [
-              Text(selectedEventTime != null ? selectedEventTime.toString() : ""),
+              Text(
+                selectedEventTime != null ? selectedEventTime!.to24h() : "",
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16,
+                ),
+              ),
               ElevatedButton(
                 onPressed: _showTimePicker,
                 child: Text("Select Time")

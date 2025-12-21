@@ -7,7 +7,7 @@ import 'package:sportm8s/core/logger/logger_config.dart';
 import 'package:sportm8s/core/utility/event_utility.dart';
 import 'package:sportm8s/core/utility/sport_utility.dart';
 import 'package:sportm8s/map/models/map_event_data.dart';
-import 'package:sportm8s/map/marker_info_row.dart';
+import 'package:sportm8s/map/icon/marker_info_row.dart';
 import 'package:sportm8s/map/models/map_marker_rect.dart';
 import 'package:sportm8s/map/models/map_sport_event_marker.dart';
 

@@ -88,7 +88,7 @@ class _MapSideView extends State<MapSideView>{
                     || event is MapEventMoveStart || event is MapEventMoveEnd){
                       setState(() {
                         zoomValue = event.camera.zoom;
-                        sportEventEngine.updateRectsNoAddition();
+                        sportEventEngine.updateRectsNoAddition(mapController.camera.visibleBounds);
                         _currentCenteredPosition = event.camera.center;
                         _currentMapPixelsSize = event.camera.size;
                         double offsetByPxInHeight = _currentMapPixelsSize.y * -0.25;
@@ -228,7 +228,7 @@ class _MapSideView extends State<MapSideView>{
   }
 
   void onPanelGeometryChanged(MapMarkerRect mapMarkerRect){
-    sportEventEngine.updateRects(mapMarkerRect);
+    sportEventEngine.updateRects(mapMarkerRect , mapController.camera.visibleBounds);
   }
 
   Widget _getMapIconEvent(MapEventData mapEventData){
@@ -251,12 +251,8 @@ class _MapSideView extends State<MapSideView>{
     return 180 * _getZoomMultiplier();
   }
 
-  double _getZoomMultiplier(){
-    return zoomValue * 0.1;
-    //zoomValue
-    //10 is very close
-    //1 is very far
-  }
+  double _getZoomMultiplier() => (zoomValue / 14.0).clamp(0.85, 1.25);
+
 /*
 
 List<Marker> _getMarkers_Test(){

@@ -143,20 +143,7 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
                   Expanded(
                     child: ListView(
                       children: [
-                        Container(
-                          margin: EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                                color: Colors.grey ,
-                                width: 2),
-                            boxShadow:[ BoxShadow(
-                              color: Colors.grey.withOpacity(0.5), // shadow color
-                              blurRadius: 4,                         // softens the shadow
-                              spreadRadius: 0,                       // extends the shadow
-                              offset: Offset(1, 2),                  // moves shadow right & down
-                            ),],
-                          ),
+                        MapEventWidgetContainer(
                           child: Column(
                             children: [
                               Text(
@@ -184,20 +171,7 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
                             ],
                           ),
                         ),
-                        Container(
-                          margin: EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: Colors.grey ,
-                              width: 2),
-                            boxShadow:[ BoxShadow(
-                              color: Colors.grey.withOpacity(0.5), // shadow color
-                              blurRadius: 4,                         // softens the shadow
-                              spreadRadius: 0,                       // extends the shadow
-                              offset: Offset(1, 2),                  // moves shadow right & down
-                            ),],
-                          ),
+                        MapEventWidgetContainer(
                           child: Column(
                             children: [
                               Text(
@@ -225,20 +199,7 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
                             ],
                           ),
                         ),
-                        Container(
-                          margin: EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: Colors.grey ,
-                              width: 2),
-                            boxShadow:[ BoxShadow(
-                              color: Colors.grey.withOpacity(0.5), // shadow color
-                              blurRadius: 4,                         // softens the shadow
-                              spreadRadius: 0,                       // extends the shadow
-                              offset: Offset(1, 2),                  // moves shadow right & down
-                            ),],
-                          ),
+                        MapEventWidgetContainer(
                           child: Column(
                             children: [
                               Text(
@@ -266,20 +227,7 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
                             ],
                           ),
                         ),
-                        Container(
-                          margin: EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: Colors.grey ,
-                              width: 2),
-                            boxShadow:[ BoxShadow(
-                              color: Colors.grey.withOpacity(0.5), // shadow color
-                              blurRadius: 4,                         // softens the shadow
-                              spreadRadius: 0,                       // extends the shadow
-                              offset: Offset(1, 2),                  // moves shadow right & down
-                            ),],
-                          ),
+                        MapEventWidgetContainer(
                           child:
                             Column(
                                 children: [
@@ -295,23 +243,6 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
                             ),
                         ),
                         MapCreateEventDatePicker(_onEventDateTimeSelected, eventDate, _onEventTimeOfDatSelected , eventTime),
-                        /*
-                        Text("data"),
-                        Text("data"),
-                        Text("data"),
-                        Text("data"),
-                        Text("data"),
-                        Text("data"),
-                        Text("data"),
-                        Text("data"),
-                        Text("data"),
-                        Text("data"),
-                        Text("data"),
-                        Text("data"),
-                        Text("data"),
-                        Text("data"),
-
-                         */
                         ElevatedButton(
                             onPressed: _onAppliedCreateEvent,
                             child: Text("Submit !"))
