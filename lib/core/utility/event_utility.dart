@@ -41,4 +41,15 @@ class EventUtility{
         return "Event Time";
     }
   }
+
+  static String getLocalisedEventRequestTypeName(EventServiceRequestType requestType){
+    switch(requestType){
+      case EventServiceRequestType.Idle:
+        return "Idle nothing to do here";
+      case EventServiceRequestType.CreatingEvent:
+        return "Create Event Request is being send to server";
+      case EventServiceRequestType.JoiningEvent:
+        return "Join Event Request is being send to server";
+    }
+  }
 }

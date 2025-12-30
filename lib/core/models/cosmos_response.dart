@@ -7,9 +7,9 @@ class CosmosResponse {
     required this.result,
   });
 
-  factory CosmosResponse.fromJson(Map<String, dynamic> json) {
+  factory CosmosResponse.fromJson(Map<String, dynamic> json , bool success) {
     return CosmosResponse(
-      result: CosmosResult.fromJson(json["result"]),
+      result: CosmosResult.fromJson(json, success),
     );
   }
 }

@@ -29,6 +29,8 @@ class SportEventEngine{
     updateTimer = Timer.periodic(Duration(seconds: 10), (timer) {
       update();
     });
+
+    update();
   }
 
   void dispose(){

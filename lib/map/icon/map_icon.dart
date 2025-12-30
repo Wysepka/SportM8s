@@ -21,8 +21,9 @@ class MapIcon extends StatefulWidget{
   final MapEventData mapEventData;
 
   final void Function(MapMarkerRect mapMarkerRect)? onPanelGeometryChanged;
+  final void Function(MapEventData mapEventData) onMapIconClicked;
 
-  MapIcon(this.zoomMultiplierFunc,this.onPanelGeometryChanged, this.controller, this.mapEventData);
+  MapIcon(this.zoomMultiplierFunc,this.onPanelGeometryChanged, this.onMapIconClicked , this.controller, this.mapEventData);
 
   @override
   State<StatefulWidget> createState() => _MapIcon();
@@ -177,6 +178,7 @@ class _MapIcon extends State<MapIcon>{
     );
 
     return GestureDetector(
+      onTap: () => widget.onMapIconClicked(widget.mapEventData),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

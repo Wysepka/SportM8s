@@ -240,7 +240,7 @@ class ServerService {
         throw HttpException('Authentication failed');
       }
 
-      if (response.statusCode != 200) {
+      if (response.statusCode < 200 || response.statusCode > 299) {
         _logger.error('Request failed with status: ${response.statusCode}');
         _logger.error('Response body: ${response.body}');
         throw Exception('Failed to post data. Status: ${response.statusCode}. Body: ${response.body}');
@@ -270,7 +270,6 @@ class ServerService {
 
       final url = '${ServerService.baseUrl}/api/$endpoint';
       _logger.debug('Making GET request to: $url');
-
       final response = await _client.get(
         Uri.parse(url),
         headers: {

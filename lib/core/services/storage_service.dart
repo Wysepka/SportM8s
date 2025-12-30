@@ -178,6 +178,18 @@ class StorageService
     }
   }
 
+  Future<String> getOtherUserPictureURL(WidgetRef ref , String userID) async{
+    try {
+      final serverUserService = ref.read(serverUserServiceProvider);
+      final otherUserProfileURL = await serverUserService.getOtherUserProfileURL(userID);
+      return otherUserProfileURL;
+    }
+    catch(e , stacktrace){
+      _logger.error("Error loading UserPictureURL ! E:$e | ST:$stacktrace");
+      return "https://i.sstatic.net/l60Hf.png";
+    }
+  }
+
   Future<bool> getChangeProfilePictureDisplayStatus(WidgetRef ref) async {
     try{
       final serverUserService = ref.read(serverUserServiceProvider);

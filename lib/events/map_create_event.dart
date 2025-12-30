@@ -6,10 +6,11 @@ import 'package:latlong2/latlong.dart';
 import 'package:sportm8s/core/enums/enums_container.dart';
 import 'package:sportm8s/core/utility/sport_utility.dart';
 import 'package:sportm8s/events/map_create_event_date_picker.dart';
+import 'package:sportm8s/events/map_event_top_panel.dart';
 import 'package:sportm8s/events/map_event_widget_container.dart';
-import 'package:sportm8s/services/server_sport_service.dart';
-
+import '../map/containers/map_event_panel_container.dart';
 import '../map/models/map_event_data.dart';
+import '../services/server_sport_service.dart';
 
 class MapCreateEventPanel extends StatefulWidget{
   void Function() onDismissClicked;
@@ -67,79 +68,10 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
         maxChildSize: 0.8,
         initialChildSize: 0.5,
         builder: (context, scrollController) {
-          return Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: Colors.grey,
-                  width: 8,
-                ),
-                color: Colors.white,
-                boxShadow:[ BoxShadow(
-                  color: Colors.grey, // shadow color
-                  blurRadius: 8,                         // softens the shadow
-                  spreadRadius: 1,                       // extends the shadow
-                  offset: Offset(2, 4),                  // moves shadow right & down
-              ),]
-            ),
+          return MapEventPanelContainer(
             child: Column(
                 children: [
-                  Stack(
-                    alignment: AlignmentDirectional.center,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          boxShadow:[ BoxShadow(
-                            color: Colors.white.withOpacity(0.5), // shadow color
-                            blurRadius: 4,                         // softens the shadow
-                            spreadRadius: 4,                       // extends the shadow
-                            offset: Offset(1, 2),                  // moves shadow right & down
-                          ),],
-                          borderRadius:BorderRadius.circular(24),
-                          border: Border.all(
-                            color: Colors.grey,
-                            width: 6
-                          )
-                        ),
-
-                        child: Align(
-                          //widthFactor: 0.1,
-                          alignment: Alignment.centerLeft,
-                          child: ElevatedButton.icon(
-                            icon: Icon(Icons.keyboard_return),
-                            onPressed: _onDismissCreateEvent,
-                            label: Text(
-                              '',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),),
-                            //TODO add localisation
-                          ),
-                        ),
-                      ),
-                      Container(
-                          /*
-                          decoration: BoxDecoration(
-                              borderRadius:BorderRadius.circular(12),
-                              border: Border.all(
-                                  color: Colors.grey,
-                                  width: 6
-                              ),
-                              color: Colors.white24
-                          ),
-
-                           */
-                          child: Text(
-                              "Create Event",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                          )
-                      )
-                    ],
-                  ),
+                  MapEventTopPanel(_onDismissCreateEvent, "Create Event"),
                   Expanded(
                     child: ListView(
                       children: [

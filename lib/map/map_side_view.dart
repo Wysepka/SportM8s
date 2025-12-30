@@ -1,4 +1,5 @@
 
+import 'dart:ffi';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
@@ -8,10 +9,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:logger/logger.dart';
 import 'package:sportm8s/app_consts.dart';
+import 'package:sportm8s/core/enums/enums_container.dart';
 import 'package:sportm8s/core/logger/logger_config.dart';
 import 'package:sportm8s/core/logger/logger_service.dart';
 import 'package:sportm8s/core/models/cosmos_response.dart';
+import 'package:sportm8s/core/utility/event_utility.dart';
 import 'package:sportm8s/core/utility/random_utility.dart';
+import 'package:sportm8s/events/map_event_widget_container.dart';
+import 'package:sportm8s/events/map_join_event.dart';
 import 'package:sportm8s/map/engine/sport_event_calculator.dart';
 import 'package:sportm8s/map/engine/sport_event_controller.dart';
 import 'package:sportm8s/map/engine/sport_event_repository.dart';
@@ -20,6 +25,8 @@ import 'package:sportm8s/map/icon/map_icon_controller.dart';
 import 'package:sportm8s/map/icon/map_icon_create_event.dart';
 import 'package:sportm8s/map/models/map_event_data.dart';
 import 'package:sportm8s/map/models/map_marker_rect.dart';
+import 'package:sportm8s/map/panels/map_view_bottom_panel.dart';
+import 'package:sportm8s/map/panels/map_view_bottom_panel_controller.dart';
 import 'package:sportm8s/services/server_service.dart';
 import 'package:sportm8s/services/server_sport_service.dart';
 
@@ -40,11 +47,14 @@ class _MapSideView extends State<MapSideView>{
   late SportEventEngine sportEventEngine;
   late SportEventCalculator sportEventCalculator;
   bool _isCreatingEvent = false;
+  bool _isJoiningEvent = false;
   double zoomValue = 0;
   LatLng _currentCenteredPosition = LatLng(0, 0);
   LatLng _currentMapIconCreateEventPosition = LatLng(0, 0);
   Point<double> _currentMapPixelsSize = Point(0, 0);
-  bool _isSendingEvent = false;
+  EventServiceRequestType eventRequestType = EventServiceRequestType.Idle;
+  MapEventData? _currentClickedMapEvent;
+  MapViewBottomPanel? bottomPanel;
 
   late MapIconCreateEvent mapIconCreateEvent;
 
@@ -69,6 +79,7 @@ class _MapSideView extends State<MapSideView>{
 
   @override
   Widget build(BuildContext context) {
+
     if(AppConsts.IS_PRODUCTION){
       return Center(child: Text("Production Ready map is not available !"));
     }
@@ -93,7 +104,15 @@ class _MapSideView extends State<MapSideView>{
                         _currentMapPixelsSize = event.camera.size;
                         double offsetByPxInHeight = _currentMapPixelsSize.y * -0.25;
                         _currentMapIconCreateEventPosition = offsetPositionByPixels(_currentCenteredPosition, 0, offsetByPxInHeight);
+                        _currentClickedMapEvent = null;
+                        _isJoiningEvent = false;
+                        _trySetBottomPanelEventType(MapViewBottomPanelType.CreatingEvent);
                       });
+                    }
+                    if(event is MapEventTap){
+                      _currentClickedMapEvent = null;
+                      _isJoiningEvent = false;
+                      _trySetBottomPanelEventType(MapViewBottomPanelType.CreatingEvent);
                     }
                   },
                 ),
@@ -107,34 +126,34 @@ class _MapSideView extends State<MapSideView>{
             ),
           ),
 
-          if(_isCreatingEvent)...[
-            MapCreateEventPanel(_onDismissCreateEvent , _applyCreateEvent ,sportEventEngine.sportService),
-          ]
-          else...[
-             Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.zero,
+          if(_isJoiningEvent)...[
+              if(_currentClickedMapEvent != null)...[
+                MapJoinEvent(_currentClickedMapEvent! , _applyJoinEvent , _onDismissJoinEvent , sportEventEngine.sportService),
+              ]
+              else...[
+                Center(
+                  child: MapEventWidgetContainer(
+                    child: Text(
+                      "Could not Join Event, _currentClickedMapEvent is null !",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 30
                       ),
-                      foregroundColor: Colors.black,
-                      backgroundColor: Colors.yellow,
+                    ),
                   ),
-                  icon: Icon(Icons.add, size: 35),
-                  onPressed: _onCreateEventTap,
-                  //TODO Add localisation
-                  label: Text("Create Event")),
-              ),
-            )
+                )
+              ]
           ],
 
-          if(_isSendingEvent)...[
+          if(_isCreatingEvent)...[
+            MapCreateEventPanel(_onDismissCreateEvent , _applyCreateEvent ,sportEventEngine.sportService),
+          ],
+
+          if(!_isCreatingEvent && !_isJoiningEvent)...[
+            bottomPanel = MapViewBottomPanel(MapViewBottomPanelController() , _onCreateEventTap, _onJoinEventTap),
+          ],
+
+          if(eventRequestType != EventServiceRequestType.Idle)...[
             Positioned.fill(
                 child: IgnorePointer(
                   ignoring: true,
@@ -144,7 +163,7 @@ class _MapSideView extends State<MapSideView>{
                       child: Column(
                         children: [
                           CircularProgressIndicator(),
-                          Text("Sport Event is send to server")
+                          Text(EventUtility.getLocalisedEventRequestTypeName(eventRequestType))
                         ],
                       ),
                     ),
@@ -169,15 +188,27 @@ class _MapSideView extends State<MapSideView>{
     });
   }
 
+  void _onJoinEventTap(){
+    setState(() {
+      _isJoiningEvent = true;
+    });
+  }
+
+  void _onDismissJoinEvent(){
+    setState(() {
+      _isJoiningEvent = false;
+    });
+  }
+
   //TODO add check if event is being send and block application while sending
   void _applyCreateEvent(MapEventData eventData) async {
     MapEventData dataWithPos = eventData.copyProvidePosition(eventData, _currentMapIconCreateEventPosition);
     setState(() {
-      _isSendingEvent = true;
+      eventRequestType = EventServiceRequestType.CreatingEvent;
     });
     CosmosResponse response = await sportEventEngine.sportService.addSportEvent(dataWithPos);
     setState(() {
-      _isSendingEvent = false;
+      eventRequestType = EventServiceRequestType.Idle;
     });
     if(response.result.statusCode < 200 || response.result.statusCode > 299){
       if(context.mounted) {
@@ -188,6 +219,27 @@ class _MapSideView extends State<MapSideView>{
     else{
       setState(() {
         _isCreatingEvent = false;
+      });
+    }
+  }
+
+  void _applyJoinEvent(MapEventData mapEventData) async {
+    setState(() {
+      eventRequestType = EventServiceRequestType.JoiningEvent;
+    });
+    CosmosResponse result = await sportEventEngine.sportService.joinSportEvent(mapEventData);
+    setState(() {
+      eventRequestType = EventServiceRequestType.Idle;
+    });
+    if(!result.result.success){
+      if(context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Could not send MapEventData E: ${result.result.diagnostics}")));
+      }
+    }
+    else{
+      setState(() {
+        _isJoiningEvent = false;
       });
     }
   }
@@ -232,16 +284,9 @@ class _MapSideView extends State<MapSideView>{
   }
 
   Widget _getMapIconEvent(MapEventData mapEventData){
-    MapIcon mapIcon = MapIcon(_getZoomMultiplier , onPanelGeometryChanged , MapIconController() , mapEventData);
+    MapIcon mapIcon = MapIcon(_getZoomMultiplier , onPanelGeometryChanged , _onMapIconClicked , MapIconController() , mapEventData);
     return mapIcon;
   }
-
-  /*
-  Widget _getMapIcon(double zoomMultiplier){
-    MapIcon mapIcon = MapIcon(_getZoomMultiplier);
-    return mapIcon;
-  }
-   */
 
   double _getMarkerWidth(){
     return 120 * _getZoomMultiplier();
@@ -253,58 +298,21 @@ class _MapSideView extends State<MapSideView>{
 
   double _getZoomMultiplier() => (zoomValue / 14.0).clamp(0.85, 1.25);
 
-/*
+  void _onMapIconClicked(MapEventData mapEventData)
+  {
+    _currentClickedMapEvent = mapEventData;
+    _trySetBottomPanelEventType(MapViewBottomPanelType.JoiningEvent);
+  }
 
-List<Marker> _getMarkers_Test(){
-    List<Marker> markersList = [];
-    
-    markersList.add(Marker(
-      point: LatLng( 52.337049, 21.117532),
-      width: _getMarkerWidth(),
-      height: _getMarkerHeight(),
-      child: _getMarkerChild(),
-    ));
+  void _trySetBottomPanelEventType(MapViewBottomPanelType type){
+    if(bottomPanel != null){
+      bottomPanel!.controller.changeBottomPanelType(type);
+    }
+  }
 
-    markersList.add(Marker(
-      point: LatLng( 52.537049, 21.227532),
-      width: _getMarkerWidth(),
-      height: _getMarkerHeight(),
-      child: _getMarkerChild(),
-    ));
+  bool isMapEventClicked() => _currentClickedMapEvent != null;
 
-    markersList.add(Marker(
-      point: LatLng( 52.427049, 21.25532),
-      width: _getMarkerWidth(),
-      height: _getMarkerHeight(),
-      child: _getMarkerChild(),
-    ));
-
-    return markersList;
-}
-
-Widget _getMarkerChild(){
-    String randomString = RandomUtility.randomString(10, 30);
-    return GestureDetector(
-      //onTap: () => LoggerConfig.logger.log(level: Level.debug , message: "On GestureDetector Tapped");
-      onTap: () => log.d("Gesture Detector tapped"),
-      child:
-      Column(
-        children: [
-          Icon(Icons.location_on, size: 40 * _getZoomMultiplier(), color: Colors.red),
-           ClipRRect(
-              borderRadius: BorderRadius.circular(25 * _getZoomMultiplier()),
-              child: Container(
-                padding: EdgeInsets.all(4 * _getZoomMultiplier()),
-                constraints: BoxConstraints(minWidth:  10 * _getZoomMultiplier() , maxWidth:  120 * _getZoomMultiplier() ,minHeight:  10 * _getZoomMultiplier(),maxHeight:  140 * _getZoomMultiplier()),
-                child: Text(randomString, style: TextStyle(fontSize: 20 * _getZoomMultiplier()) , textAlign: TextAlign.center,),
-                decoration: BoxDecoration(color: Colors.white , borderRadius: BorderRadius.circular(25 * _getZoomMultiplier()) , border: Border.all(color: Colors.cyan ,width:  10 * _getZoomMultiplier())),
-          )),
-        ],
-      ),
-    );
-}
-*/
-
+  MapEventData get currentClickedMapEvent => _currentClickedMapEvent!;
 }
 
 class OSMMarkerData{

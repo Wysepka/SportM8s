@@ -14,6 +14,8 @@
 13. Add Hero anim when starting to create event
 14. Add Color customization in create event when EventType is selected
 15. Add timeout bigger and renewal when app client is blocked
+16. Increase CreateEvent location icon size
+17. Optimize ServerSportService to send only EventID instead of whole SportEventData
 
 1. Clone repository on Laptop and check whats missing and poppin
 

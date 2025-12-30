@@ -152,6 +152,22 @@ class ServerUserService {
     }
   }
 
+  Future<String> getOtherUserProfileURL(String userID) async{
+    try{
+      final result = await _serverService.getDynamicMap("User/profileUrl/$userID");
+      if(result.isNotEmpty){
+        return result.entries.first.value;
+      }
+      else{
+        return "https://i.sstatic.net/l60Hf.png";
+      }
+    }
+    catch(error , stacktrace){
+      _logger.error("There was an error while trying to get Other User ProfileURL | E:$error ||| StackTrace:$stacktrace");
+      return "https://i.sstatic.net/l60Hf.png";
+    }
+  }
+
   Future<bool> getChangeProfilePictureDisplayStatus() async{
     try{
       final result = await _serverService.getDynamicMap("User/profileDisplayChanged");

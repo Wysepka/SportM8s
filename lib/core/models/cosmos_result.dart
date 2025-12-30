@@ -6,6 +6,7 @@ class CosmosResult {
   final double requestCharge;
   final String activityId;
   final String eTag;
+  final bool success;
 
   CosmosResult({
     required this.headers,
@@ -15,9 +16,10 @@ class CosmosResult {
     required this.requestCharge,
     required this.activityId,
     required this.eTag,
+    required this.success,
   });
 
-  factory CosmosResult.fromJson(Map<String, dynamic> json) {
+  factory CosmosResult.fromJson(Map<String, dynamic> json , bool success) {
     return CosmosResult(
       headers: json["headers"],
       resource: json["resource"],
@@ -26,6 +28,7 @@ class CosmosResult {
       requestCharge: (json["requestCharge"] as num).toDouble(),
       activityId: json["activityId"],
       eTag: json["eTag"],
+      success: success,
     );
   }
 }

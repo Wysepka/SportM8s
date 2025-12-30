@@ -6,7 +6,9 @@ import 'dart:ui';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sportm8s/core/logger/logger_service.dart';
 import 'package:sportm8s/core/models/cosmos_response.dart';
+import 'package:sportm8s/core/models/cosmos_result.dart';
 import 'package:sportm8s/core/models/server_response.dart';
+import 'package:sportm8s/dto/list_response.dart';
 import 'package:sportm8s/map/map_side_view.dart';
 import 'package:sportm8s/map/models/map_sport_event_marker.dart';
 import 'package:sportm8s/services/server_service.dart';
@@ -81,6 +83,62 @@ class ServerSportService
         'eventTime': '${mapEventData.eventDuration.hour.toString().padLeft(2, '0')}:'
             '${mapEventData.eventDuration.minute.toString().padLeft(2, '0')}:00',
       },);
-    return CosmosResponse.fromJson(response);
+    if(response["statusCode"] == 500){
+      logger.error("Could not Create Sport Event | Error: ${response["detail"]}");
+      return CosmosResponse.fromJson(response, false);
+    }
+    else {
+      return CosmosResponse.fromJson(response , true);
+    }
+  }
+
+  Future<CosmosResponse> joinSportEvent(MapEventData mapEventData) async {
+    final response = await serverService.post(
+      "SportMap/joinSportEvent",
+      body: {
+        'eventName': mapEventData.eventName,
+        'eventDescription': mapEventData.eventDescription,
+        'sportEventType': mapEventData.sportEventType.index,
+        'positionLatitude': mapEventData.position.latitude,
+        'positionLongitude': mapEventData.position.longitude,
+        'maxParticipants': mapEventData.maxParticipants,
+        'currentParticipants': 1,
+        'eventDateTime': mapEventData.eventStartDate.toIso8601String(),
+        'eventTime': '${mapEventData.eventDuration.hour.toString().padLeft(2, '0')}:'
+            '${mapEventData.eventDuration.minute.toString().padLeft(2, '0')}:00',
+      },);
+    if(response["statusCode"] == 500){
+      logger.error("Could not Join Sport Event | Error: ${response["detail"]}");
+      return CosmosResponse.fromJson(response, false);
+    }
+    else {
+      return CosmosResponse.fromJson(response , true);
+    }
+  }
+
+  //Optimize to send only event ID
+  Future<ListResponse<String>> getMapEventParticipantsDisplayNames(MapEventData mapEventData) async {
+    final result = await serverService.post("UserController/getUsersDisplayName",
+      body: {
+        'eventName': mapEventData.eventName,
+        'eventDescription': mapEventData.eventDescription,
+        'sportEventType': mapEventData.sportEventType.index,
+        'positionLatitude': mapEventData.position.latitude,
+        'positionLongitude': mapEventData.position.longitude,
+        'maxParticipants': mapEventData.maxParticipants,
+        'currentParticipants': mapEventData.currentParticipants,
+        'eventDateTime': mapEventData.eventStartDate.toIso8601String(),
+        'eventTime': '${mapEventData.eventDuration.hour.toString().padLeft(2, '0')}:'
+            '${mapEventData.eventDuration.minute.toString().padLeft(2, '0')}:00',
+      },);
+    if(result["reason"] == "Success"){
+      final response = ListResponse.fromJson(result, (e) => e as String);
+      return response;
+    }
+    else{
+      logger.error("Could not Retrieve Participants Display Names | Error: ${result["response"]}");
+      return ListResponse<String>(items: [] , reason: result["response"]);
+    }
+    return ListResponse<String>(items: [] , reason: "Error");
   }
 }
