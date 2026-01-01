@@ -6,4 +6,5 @@ class ServerResponse {
     required this.isSuccess,
     this.error,
   });
+
 } 

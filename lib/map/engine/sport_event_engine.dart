@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sportm8s/core/logger/logger_config.dart';
 import 'package:sportm8s/map/engine/sport_event_calculator.dart';
@@ -28,6 +29,8 @@ class SportEventEngine{
     updateTimer = Timer.periodic(Duration(seconds: 10), (timer) {
       update();
     });
+
+    update();
   }
 
   void dispose(){
@@ -46,19 +49,19 @@ class SportEventEngine{
     }
   }
 
-  void updateRects(MapMarkerRect mapMarkerRect){
+  void updateRects(MapMarkerRect mapMarkerRect , LatLngBounds mapBounds){
     eventRepository.updateOSMMarkerRects(mapMarkerRect);
     List<MapMarkerRect> rects = eventRepository.getMarkerRects();
-    final collidingMarkers = eventCalculator.returnSportEventsRectsColliding(rects);
+    final collidingMarkers = eventCalculator.returnSportEventsRectsColliding(rects , mapBounds);
     eventCalculator.toggleCollisionProperties(collidingMarkers, rects);
     if(collidingMarkers.isNotEmpty){
       _logger.info("Found CollidingMarkers Count: ${collidingMarkers.length}");
     }
   }
 
-  void updateRectsNoAddition(){
+  void updateRectsNoAddition(LatLngBounds mapBounds){
     List<MapMarkerRect> rects = eventRepository.getMarkerRects();
-    final collidingMarkers = eventCalculator.returnSportEventsRectsColliding(rects);
+    final collidingMarkers = eventCalculator.returnSportEventsRectsColliding(rects , mapBounds);
     eventCalculator.toggleCollisionProperties(collidingMarkers, rects);
     if(collidingMarkers.isNotEmpty) {
       _logger.info("Found CollidingMarkers Count: ${collidingMarkers.length}");

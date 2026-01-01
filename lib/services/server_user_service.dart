@@ -56,7 +56,7 @@ class ServerUserService {
     required DateTime acceptedAt,
   }) async {
     try {
-      await _serverService.post(
+      await _serverService.patch(
         'User/agreements',
         body: {
           'agreementName': agreementName,
@@ -152,6 +152,22 @@ class ServerUserService {
     }
   }
 
+  Future<String> getOtherUserProfileURL(String userID) async{
+    try{
+      final result = await _serverService.getDynamicMap("User/userAvatarUrl/$userID");
+      if(result.isNotEmpty){
+        return result.entries.first.value;
+      }
+      else{
+        return "https://i.sstatic.net/l60Hf.png";
+      }
+    }
+    catch(error , stacktrace){
+      _logger.error("There was an error while trying to get Other User ProfileURL | E:$error ||| StackTrace:$stacktrace");
+      return "https://i.sstatic.net/l60Hf.png";
+    }
+  }
+
   Future<bool> getChangeProfilePictureDisplayStatus() async{
     try{
       final result = await _serverService.getDynamicMap("User/profileDisplayChanged");
@@ -230,7 +246,7 @@ class ServerUserService {
   Future<bool> setProfileDisplayParam(String value, ProfileDisplayPropertyType type) async {
     try{
       final typeString = type.name;
-      final result = await _serverService.post("User/setProfileDisplayParam/$typeString" ,
+      final result = await _serverService.patch("User/setProfileDisplayParam/$typeString" ,
         body: {
           'Value': value,
           'Type': typeString,

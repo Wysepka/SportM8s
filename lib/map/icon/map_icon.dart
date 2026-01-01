@@ -2,11 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:sportm8s/core/enums/enums_container.dart';
+import 'package:sportm8s/core/extensions/string_extensions.dart';
 import 'package:sportm8s/core/logger/logger_config.dart';
 import 'package:sportm8s/core/utility/event_utility.dart';
 import 'package:sportm8s/core/utility/sport_utility.dart';
 import 'package:sportm8s/map/models/map_event_data.dart';
-import 'package:sportm8s/map/marker_info_row.dart';
+import 'package:sportm8s/map/icon/marker_info_row.dart';
 import 'package:sportm8s/map/models/map_marker_rect.dart';
 import 'package:sportm8s/map/models/map_sport_event_marker.dart';
 
@@ -20,8 +21,9 @@ class MapIcon extends StatefulWidget{
   final MapEventData mapEventData;
 
   final void Function(MapMarkerRect mapMarkerRect)? onPanelGeometryChanged;
+  final void Function(MapEventData mapEventData) onMapIconClicked;
 
-  MapIcon(this.zoomMultiplierFunc,this.onPanelGeometryChanged, this.controller, this.mapEventData);
+  MapIcon(this.zoomMultiplierFunc,this.onPanelGeometryChanged, this.onMapIconClicked , this.controller, this.mapEventData);
 
   @override
   State<StatefulWidget> createState() => _MapIcon();
@@ -176,6 +178,7 @@ class _MapIcon extends State<MapIcon>{
     );
 
     return GestureDetector(
+      onTap: () => widget.onMapIconClicked(widget.mapEventData),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -280,6 +283,32 @@ class _MapIcon extends State<MapIcon>{
                         ),
                         text: SportEventUtils
                             .getSportNameLocalisedBasedOnSportEventType(sportType),
+                        maxLines: 1,
+                      ),
+
+                      SizedBox(height: 2 * zoom),
+
+                      MarkerInfoRow(
+                        zoom: zoom,
+                        icon: EventUtility.GetEventIconBasedOnEventParam(
+                            EventParamType.EventDate,
+                            18,
+                            18
+                        ),
+                        text: mapEventData!.eventStartDate.toDate(),
+                        maxLines: 1,
+                      ),
+
+                      SizedBox(height: 2 * zoom),
+
+                      MarkerInfoRow(
+                        zoom: zoom,
+                        icon: EventUtility.GetEventIconBasedOnEventParam(
+                            EventParamType.EventTime,
+                            18,
+                            18
+                        ),
+                        text: mapEventData!.eventDuration.to24h(),
                         maxLines: 1,
                       ),
                     ],

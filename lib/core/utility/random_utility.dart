@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -138,6 +139,8 @@ class RandomUtility{
     (int min, int max) participants = SportEventUtils.getRandomParticipants(eventType);
     int currParticipants = participants.$1;
     int maxParticipants = participants.$2;
+    DateTime dateTime = DateTime.now();
+    TimeOfDay timeOfDay = TimeOfDay.now();
 
     return MapEventData(
         eventName: eventTitle,
@@ -148,7 +151,9 @@ class RandomUtility{
         currentParticipants: currParticipants,
         eventID: Uuid().v4(),
         creatorID: Uuid().v4(),
-        participantsIDs: []);
+        participantsIDs: [],
+        eventStartDate: dateTime,
+        eventDuration: timeOfDay);
   }
 
   static SportEventType getTypeBasedOnRandomTitle(String sportTitle) {

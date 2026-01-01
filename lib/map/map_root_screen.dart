@@ -13,18 +13,21 @@ class MapRootScreen extends StatelessWidget{
       return Scaffold(
         appBar: AppBar(),
         drawer: MapRootDrawer(
-          onCreateEventCallback: () => _openCreateEventView(context),
+          onCreateEventCallback: () => Drawer(),
         ),
         body: MapSideView(),
       );
   }
 
+  /*
   void _openCreateEventView(BuildContext buildContext){
     Navigator.of(buildContext).pop();
     showModalBottomSheet(
         context: buildContext,
-        builder: (buildContext) => MapCreateEvent()
+        builder: (buildContext) => MapCreateEventPanel()
     );
   }
 
+
+   */
 }

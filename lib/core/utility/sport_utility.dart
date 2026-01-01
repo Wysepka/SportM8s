@@ -162,4 +162,72 @@ class SportEventUtils {
         return const Color(0xFFF5F5F5); // near white
     }
   }
+
+  //TODO Add localisation
+  static DropdownButton<String> getSportTypeDropdownButton(Function(String?)? onChanged , String Function() getValue , double iconSize){
+    return DropdownButton<String>(
+      value: getValue(),
+      alignment: Alignment.center,
+      items: [
+        DropdownMenuItem(
+          value: "Invalid",
+          child: Text("Select sport"),
+        ),
+        DropdownMenuItem(
+            value: "Soccer",
+            child: Row(
+              children: [
+                getTransparentIconBasedOnSportEventType(SportEventType.Soccer , iconSize, iconSize),
+                Text("Soccer")
+              ],
+            )
+        ),
+        DropdownMenuItem(
+            value: "Volleyball",
+            child: Row(
+              children: [
+                getTransparentIconBasedOnSportEventType(SportEventType.Volleyball , iconSize, iconSize),
+                Text("Volleyball")
+              ],
+            )
+        ),
+        DropdownMenuItem(
+            value: "Basketball",
+            child: Row(
+              children: [
+                getTransparentIconBasedOnSportEventType(SportEventType.Basketball , iconSize, iconSize),
+                Text("Basketball")
+              ],
+            )
+        ),
+        DropdownMenuItem(
+            value: "Tennis",
+            child: Row(
+              children: [
+                getTransparentIconBasedOnSportEventType(SportEventType.Tennis , iconSize, iconSize),
+                Text("Tennis")
+              ],
+            )
+        ),
+        DropdownMenuItem(
+            value: "Running",
+            child: Row(
+              children: [
+                getTransparentIconBasedOnSportEventType(SportEventType.Running , iconSize, iconSize),
+                Text("Running")
+              ],
+            )
+        ),
+        DropdownMenuItem(
+            value: "Cycling",
+            child: Row(
+              children: [
+                getTransparentIconBasedOnSportEventType(SportEventType.Cycling, iconSize, iconSize),
+                Text("Cycling")
+              ],
+            )
+        ),
+      ], onChanged: (x) => onChanged!(x),
+    );
+  }
 }

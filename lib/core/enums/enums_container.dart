@@ -28,4 +28,17 @@ enum EventParamType{
   EventDescription,
   EventParticipants,
   EventDate,
+  EventTime,
+}
+
+enum MapViewBottomPanelType{
+  Invalid,
+  CreatingEvent,
+  JoiningEvent,
+}
+
+enum EventServiceRequestType{
+  Idle,
+  CreatingEvent,
+  JoiningEvent,
 }

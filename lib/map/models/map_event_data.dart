@@ -1,5 +1,7 @@
 import 'dart:ffi';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../core/enums/enums_container.dart';
@@ -15,6 +17,8 @@ class MapEventData
   final String eventID;
   final String creatorID;
   final List<String> participantsIDs;
+  final DateTime eventStartDate;
+  final TimeOfDay eventDuration;
 
   const MapEventData({
       required this.eventName,
@@ -25,5 +29,24 @@ class MapEventData
       required this.currentParticipants,
       required this.eventID,
       required this.creatorID,
-      required this.participantsIDs});
+      required this.participantsIDs,
+      required this.eventStartDate,
+      required this.eventDuration,
+  });
+
+  MapEventData copyProvidePosition(MapEventData mapEventData, LatLng position){
+    return MapEventData(
+        eventName: mapEventData.eventName,
+        eventDescription: mapEventData.eventDescription,
+        sportEventType: mapEventData.sportEventType,
+        position: position,
+        maxParticipants: mapEventData.maxParticipants,
+        currentParticipants: mapEventData.currentParticipants,
+        eventID: mapEventData.eventID,
+        creatorID: mapEventData.creatorID,
+        participantsIDs: mapEventData.participantsIDs,
+        eventStartDate: mapEventData.eventStartDate,
+        eventDuration: mapEventData.eventDuration,
+    );
+  }
 }

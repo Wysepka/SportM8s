@@ -49,6 +49,10 @@ class $AssetsIconsEventsGen {
   AssetGenImage get iconsCalendar =>
       const AssetGenImage('assets/icons/events/Icons_Calendar.png');
 
+  /// File path: assets/icons/events/Icons_EventClock.png
+  AssetGenImage get iconsEventClock =>
+      const AssetGenImage('assets/icons/events/Icons_EventClock.png');
+
   /// File path: assets/icons/events/Icons_EventDescription.png
   AssetGenImage get iconsEventDescription =>
       const AssetGenImage('assets/icons/events/Icons_EventDescription.png');
@@ -62,8 +66,13 @@ class $AssetsIconsEventsGen {
       const AssetGenImage('assets/icons/events/Icons_SportPeople.png');
 
   /// List of all assets
-  List<AssetGenImage> get values =>
-      [iconsCalendar, iconsEventDescription, iconsEventName, iconsSportPeople];
+  List<AssetGenImage> get values => [
+        iconsCalendar,
+        iconsEventClock,
+        iconsEventDescription,
+        iconsEventName,
+        iconsSportPeople
+      ];
 }
 
 class $AssetsIconsSportIconsFixedGen {
