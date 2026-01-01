@@ -81,7 +81,7 @@ class _MapEventJoinScrollView extends State<MapEventJoinScrollView>{
                     physics: NeverScrollableScrollPhysics(),
                       itemCount: snapshot.data!.length,
                       itemBuilder: (context, index) {
-                        return MapEventParticipantWidget(snapshot.data![index], 20, widget.mapEventData.participantsIDs[index]);
+                        return MapEventParticipantWidget(snapshot.data![index], 20, widget.mapEventData.participantsIDs[index] , index);
                       }
                   );
                 },
