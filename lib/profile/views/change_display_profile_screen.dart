@@ -117,6 +117,7 @@ class _ChangeDisplayProfileScreen extends ConsumerState<ChangeDisplayProfileScre
 
           if(type == ProfileDisplayPropertyType.Name)
           {
+            nameTextController.text = snapshot.data!;
             widgetTextField = TextField(
               decoration: InputDecoration(hintText: snapshot.data),
               controller: nameTextController,
@@ -125,6 +126,7 @@ class _ChangeDisplayProfileScreen extends ConsumerState<ChangeDisplayProfileScre
           }
           else if(type == ProfileDisplayPropertyType.Surname)
           {
+            surnameTextController.text = snapshot.data!;
             widgetTextField = TextField(
               decoration: InputDecoration(hintText: snapshot.data),
               controller: surnameTextController,
@@ -133,6 +135,7 @@ class _ChangeDisplayProfileScreen extends ConsumerState<ChangeDisplayProfileScre
           }
           else if(type == ProfileDisplayPropertyType.DisplayName)
           {
+            displayNameTextController.text = snapshot.data!;
             widgetTextField = TextField(
               decoration: InputDecoration(hintText: snapshot.data),
               controller: displayNameTextController,

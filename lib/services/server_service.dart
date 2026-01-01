@@ -220,7 +220,7 @@ class ServerService {
       if (user == null) {
         throw Exception('No authenticated user found');
       }
-      
+
       final token = await user.getIdToken();
       _logger.debug('Making POST request to: ${ServerService.baseUrl}/api/$endpoint');
 
@@ -251,6 +251,47 @@ class ServerService {
       }
     } catch (e) {
       _logger.error('Error in POST request to $endpoint: $e');
+      rethrow;
+    }
+  }
+
+  Future<dynamic> patch(String endpoint, {Map<String, dynamic>? body}) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        throw Exception('No authenticated user found');
+      }
+      
+      final token = await user.getIdToken();
+      _logger.debug('Making PATCH request to: ${ServerService.baseUrl}/api/$endpoint');
+
+      final response = await _client.patch(
+        Uri.parse('$baseUrl/api/$endpoint'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(body),
+      ).timeout(const Duration(seconds: 10));
+
+      _logger.debug('Response status code: ${response.statusCode}');
+      if (response.statusCode == 401) {
+        _logger.error('Authentication failed (401)');
+        _logger.error('Response body: ${response.body}');
+        throw HttpException('Authentication failed');
+      }
+
+      if (response.statusCode < 200 || response.statusCode > 299) {
+        _logger.error('Request failed with status: ${response.statusCode}');
+        _logger.error('Response body: ${response.body}');
+        throw Exception('Failed to patch data. Status: ${response.statusCode}. Body: ${response.body}');
+      }
+
+      if (response.body.isNotEmpty) {
+        return jsonDecode(response.body);
+      }
+    } catch (e) {
+      _logger.error('Error in PATCH request to $endpoint: $e');
       rethrow;
     }
   }

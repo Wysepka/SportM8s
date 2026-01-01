@@ -54,6 +54,7 @@ class _MapEventJoinScrollView extends State<MapEventJoinScrollView>{
               Text(widget.mapEventData.eventDuration.to24h()),
             ])
         ),
+
         MapEventWidgetContainer(
             child: Column(children: [
               Text("Event Participants"),
@@ -76,15 +77,20 @@ class _MapEventJoinScrollView extends State<MapEventJoinScrollView>{
                     );
                   }
                   return ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                      itemCount: snapshot.data!.length,
                       itemBuilder: (context, index) {
                         return MapEventParticipantWidget(snapshot.data![index], 20, widget.mapEventData.participantsIDs[index]);
                       }
                   );
                 },
               ),
+
             ])
         ),
-      ],
+
+    ],
     );
   }
 

@@ -32,7 +32,8 @@ class _MapJoinEvent extends State<MapJoinEvent>{
               child: Column(
                 children: [
                   MapEventTopPanel(_onDismissJoinEvent, "Join Event"),
-                  Expanded(
+                  Flexible(
+                      fit: FlexFit.loose,
                       child: MapEventJoinScrollView(widget.mapEventData , widget.serverSportService)
                   ),
                 ],

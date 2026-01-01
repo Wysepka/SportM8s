@@ -118,7 +118,7 @@ class ServerSportService
 
   //Optimize to send only event ID
   Future<ListResponse<String>> getMapEventParticipantsDisplayNames(MapEventData mapEventData) async {
-    final result = await serverService.post("UserController/getUsersDisplayName",
+    final result = await serverService.post("User/getUsersDisplayName",
       body: {
         'eventName': mapEventData.eventName,
         'eventDescription': mapEventData.eventDescription,
@@ -130,8 +130,9 @@ class ServerSportService
         'eventDateTime': mapEventData.eventStartDate.toIso8601String(),
         'eventTime': '${mapEventData.eventDuration.hour.toString().padLeft(2, '0')}:'
             '${mapEventData.eventDuration.minute.toString().padLeft(2, '0')}:00',
+        'participantsIDs': mapEventData.participantsIDs,
       },);
-    if(result["reason"] == "Success"){
+    if(result["response"] == "Success"){
       final response = ListResponse.fromJson(result, (e) => e as String);
       return response;
     }
