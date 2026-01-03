@@ -23,10 +23,13 @@ class _ChangeDisplayProfileScreen extends ConsumerState<ChangeDisplayProfileScre
 
   late TextFormField nameTextField;
   final TextEditingController nameTextController = TextEditingController();
+  final FocusNode nameFocus = FocusNode();
   late TextFormField surnameTextField;
   final TextEditingController surnameTextController = TextEditingController();
+  final FocusNode surnameFocus = FocusNode();
   late TextFormField displayNameTextField;
   final TextEditingController displayNameTextController = TextEditingController();
+  final FocusNode displayNameFocus = FocusNode();
 
   bool _hasChangedNameField = false;
   bool _hasChangedSurnameField = false;
@@ -37,69 +40,112 @@ class _ChangeDisplayProfileScreen extends ConsumerState<ChangeDisplayProfileScre
   String? _displayNameFieldLoadedValue ="";
 
   bool _isSendingValuesOverNetwork = false;
-  bool _canSendValues = true;
+  bool _canSendNameValues = true;
+  bool _canSendSurnameValues = true;
+  bool _canSendDisplayNameValus = true;
+
+  bool _ditInitName = false;
+  bool _didInitSurname = false;
+  bool _didInitDisplayName = false;
 
   @override
   void initState() {
     super.initState();
+
+
+    nameTextController.addListener(()  {
+        if(!nameFocus.hasFocus) {
+          _revalidateAllFields();
+        }
+    });
+    surnameTextController.addListener(() {
+      if(!surnameFocus.hasFocus) {
+        _revalidateAllFields();
+      }
+    });
+    displayNameTextController.addListener(() {
+      if(!displayNameFocus.hasFocus) {
+        _revalidateAllFields();
+      }
+    });
   }
 
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    var storageServiceAsync = ref.read(storageServiceInitializerProvider);
+    var storageServiceAsync = ref.watch(storageServiceInitializerProvider);
     return Scaffold(
         appBar: AppBar(title: Text("Edit Profile"),),
         body: SafeArea(
-          child: Padding(padding: EdgeInsets.fromLTRB(20 , 70, 20, 20),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ProfilePictureWidget(pictureRadius: 60),
-                  SizedBox(height: 10,),
-                  Text(
-                    "Public Info",
-                    style: Theme.of(context).textTheme.titleMedium,),
-                  SizedBox(height: 5,),
-                  Text(
-                    "Update your name , surname, and display name shown for other users",
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant
+          child: Stack(
+            children: [
+              Padding(padding: EdgeInsets.fromLTRB(20 , 70, 20, 20),
+                child: ListView(
+                  //mainAxisAlignment: MainAxisAlignment.center,
+                  //crossAxisAlignment: CrossAxisAlignment.center,
+                  //mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ProfilePictureWidget(pictureRadius: 60),
+                    SizedBox(height: 10,),
+                    Text(
+                      "Public Info",
+                      style: Theme.of(context).textTheme.titleMedium,),
+                    SizedBox(height: 5,),
+                    Text(
+                      "Update your name , surname, and display name shown for other users",
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 20,),
-                  Card(
-                    color: Theme.of(context).colorScheme.surface.withOpacity(0.6),
-                    child: Form(
-                      child: Column(
-                        children: [
-                          _buildUserPropTypeWidget(storageServiceAsync, ProfileDisplayPropertyType.Name),
-                          SizedBox(height: 8,),
-                          _buildUserPropTypeWidget(storageServiceAsync, ProfileDisplayPropertyType.Surname),
-                          SizedBox(height: 8,),
-                          _buildUserPropTypeWidget(storageServiceAsync, ProfileDisplayPropertyType.DisplayName),
-                      ],),
-                    ) ,),
-                  SizedBox(height: 10),
-                  _getEndResultButton(storageServiceAsync),
-                ],
-              )
+                    SizedBox(height: 20,),
+                    Card(
+                      color: Theme.of(context).colorScheme.surface.withOpacity(0.6),
+                      child: Form(
+                        child: Column(
+                          children: [
+                            _buildUserPropTypeWidget(storageServiceAsync, ProfileDisplayPropertyType.Name),
+                            SizedBox(height: 8,),
+                            _buildUserPropTypeWidget(storageServiceAsync, ProfileDisplayPropertyType.Surname),
+                            SizedBox(height: 8,),
+                            _buildUserPropTypeWidget(storageServiceAsync, ProfileDisplayPropertyType.DisplayName),
+                        ],),
+                      ) ,),
+                    SizedBox(height: 10),
+                    _getEndResultButton(storageServiceAsync),
+                  ],
+                )
+              ),
+              if(_isSendingValuesOverNetwork)...{
+                Positioned.fill(
+                    child: IgnorePointer(
+                      ignoring: true,
+                      child: Container(
+                        color: Colors.black.withOpacity(0.3),
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                    )
+                ),
+              }
+            ]
           ),
         )
     );
   }
 
   Widget _getEndResultButton(AsyncValue<StorageService> storageServiceAsync){
-    bool _hasChangedAnything = _hasChangedNameField || _hasChangedSurnameField || _hasChangedDisplayNameField;
+    bool hasChangedAnything = _hasChangedNameField || _hasChangedSurnameField || _hasChangedDisplayNameField;
+    bool sendValuesAllGood = _nameFieldLoadedValue!.isNotEmpty &&
+                             _surnameFieldLoadedValue!.isNotEmpty &&
+                             _displayNameFieldLoadedValue!.isNotEmpty;
 
     return SizedBox(
       height: 48,
       child: FilledButton.icon(
           onPressed: () {
-            if (_hasChangedAnything) {
+            if (sendValuesAllGood) {
               storageServiceAsync.when(
                 data: (storageServiceData) async {
                   setState(() {
@@ -146,16 +192,28 @@ class _ChangeDisplayProfileScreen extends ConsumerState<ChangeDisplayProfileScre
                 loading: () => CircularProgressIndicator(),
               );
             }
+            /*
+            else if(sendValuesAllGood){
+              if (context.mounted) {
+                _logger.info(
+                    'Profile params not changed ! Navigating to MapRootScreen');
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  Navigator.pushReplacementNamed(context, '/map-root-screen');
+                });
+              }
+            }
+
+             */
           },
           label: Text(
-              _canSendValues ? _hasChangedAnything ? "Save" : "Continue" : "Data Malformed",
+            sendValuesAllGood ? (hasChangedAnything ? "Save" : "Continue") : "Data Malformed",
           ),
           icon: _isSendingValuesOverNetwork ? const SizedBox(
             width: 18,
             height: 18,
             child: CircularProgressIndicator(strokeWidth: 2),
           )
-          : const Icon(Icons.check),
+          : sendValuesAllGood ? const Icon(Icons.check) : const Icon(Icons.error),
       ),
     );
   }
@@ -189,9 +247,20 @@ class _ChangeDisplayProfileScreen extends ConsumerState<ChangeDisplayProfileScre
 
           if(type == ProfileDisplayPropertyType.Name)
           {
-            _nameFieldLoadedValue = snapshot.data;
-            nameTextController.text = snapshot.data!;
+            if(!_ditInitName){
+              //_ditInitName = true;
+              WidgetsBinding.instance.addPostFrameCallback( (_) {
+                setState(() {
+                  _ditInitName = true;
+                  nameTextController.text = snapshot.data!;
+                  _nameFieldLoadedValue = snapshot.data;
+                });
+              });
+            }
+
+            _canSendNameValues = _nameFieldLoadedValue != null && _nameFieldLoadedValue!.isNotEmpty;
             widgetTextField = TextFormField(
+              focusNode: nameFocus,
               decoration: InputDecoration(
                   labelText: "Name",
                   hintText: "e.g. Jacob",
@@ -200,16 +269,26 @@ class _ChangeDisplayProfileScreen extends ConsumerState<ChangeDisplayProfileScre
               controller: nameTextController,
               textInputAction: TextInputAction.next,
               autofillHints: const [AutofillHints.name],
-              validator: (v) => _fieldNameValidator(v),
-              onFieldSubmitted: (v) => _onNameSumbited(v),
+              validator: (v) => _requiredValidator(v , 15 , "Name"),
+              onFieldSubmitted: (v) => _revalidateAllFields(),
             );
             nameTextField = widgetTextField;
           }
           else if(type == ProfileDisplayPropertyType.Surname)
           {
-            _surnameFieldLoadedValue = snapshot.data;
-            surnameTextController.text = snapshot.data!;
+            if(!_didInitSurname){
+              WidgetsBinding.instance.addPostFrameCallback( (_) {
+                setState(() {
+                  _didInitSurname = true;
+                  surnameTextController.text = snapshot.data!;
+                  _surnameFieldLoadedValue = snapshot.data;
+                });
+              });
+            }
+
+            _canSendSurnameValues = _surnameFieldLoadedValue != null && _surnameFieldLoadedValue!.isNotEmpty;
             widgetTextField = TextFormField(
+              focusNode: surnameFocus,
               decoration: InputDecoration(
                   labelText: "Surname",
                   hintText: "e.g. Smith",
@@ -218,16 +297,25 @@ class _ChangeDisplayProfileScreen extends ConsumerState<ChangeDisplayProfileScre
               controller: surnameTextController,
               textInputAction: TextInputAction.next,
               autofillHints: const [AutofillHints.familyName],
-              validator: (v) => _fieldSurnameValidator(v),
-              onFieldSubmitted: (v) => _onSurnameSumbited(v),
+              validator: (v) => _requiredValidator(v , 20 , "Surname"),
+              onFieldSubmitted: (v) => _revalidateAllFields(),
             );
             surnameTextField = widgetTextField;
           }
           else if(type == ProfileDisplayPropertyType.DisplayName)
           {
-            _displayNameFieldLoadedValue = snapshot.data;
-            displayNameTextController.text = snapshot.data!;
+            if(!_didInitDisplayName){
+              WidgetsBinding.instance.addPostFrameCallback( (_) {
+                setState(() {
+                  _didInitDisplayName = true;
+                  displayNameTextController.text = snapshot.data!;
+                  _displayNameFieldLoadedValue = snapshot.data;
+                });
+              });
+            }
+            _canSendDisplayNameValus = _displayNameFieldLoadedValue != null && _displayNameFieldLoadedValue!.isNotEmpty;
             widgetTextField = TextFormField(
+              focusNode: displayNameFocus,
               decoration: InputDecoration(
                 helperText: "What other users will se when displaying your participation in event",
                 labelText: "Display Name",
@@ -236,11 +324,12 @@ class _ChangeDisplayProfileScreen extends ConsumerState<ChangeDisplayProfileScre
               controller: displayNameTextController,
               textInputAction: TextInputAction.done,
               autofillHints: const [AutofillHints.nickname],
-              validator: (v) => _fieldDisplayNameValidator(v),
-              onFieldSubmitted: (v) => _onDisplayNameSubmited(v),
+              validator: (v) => _requiredValidator(v , 15 , "Display Name"),
+              onFieldSubmitted: (v) => _revalidateAllFields(),
             );
             displayNameTextField = widgetTextField;
           }
+
           return widgetTextField;
         },
       ),
@@ -249,88 +338,45 @@ class _ChangeDisplayProfileScreen extends ConsumerState<ChangeDisplayProfileScre
     );
   }
 
-  void _onNameSumbited(String? fieldValueNull){
-    if(fieldValueNull == null){
-      _canSendValues = false;
-    }
-    String fieldValue = fieldValueNull!;
-    if(fieldValue != _nameFieldLoadedValue && !_hasChangedNameField){
-      setState(() {
-        _hasChangedNameField = true;
-      });
-    }
-    else if(_hasChangedNameField){
-      setState(() {
-        _hasChangedNameField = false;
-      });
-    }
-  }
-
-  void _onSurnameSumbited(String? fieldValueNull){
-    if(fieldValueNull == null || fieldValueNull.isEmpty){
-      _canSendValues = false;
-    }
-    String fieldValue = fieldValueNull!;
-    if(fieldValue != _surnameFieldLoadedValue && !_hasChangedSurnameField){
-      setState(() {
-        _hasChangedSurnameField = true;
-      });
-    }
-    else if(_hasChangedSurnameField){
-      setState(() {
-        _hasChangedSurnameField = false;
-      });
-    }
-  }
-
-  void _onDisplayNameSubmited(String? fieldValueNull){
-    if(fieldValueNull == null || fieldValueNull.isEmpty){
-      _canSendValues = false;
-    }
-    String fieldValue = fieldValueNull!;
-    if(fieldValue != _displayNameFieldLoadedValue && !_hasChangedDisplayNameField){
-      setState(() {
-        _hasChangedDisplayNameField = true;
-      });
-    }
-    else if(_hasChangedDisplayNameField){
-      setState(() {
-        _hasChangedDisplayNameField = false;
-      });
-    }
-  }
-
-  String? _fieldNameValidator(String? fieldValueNull){
-    String fieldValue = fieldValueNull ?? "";
-    if(fieldValue.isEmpty){
-      return "Name Field is Empty ! Write Something";
-    }
-    if(fieldValue.length > 20){
-      return "Your name is too long";
-    }
+  String? _requiredValidator(String? v, int max, String label) {
+    final value = v?.trim() ?? '';
+    if (value.isEmpty) return '$label cannot be empty';
+    if (value.length > max) return '$label is too long';
     return null;
   }
 
-  String? _fieldSurnameValidator(String? fieldValueNull){
-    String fieldValue = fieldValueNull ?? "";
-    if(fieldValue.isEmpty){
-      return "Surname is Empty ! Write Something";
-    }
-    if(fieldValue.length > 40){
-      return "Surname is too long";
-    }
-    return null;
-  }
+  void _revalidateAllFields() {
+    final nameOk = nameTextController.text.trim().isNotEmpty;
+    final surnameOk = surnameTextController.text.trim().isNotEmpty;
+    final displayOk = displayNameTextController.text.trim().isNotEmpty;
 
-  String? _fieldDisplayNameValidator(String? fieldValueNull){
-    String fieldValue = fieldValueNull ?? "";
-    if(fieldValue.isEmpty){
-      return "Display Name is empty! Write something";
-    }
-    if(fieldValue.length > 20){
-      return "Display Name is too long, shorten it";
-    }
-    return null;
+    final changedName = nameTextController.text != (_nameFieldLoadedValue! ?? '');
+    final changedSurname = surnameTextController.text != (_surnameFieldLoadedValue! ?? '');
+    final changedDisplay = displayNameTextController.text != (_displayNameFieldLoadedValue! ?? '');
+
+    final shouldRebuild =
+        nameOk != _canSendNameValues ||
+            surnameOk != _canSendSurnameValues ||
+            displayOk != _canSendDisplayNameValus ||
+            changedName != _hasChangedNameField ||
+            changedSurname != _hasChangedSurnameField ||
+            changedDisplay != _hasChangedDisplayNameField;
+
+    if (!shouldRebuild) return;
+
+    setState(() {
+      _canSendNameValues = nameOk;
+      _canSendSurnameValues = surnameOk;
+      _canSendDisplayNameValus = displayOk;
+
+      _nameFieldLoadedValue = nameTextController.text;
+      _surnameFieldLoadedValue = surnameTextController.text;
+      _displayNameFieldLoadedValue = displayNameTextController.text;
+
+      _hasChangedNameField = changedName;
+      _hasChangedSurnameField = changedSurname;
+      _hasChangedDisplayNameField = changedDisplay;
+    });
   }
 
 }
