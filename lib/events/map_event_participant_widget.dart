@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sportm8s/core/logger/logger_service.dart';
 import 'package:sportm8s/core/services/storage_service.dart';
+import 'package:sportm8s/events/map_event_widget_container.dart';
 
 class MapEventParticipantWidget extends ConsumerStatefulWidget{
 
   final String displayName;
   final double profileAvatarRadius;
   final String participantID;
+  final int participantIndex;
 
-  MapEventParticipantWidget(this.displayName , this.profileAvatarRadius , this.participantID);
+  MapEventParticipantWidget(this.displayName , this.profileAvatarRadius , this.participantID , this.participantIndex);
 
 
 
@@ -35,7 +37,7 @@ class _MapEventParticipantWidget extends ConsumerState<MapEventParticipantWidget
                   return Row(
                       children: [
                         CircularProgressIndicator(),
-                        _userDisplayNameWidget(),
+                        _userDisplayNameWidget(widget.participantIndex + 1),
                       ]
                   );
                 }
@@ -46,19 +48,29 @@ class _MapEventParticipantWidget extends ConsumerState<MapEventParticipantWidget
                         child: Text("Could not load Avatar for UserID: ${widget.participantID}"),
                         radius: widget.profileAvatarRadius,
                       ),
-                      _userDisplayNameWidget(),
+                      _userDisplayNameWidget(widget.participantIndex + 1),
                     ]
                   );
                 }
 
-                return Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundImage: NetworkImage(snapshot.data!),
-                      radius: widget.profileAvatarRadius,
-                    ),
-                    _userDisplayNameWidget(),
-                  ]
+                return MapEventWidgetContainer(
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(
+                          left: 5 ,
+                          top: 5,
+                          right: 0,
+                          bottom: 5
+                        ),
+                        child: CircleAvatar(
+                          backgroundImage: NetworkImage(snapshot.data!),
+                          radius: widget.profileAvatarRadius,
+                        ),
+                      ),
+                      _userDisplayNameWidget(widget.participantIndex + 1),
+                    ]
+                  ),
                 );
               });
         },
@@ -74,11 +86,9 @@ class _MapEventParticipantWidget extends ConsumerState<MapEventParticipantWidget
     );
   }
 
-  Widget _userDisplayNameWidget(){
-    return Expanded(
-      child: Center(
-        child: Text(widget.displayName) ,
-      ),
+  Widget _userDisplayNameWidget(int participantIndex){
+    return Center(
+      child: Text("$participantIndex. ${widget.displayName}") ,
     );
   }
 }
