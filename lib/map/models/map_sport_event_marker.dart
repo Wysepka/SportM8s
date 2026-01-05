@@ -17,23 +17,29 @@ class MapSportEventData
   factory MapSportEventData.fromJson(Map<String,dynamic> value , OSMMarkerData markerData){
     MapSportEventData mapSportEventDataParsed;
     
-    LatLng position = LatLng(value['positionLatitude'] as double, value['positionLongitude'] as double);
+    LatLng position = LatLng(value['eventPosition']['latitude'] as double, value['eventPosition']['longitude'] as double);
     SportEventType sportEventType = SportEventUtils.parseIntToSportEventType(value['sportEventType']);
 
-    List<String> participantsIDs = List<String>.from(value['participantsIDs'] ?? []);
+    final Map<String, Participant> participantsIDs =
+    (value['participantsIDs'] as Map<String, dynamic>? ?? {})
+        .map(
+          (key, val) => MapEntry(
+        key,
+        Participant.fromJson(val as Map<String, dynamic>),
+      ),
+    );
 
     MapEventData eventData = MapEventData(
         eventName: value['eventName'] as String,
         eventDescription: value['eventDescription'] as String,
         sportEventType: sportEventType,
         position: position,
-        maxParticipants: value['maxParticipants'],
-        currentParticipants: value['currentParticipants'],
         eventID: value['eventID'],
         creatorID: value['creatorID'],
         participantsIDs: participantsIDs,
         eventStartDate: DateTime.parse(value["eventDateTime"]),
         eventDuration: parseTimeOfDay(value["eventTime"]),
+        capacity: Capacity.fromJson(value['capacity']),
     );
 
     Marker marker = Marker(point: position, child: markerData.mapIconEvent(eventData) , width: 160, height: 360 , alignment: Alignment.bottomCenter);

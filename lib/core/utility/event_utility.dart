@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:sportm8s/gen/assets.gen.dart';
+import 'package:sportm8s/map/models/map_event_data.dart';
 
 import '../enums/enums_container.dart';
 
@@ -51,5 +52,9 @@ class EventUtility{
       case EventServiceRequestType.JoiningEvent:
         return "Join Event Request is being send to server";
     }
+  }
+
+  static Map<String,dynamic> toJson(Map<String,Participant> participants){
+    return participants.map((key, value) => MapEntry(key, value.toJson()));
   }
 }

@@ -243,6 +243,25 @@ class ServerUserService {
     }
   }
 
+  Future<String> getUserID() async{
+    try{
+      final result = await _serverService.getDynamicMap("User/getUserID");
+      if(result.isNotEmpty && result.entries.first.value != null){
+        return result.entries.first.value;
+      }
+      else if(result.isNotEmpty && result.entries.first.value == null){
+        return "Profile Name is null";
+      }
+      else{
+        return "Error while loading data";
+      }
+    }
+    catch(error , stacktrace){
+      _logger.error("There was an error while trying to get getUserID | E:$error ||| StackTrace:$stacktrace");
+      return "Error while loading data";
+    }
+  }
+
   Future<bool> setProfileDisplayParam(String value, ProfileDisplayPropertyType type) async {
     try{
       final typeString = type.name;

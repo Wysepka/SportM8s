@@ -147,11 +147,10 @@ class RandomUtility{
         eventDescription: eventDescr,
         sportEventType: eventType,
         position: position,
-        maxParticipants: maxParticipants,
-        currentParticipants: currParticipants,
+        capacity: Capacity(maxParticipants: maxParticipants, currentParticipants: currParticipants),
         eventID: Uuid().v4(),
         creatorID: Uuid().v4(),
-        participantsIDs: [],
+        participantsIDs: <String,Participant>{},
         eventStartDate: dateTime,
         eventDuration: timeOfDay);
   }

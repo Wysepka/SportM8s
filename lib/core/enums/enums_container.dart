@@ -42,3 +42,9 @@ enum EventServiceRequestType{
   CreatingEvent,
   JoiningEvent,
 }
+
+enum UserEventRequestType{
+  Invalid,
+  Join,
+  Leave,
+}
