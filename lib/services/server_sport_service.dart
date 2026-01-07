@@ -1,19 +1,24 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sportm8s/core/logger/logger_service.dart';
 import 'package:sportm8s/core/models/cosmos_response.dart';
 import 'package:sportm8s/core/models/cosmos_result.dart';
 import 'package:sportm8s/core/models/server_response.dart';
 import 'package:sportm8s/core/utility/event_utility.dart';
+import 'package:sportm8s/dto/api_error.dart';
+import 'package:sportm8s/dto/api_result.dart';
 import 'package:sportm8s/dto/list_response.dart';
 import 'package:sportm8s/map/map_side_view.dart';
 import 'package:sportm8s/map/models/map_sport_event_marker.dart';
 import 'package:sportm8s/services/server_service.dart';
 
+import '../dto/sport_event_dto.dart';
 import '../map/models/map_event_data.dart';
 
 final serverSportServiceProvider = Provider((ref) {
@@ -35,29 +40,45 @@ class ServerSportService
     String continuationToken = "";
     int pageSize = 50;
 
-    List<MapSportEventData> events = await getSportEventsFromServer(pageSize, continuationToken);
+    var eventsResult = await getSportEventsFromServer(pageSize, continuationToken);
+
+    List<MapSportEventData> events = [];
+    if(eventsResult is OkResultPaginated<List<MapSportEventData>>){
+      events = (eventsResult).data;
+    }
 
     return events;
   }
 
-  Future<List<MapSportEventData>> getSportEventsFromServer(int pageSize ,  String continuationToken) async {
+  Future<ApiResult<List<MapSportEventData>>> getSportEventsFromServer(int pageSize ,  String continuationToken) async {
     bool firstRun = true;
     List<MapSportEventData> eventsList = [];
+    int statusCode = 500;
+
     while(firstRun || continuationToken.isNotEmpty) {
       // ✅ Send GET request
       final response = await serverService.getDynamicMapPaginated(
           "SportMap/getSportEvents", pageSize: 50,
           continuationToken: continuationToken);
 
-      final eventsJson = response['items'] as List;
+      if(response['okResult'] == null){
+        return ErrorResult(
+            error: ApiError(
+                errorCode: response['statusCode'],
+                errorMessage: response['detail']),
+            statusCode: response['statusCode']);
+      }
+
+      statusCode = response['okResult']['statusCode'];
+      final eventsJson = response['okResult']['data'] as List;
       for(int i = 0; i < eventsJson.length; i++)
       {
           MapSportEventData event = MapSportEventData.fromJson(eventsJson[i], markerData);
           eventsList.add(event);
       }
 
-      if(response["continuationToken"] != null) {
-        continuationToken = response['continuationToken'];
+      if(response['okResult']['continuationToken'] != null) {
+        continuationToken = response['okResult']['continuationToken'];
       }
       else{
         continuationToken = "";
@@ -66,10 +87,14 @@ class ServerSportService
       firstRun = false;
     }
 
-    return eventsList;
+    return OkResultPaginated(
+        data: eventsList,
+        continuationToken: continuationToken,
+        statusCode: statusCode,
+    );
   }
 
-  Future<CosmosResponse> addSportEvent(MapEventData mapEventData) async {
+  Future<ApiResult<bool>> addSportEvent(MapEventData mapEventData) async {
     final response = await serverService.post(
       "SportMap/addSportEvent",
       body: {
@@ -90,16 +115,21 @@ class ServerSportService
         'eventTime': '${mapEventData.eventDuration.hour.toString().padLeft(2, '0')}:'
             '${mapEventData.eventDuration.minute.toString().padLeft(2, '0')}:00',
       },);
-    if(response["statusCode"] == 500){
+
+    OkResult<bool> okResult;
+    var apiResultCode = response['statusCode'] ?? response['okResult']['statusCode'] as int;
+    bool isOkStatusCode = apiResultCode >= 200 && apiResultCode < 299;
+    okResult = OkResult(data: isOkStatusCode , statusCode: apiResultCode);
+    if(!isOkStatusCode){
       logger.error("Could not Create Sport Event | Error: ${response["detail"]}");
-      return CosmosResponse.fromJson(response, false);
+      return ErrorResult(error: response['detail'] ?? response['errorMessage'], statusCode: apiResultCode);
     }
     else {
-      return CosmosResponse.fromJson(response , true);
+      return okResult;
     }
   }
 
-  Future<CosmosResponse> joinSportEvent(MapEventData mapEventData) async {
+  Future<ApiResult<bool>> joinSportEvent(MapEventData mapEventData) async {
     final response = await serverService.post(
       "SportMap/joinSportEvent",
       body: {
@@ -120,16 +150,32 @@ class ServerSportService
         'eventTime': '${mapEventData.eventDuration.hour.toString().padLeft(2, '0')}:'
             '${mapEventData.eventDuration.minute.toString().padLeft(2, '0')}:00',
       },);
-    if(response["statusCode"] == 500){
-      logger.error("Could not Join Sport Event | Error: ${response["detail"]}");
-      return CosmosResponse.fromJson(response, false);
+
+    if(response['okStatus'] != null){
+      return OkResult(data: true, statusCode: 200);
     }
-    else {
-      return CosmosResponse.fromJson(response , true);
+
+    int statusCode = response['statusCode'] ?? response['errorCode'];
+    String errorMsg = response['detail'] ?? response['errorMessage'];
+
+    if(statusCode < 200 || statusCode > 299){
+      logger.error("Could not Join Sport Event | Error: ${errorMsg}");
+        return ErrorResult(
+            error: ApiError(
+                errorCode: statusCode,
+                errorMessage: errorMsg),
+            statusCode: statusCode
+        );
+    }
+    else{
+      return OkResult(
+          data: false,
+          statusCode: statusCode
+      );
     }
   }
 
-  Future<CosmosResponse> leaveSportEvent(MapEventData mapEventData) async {
+  Future<ApiResult<bool>> leaveSportEvent(MapEventData mapEventData) async {
     final response = await serverService.post(
       "SportMap/joinSportEvent",
       body: {
@@ -150,34 +196,68 @@ class ServerSportService
         'eventTime': '${mapEventData.eventDuration.hour.toString().padLeft(2, '0')}:'
             '${mapEventData.eventDuration.minute.toString().padLeft(2, '0')}:00',
       },);
-    if(response["statusCode"] == 500){
-      logger.error("Could not Join Sport Event | Error: ${response["detail"]}");
-      return CosmosResponse.fromJson(response, false);
+
+    int statusCode = response['statusCode'] ?? response['okResult']['statusCode'];
+
+    if(statusCode == 500){
+      String errorMsg =  response['detail'] ?? response['errorMessage'];
+      logger.error("Could not Join Sport Event | Error: ${errorMsg}");
+      return ErrorResult(
+          error: ApiError(
+              errorCode: 500,
+              errorMessage: errorMsg),
+          statusCode: 500
+      );
+    }
+
+    if(statusCode >= 200 && statusCode <= 299){
+      return OkResult(
+          data: true,
+          statusCode: statusCode
+      );
     }
     else {
-      return CosmosResponse.fromJson(response , true);
+      String errorMsg =  response['detail'] ?? response['errorMessage'];
+      logger.error("Could not Join Sport Event | Error: ${errorMsg}}");
+      return ErrorResult(
+          error: ApiError(
+              errorCode: response['statusCode'],
+              errorMessage: errorMsg
+          ),
+          statusCode: response['statusCode']
+      );
     }
   }
 
 
-  Future<bool> deleteSportEvent(MapEventData mapEventData) async {
+  Future<ApiResult<bool>> deleteSportEvent(MapEventData mapEventData) async {
     final response = await serverService.delete(
       "SportMap/deleteSportEvent/${mapEventData.eventID}",
       body: {
         'eventID': mapEventData.eventID,
       },);
-    if(response["result"] as bool){
+    int statusCode = response['statusCode'] ?? response['okResult']['statusCode'];
+    if(statusCode >= 200 && statusCode < 299){
       logger.info("Sport Event with ID:${mapEventData.eventID} deletion went success");
-      return true;
+      return OkResult(
+          data: true,
+          statusCode: statusCode
+      );
     }
     else {
-      logger.error("Could not Delete Sport Event");
-      return false;
+      logger.error("Could not Delete Sport Event | Error: ${response["detail"]}");
+      return ErrorResult(
+          error: ApiError(
+              errorCode: response['statusCode'],
+              errorMessage: response['detail'] ?? response['errorMessage']
+          ),
+          statusCode: response['statusCode']
+      );
     }
   }
 
   //Optimize to send only event ID
-  Future<ListResponse<String>> getMapEventParticipantsDisplayNames(MapEventData mapEventData) async {
+  Future<ApiResult<ListResponse<String>>> getMapEventParticipantsDisplayNames(MapEventData mapEventData) async {
     final result = await serverService.post("User/getUsersDisplayName",
       body: {
         'eventName': mapEventData.eventName,
@@ -198,19 +278,44 @@ class ServerSportService
             '${mapEventData.eventDuration.minute.toString().padLeft(2, '0')}:00',
         'participantsIDs': EventUtility.toJson(mapEventData.participantsIDs),
       },);
-    if(result["response"] == "Success"){
-      final response = ListResponse.fromJson(result, (e) => e as String);
-      return response;
+
+    if(result["statusCode"] == 200){
+      final dataList = ListResponse.fromJson(result['data'], (e) => e as String);
+      return OkResult(
+          data: dataList,
+          statusCode: result['statusCode'],
+      );
     }
     else{
-      logger.error("Could not Retrieve Participants Display Names | Error: ${result["response"]}");
-      return ListResponse<String>(items: [] , reason: result["response"]);
+      String errorMessage = result['detail'];
+      logger.error("Could not Retrieve Participants Display Names | Error: ${errorMessage}");
+      return ErrorResult(
+          error: ApiError(
+              errorCode: result['statusCode'],
+              errorMessage: errorMessage
+          ),
+          statusCode: result['statusCode']
+      );
     }
-    return ListResponse<String>(items: [] , reason: "Error");
   }
 
-  Future<bool> getIsCurrentUserEventCreator(String mapEventID) async {
+  Future<ApiResult<bool>> getIsCurrentUserEventCreator(String mapEventID) async {
     final result = await serverService.getDynamicMap("SportMap/${mapEventID}/isCurrentUserEventCreator");
-    return result['isCreator'] as bool;
+    int statusCode = result['statusCode'] ?? result['okResult']['statusCode'];
+    if(statusCode >= 200 && statusCode <= 299){
+      return OkResult(
+          data: result['okResult']['data'] as bool,
+          statusCode: statusCode
+      );
+    }
+    else {
+      return ErrorResult(
+          error: ApiError(
+              errorCode: statusCode,
+              errorMessage: result['detail'] ?? result['errorMessage'],
+          ),
+          statusCode: statusCode
+      );
+    }
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sportm8s/core/enums/enums_container.dart';
+import 'package:sportm8s/dto/api_result.dart';
 import 'package:sportm8s/services/server_sport_service.dart';
 
 import '../core/services/storage_service.dart';
@@ -11,8 +12,9 @@ class MapEventJoinButton extends StatefulWidget{
   final ServerSportService _sportService;
   final MapEventData _mapEventData;
   void Function(UserEventRequestType request) _onButtonRequestReceived;
+  void Function() _onDeleteButtonClicked;
 
-  MapEventJoinButton(this._sportService , this._mapEventData , this._onButtonRequestReceived);
+  MapEventJoinButton(this._sportService , this._mapEventData , this._onButtonRequestReceived , this._onDeleteButtonClicked);
 
   @override
   State<StatefulWidget> createState() => _MapEventJoinButton();
@@ -69,7 +71,12 @@ class _MapEventJoinButton extends State<MapEventJoinButton>{
                 }
                 final results = snapshot.data!;
                 String userID = results[0] as String;
-                bool isCurrentUserCreator = results[1] as bool;
+                bool isCurrentUserCreator = false;
+                ApiResult<bool> apiResult = results[1] as ApiResult<bool>;
+                if(apiResult is OkResult<bool>){
+                  isCurrentUserCreator = (apiResult as OkResult<bool>).data;
+                }
+
                 bool alreadyParticipant = widget._mapEventData.participantsIDs.containsKey(userID);
 
                 String sendingThroughNetworkDisplayText = alreadyParticipant ? isCurrentUserCreator ? "Deleting..." : "Leaving..." : "Joining...";
@@ -86,6 +93,7 @@ class _MapEventJoinButton extends State<MapEventJoinButton>{
                           });
                           if(isCurrentUserCreator){
                             var result = await widget._sportService.deleteSportEvent(widget._mapEventData);
+                            widget._onDeleteButtonClicked();
                           }
                           else {
                             var result = await widget._sportService

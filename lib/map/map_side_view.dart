@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,6 +16,7 @@ import 'package:sportm8s/core/logger/logger_service.dart';
 import 'package:sportm8s/core/models/cosmos_response.dart';
 import 'package:sportm8s/core/utility/event_utility.dart';
 import 'package:sportm8s/core/utility/random_utility.dart';
+import 'package:sportm8s/dto/api_result.dart';
 import 'package:sportm8s/events/map_event_widget_container.dart';
 import 'package:sportm8s/events/map_join_event.dart';
 import 'package:sportm8s/map/engine/sport_event_calculator.dart';
@@ -128,7 +130,7 @@ class _MapSideView extends State<MapSideView>{
 
           if(_isJoiningEvent)...[
               if(_currentClickedMapEvent != null)...[
-                MapJoinEvent(_currentClickedMapEvent! , _applyJoinEvent , _onDismissJoinEvent , sportEventEngine.sportService),
+                MapJoinEvent(_currentClickedMapEvent! , _applyJoinEvent , _onDismissJoinEvent , sportEventEngine.sportService , _onUserDeletedEvent),
               ]
               else...[
                 Center(
@@ -176,6 +178,13 @@ class _MapSideView extends State<MapSideView>{
     }
   }
 
+  void _onUserDeletedEvent(){
+    setState(() {
+      _isJoiningEvent = false;
+      _currentClickedMapEvent = null;
+    });
+  }
+
   void _onCreateEventTap(){
     setState(() {
       _isCreatingEvent = true;
@@ -206,14 +215,20 @@ class _MapSideView extends State<MapSideView>{
     setState(() {
       eventRequestType = EventServiceRequestType.CreatingEvent;
     });
-    CosmosResponse response = await sportEventEngine.sportService.addSportEvent(dataWithPos);
+    ApiResult<bool> response = await sportEventEngine.sportService.addSportEvent(dataWithPos);
     setState(() {
       eventRequestType = EventServiceRequestType.Idle;
     });
-    if(response.result.statusCode < 200 || response.result.statusCode > 299){
+    if(response.statusCode < 200 || response.statusCode > 299){
       if(context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text("Could not send MapEventData E: ${response.result.diagnostics}")));
+        if(kDebugMode) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("Could not send MapEventData E: ${(response as ErrorResult<bool>).error.errorMessage}")));
+        }
+        else{
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("Something went wrong")));
+        }
       }
     }
     else{
@@ -227,14 +242,14 @@ class _MapSideView extends State<MapSideView>{
     setState(() {
       eventRequestType = EventServiceRequestType.JoiningEvent;
     });
-    CosmosResponse result = await sportEventEngine.sportService.joinSportEvent(mapEventData);
+    ApiResult<bool> result = await sportEventEngine.sportService.joinSportEvent(mapEventData);
     setState(() {
       eventRequestType = EventServiceRequestType.Idle;
     });
-    if(!result.result.success){
+    if(!result.success){
       if(context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text("Could not send MapEventData E: ${result.result.diagnostics}")));
+            content: Text("Could not send MapEventData E: ${(result as ErrorResult<bool>).error.errorMessage}")));
       }
     }
     else{

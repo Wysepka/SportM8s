@@ -445,10 +445,14 @@ class ServerService {
 
       final nextToken = data["x-ms-continuation"];
 
+      return data;
+      /*
       return {
-        'items' : data['items'],
-        'continuationToken': nextToken ?? data['x-ms-continuation']
+        'items' : data['okResult']['Data'],
+        'continuationToken': nextToken ?? data['okResult']['ContinuationToken']
       };
+
+       */
     } catch (e) {
       _logger.error('Error in GET request to $endpoint: $e');
       if (e is HttpException) {
