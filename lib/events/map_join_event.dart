@@ -11,9 +11,10 @@ class MapJoinEvent extends StatefulWidget
   MapEventData mapEventData;
   final Function() onDismissJoinEventEvent;
   final Function(MapEventData mapEventData) onApplyJointEventEvent;
+  final Function() onUserDeletedEvent;
   final ServerSportService serverSportService;
 
-  MapJoinEvent(this.mapEventData , this.onApplyJointEventEvent, this.onDismissJoinEventEvent , this.serverSportService);
+  MapJoinEvent(this.mapEventData , this.onApplyJointEventEvent, this.onDismissJoinEventEvent , this.serverSportService , this.onUserDeletedEvent);
 
   @override
   State<StatefulWidget> createState() => _MapJoinEvent();
@@ -34,7 +35,7 @@ class _MapJoinEvent extends State<MapJoinEvent>{
                   MapEventTopPanel(_onDismissJoinEvent, "Join Event"),
                   Flexible(
                       fit: FlexFit.loose,
-                      child: MapEventJoinScrollView(widget.mapEventData , widget.serverSportService)
+                      child: MapEventJoinScrollView(widget.mapEventData , widget.serverSportService ,_onUserDeletedEvent)
                   ),
                 ],
               )
@@ -45,5 +46,9 @@ class _MapJoinEvent extends State<MapJoinEvent>{
 
   void _onDismissJoinEvent(){
     widget.onDismissJoinEventEvent();
+  }
+
+  void _onUserDeletedEvent(){
+    widget.onUserDeletedEvent();
   }
 }

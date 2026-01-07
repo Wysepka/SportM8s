@@ -241,6 +241,18 @@ class StorageService
     }
   }
 
+  Future<String> getUserID(WidgetRef ref) async{
+    try{
+      final serverUserService = ref.read(serverUserServiceProvider);
+      final serverStatus = await serverUserService.getUserID();
+      return serverStatus;
+    }
+    catch (e , stacktrace){
+      _logger.error("Error loading UserPictureURL ! E:$e | ST:$stacktrace");
+      return "Error";
+    }
+  }
+
   Future<bool> setUserDisplayProfileParam(WidgetRef ref, String value, ProfileDisplayPropertyType type) async {
     try{
       final serverUserService = ref.read(serverUserServiceProvider);

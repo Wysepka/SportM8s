@@ -207,11 +207,10 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
         sportEventType: sportEventTypeValue,
         //This is zero, but in MapSideView is providing a value
         position: LatLng(0, 0),
-        maxParticipants: maxParticipantsValue,
-        currentParticipants: 1,
+        capacity: Capacity(maxParticipants: maxParticipantsValue, currentParticipants: 1),
         eventID: "",
         creatorID: "",
-        participantsIDs: [],
+        participantsIDs: <String,Participant>{},
         eventStartDate: eventDate!,
         eventDuration: eventTime!
     );
@@ -283,7 +282,7 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
 
   void _onEventDescriptionChanged(){
     setState(() {
-      eventDescriptionValue = eventNameController.text;
+      eventDescriptionValue = eventDescriptionController.text;
       if(eventDescriptionValue.isNotEmpty){
         eventDescriptionSelected = true;
       }

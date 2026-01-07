@@ -139,7 +139,7 @@ class _MapIcon extends State<MapIcon>{
                                       alignment: PlaceholderAlignment.middle,
                                       child: EventUtility.GetEventIconBasedOnEventParam(EventParamType.EventParticipants ,18, 18)),
                                   TextSpan(
-                                      text: '${mapEventData!.currentParticipants}/${mapEventData!.maxParticipants}'
+                                      text: '${mapEventData!.capacity.currentParticipants}/${mapEventData!.capacity.maxParticipants}'
                                   ),
                                 ]
                             )),
@@ -267,7 +267,7 @@ class _MapIcon extends State<MapIcon>{
                           18,
                         ),
                         text:
-                        '${mapEventData!.currentParticipants}/${mapEventData!.maxParticipants}',
+                        '${mapEventData!.capacity.currentParticipants}/${mapEventData!.capacity.maxParticipants}',
                         maxLines: 1,
                       ),
 

@@ -12,11 +12,10 @@ class MapEventData
   final String eventDescription;
   final SportEventType sportEventType;
   final LatLng position;
-  final int maxParticipants;
-  final int currentParticipants;
+  final Capacity capacity;
   final String eventID;
   final String creatorID;
-  final List<String> participantsIDs;
+  final Map<String , Participant> participantsIDs;
   final DateTime eventStartDate;
   final TimeOfDay eventDuration;
 
@@ -25,13 +24,12 @@ class MapEventData
       required this.eventDescription ,
       required this.sportEventType,
       required this.position ,
-      required this.maxParticipants ,
-      required this.currentParticipants,
       required this.eventID,
       required this.creatorID,
       required this.participantsIDs,
       required this.eventStartDate,
       required this.eventDuration,
+      required this.capacity,
   });
 
   MapEventData copyProvidePosition(MapEventData mapEventData, LatLng position){
@@ -40,13 +38,46 @@ class MapEventData
         eventDescription: mapEventData.eventDescription,
         sportEventType: mapEventData.sportEventType,
         position: position,
-        maxParticipants: mapEventData.maxParticipants,
-        currentParticipants: mapEventData.currentParticipants,
         eventID: mapEventData.eventID,
         creatorID: mapEventData.creatorID,
         participantsIDs: mapEventData.participantsIDs,
         eventStartDate: mapEventData.eventStartDate,
         eventDuration: mapEventData.eventDuration,
+        capacity: mapEventData.capacity,
     );
   }
+}
+
+class Capacity{
+  final int maxParticipants;
+  final int currentParticipants;
+
+  Capacity({required this.maxParticipants , required this.currentParticipants});
+  
+  factory Capacity.fromJson(Map<String, dynamic> json){
+    return Capacity(maxParticipants: json['maxParticipants'], currentParticipants: json['currentParticipants']);
+  }
+}
+
+class Participant{
+  final String participantID;
+  final bool isConfirmed;
+  final DateTime joinedAt;
+
+  Participant({required this.participantID , required this.isConfirmed , required this.joinedAt});
+
+  factory Participant.fromJson(Map<String, dynamic> json) {
+    return Participant(
+      participantID: json['participantID'] as String,
+      isConfirmed: json['isConfirmed'] as bool,
+      joinedAt: DateTime.parse(json['joinedAt'] as String).toLocal(), // ✅
+    );
+  }
+
+  Map<String,dynamic> toJson() =>
+  {
+    'participantID': participantID,
+    'isConfirmed': isConfirmed,
+    'joinedAt': joinedAt.toUtc().toIso8601String(),
+  };
 }

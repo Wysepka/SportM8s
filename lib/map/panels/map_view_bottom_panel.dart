@@ -122,7 +122,7 @@ class _MapViewBottomPanel extends State<MapViewBottomPanel>{
               onPressed: widget.onJoinEventEvent,
               //TODO Add localisation
               label: Text(
-                "Join Event",
+                "View Event",
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 35,
