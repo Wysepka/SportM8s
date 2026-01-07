@@ -183,6 +183,7 @@ class _MapSideView extends State<MapSideView>{
       _isJoiningEvent = false;
       _currentClickedMapEvent = null;
     });
+    sportEventEngine.update();
   }
 
   void _onCreateEventTap(){
@@ -236,6 +237,8 @@ class _MapSideView extends State<MapSideView>{
         _isCreatingEvent = false;
       });
     }
+
+    sportEventEngine.update();
   }
 
   void _applyJoinEvent(MapEventData mapEventData) async {

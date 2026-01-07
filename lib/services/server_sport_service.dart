@@ -104,7 +104,7 @@ class ServerSportService
         'eventPosition':
         {
           'latitude': mapEventData.position.latitude,
-          'longitude': mapEventData.position.latitude,
+          'longitude': mapEventData.position.longitude,
         },
         'capacity':
         {

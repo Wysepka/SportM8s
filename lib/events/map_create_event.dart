@@ -282,7 +282,7 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
 
   void _onEventDescriptionChanged(){
     setState(() {
-      eventDescriptionValue = eventNameController.text;
+      eventDescriptionValue = eventDescriptionController.text;
       if(eventDescriptionValue.isNotEmpty){
         eventDescriptionSelected = true;
       }
