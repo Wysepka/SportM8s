@@ -80,7 +80,7 @@ class _MapViewBottomPanel extends State<MapViewBottomPanel>{
         child: SizedBox(
           width: double.infinity,
           height: 80,
-          child: _getMapEventPopupButton("   Create Event", widget.onCreateEventEvent)
+          child: _getMapEventPopupButton("Create Event", widget.onCreateEventEvent)
         ),
       );
     }
@@ -92,7 +92,7 @@ class _MapViewBottomPanel extends State<MapViewBottomPanel>{
         child: SizedBox(
           width: double.infinity,
           height: 80,
-          child: _getMapEventPopupButton("   Join Event", widget.onJoinEventEvent)
+          child: _getMapEventPopupButton("Join Event", widget.onJoinEventEvent)
         ),
       );
     }
