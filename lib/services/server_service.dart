@@ -16,15 +16,16 @@ final serverServiceProvider = Provider((ref) {
   final httpClient = HttpClient()
     ..badCertificateCallback = ((X509Certificate cert, String host, int port) => ServerService.isRunningLocally);
   final client = IOClient(httpClient);
-  
   return ServerService(client);
 });
 
 class ServerService {
   final LoggerService _logger = LoggerService();
   late final ServerUserService userService;
-  static const bool isRunningLocally = true;
-  //final String baseUrl;
+  static const String appEnv =
+  String.fromEnvironment('APP_ENV', defaultValue: 'dev');
+
+  static const bool isRunningLocally = appEnv == 'dev';  //final String baseUrl;
   final IOClient _client;
 
   static bool get isEmulator {

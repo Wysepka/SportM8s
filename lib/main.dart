@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sportm8s/features/auth/presentation/screens/aggreements_screen.dart';
+import 'package:sportm8s/graphics/sportm8s_themes.dart';
 import 'package:sportm8s/map/map_root_screen.dart';
 import 'package:sportm8s/profile/views/change_display_profile_screen.dart';
 import 'package:sportm8s/features/auth/presentation/screens/privacy_policy_screen.dart';
@@ -48,10 +49,7 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
       title: 'SportM8s',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
+      theme: SportM8sTheme.dark(),
       home: Consumer(
         builder: (context, ref, child) {
           final authState = ref.watch(authStateProvider);

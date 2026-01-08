@@ -8,24 +8,50 @@ class MapEventPanelContainer extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    var colorSheme = Theme.of(context).colorScheme;
     return Container(
+        margin: EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 10
+        ),
+
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(28),
+          color: colorSheme.outline,
+            /*
           border: Border.all(
             color: Colors.grey,
             width: 8,
           ),
-          color: Colors.white,
+           */
           boxShadow:[
             BoxShadow(
-              color: Colors.grey, // shadow color
-              blurRadius: 8,                         // softens the shadow
+              color: colorSheme.shadow.withOpacity(0.25), // shadow color
+              blurRadius: 18,                         // softens the shadow
               spreadRadius: 1,                       // extends the shadow
-              offset: Offset(2, 4),                  // moves shadow right & down
+              offset: Offset(0, 8),                  // moves shadow right & down
             ),
           ]
         ),
-        child: child,
+
+        child: Padding(
+          padding: const EdgeInsets.all(6),
+          child: Container(
+            decoration: BoxDecoration(
+              color: colorSheme.surface,
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(
+                color: colorSheme.outlineVariant,
+                width: 1
+              )
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
+            child: child,
+          ),
+        ),
       );
     }
 }

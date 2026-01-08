@@ -80,6 +80,7 @@ class _MapViewBottomPanel extends State<MapViewBottomPanel>{
           width: double.infinity,
           height: 50,
           child: ElevatedButton.icon(
+              /*
               style: ElevatedButton.styleFrom(
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(4))
@@ -87,6 +88,8 @@ class _MapViewBottomPanel extends State<MapViewBottomPanel>{
                 foregroundColor: Colors.black,
                 backgroundColor: Colors.yellow,
               ),
+
+               */
               icon: Icon(Icons.add, size: 35),
               onPressed: widget.onCreateEventEvent,
               //TODO Add localisation
@@ -110,6 +113,7 @@ class _MapViewBottomPanel extends State<MapViewBottomPanel>{
           width: double.infinity,
           height: 50,
           child: ElevatedButton.icon(
+              /*
               style: ElevatedButton.styleFrom(
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(4)
@@ -118,6 +122,8 @@ class _MapViewBottomPanel extends State<MapViewBottomPanel>{
                 foregroundColor: Colors.black,
                 backgroundColor: Colors.yellow,
               ),
+
+               */
               icon: Icon(Icons.add, size: 35),
               onPressed: widget.onJoinEventEvent,
               //TODO Add localisation

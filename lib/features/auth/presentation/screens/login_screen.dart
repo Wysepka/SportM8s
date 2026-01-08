@@ -24,7 +24,7 @@ class LoginScreen extends ConsumerWidget {
         ),
       );
     }
-
+    this.log.i('APP_ENV = ${ServerService.appEnv}');
     return Scaffold(
       body: Center(
         child: Column(
