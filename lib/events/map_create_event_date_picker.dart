@@ -38,6 +38,7 @@ class _MapCreateEventDatePicker extends State<MapCreateEventDatePicker>{
           Container(
               child: Text(
                 selectedEventDate != null ? selectedEventDate!.toDate() : "" ,
+
                 /*
                 style: TextStyle(
                   fontWeight: FontWeight.w500,

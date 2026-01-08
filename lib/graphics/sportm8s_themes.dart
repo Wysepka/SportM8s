@@ -299,8 +299,8 @@ class SportM8sTheme {
       ),
 
       textTheme: const TextTheme(
-        titleLarge: TextStyle(color: SportM8sColors.textPrimary, fontWeight: FontWeight.w700),
-        titleMedium: TextStyle(color: SportM8sColors.textPrimary, fontWeight: FontWeight.w600),
+        titleLarge: TextStyle(color: SportM8sColors.textPrimary, fontWeight: FontWeight.w900),
+        titleMedium: TextStyle(color: SportM8sColors.textPrimary, fontWeight: FontWeight.w700),
         bodyLarge: TextStyle(color: SportM8sColors.textPrimary),
         bodyMedium: TextStyle(color: SportM8sColors.textPrimary),
         bodySmall: TextStyle(color: SportM8sColors.textSecondary),

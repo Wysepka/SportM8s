@@ -4,17 +4,19 @@ import 'package:flutter/material.dart';
 class MapEventWidgetContainer extends StatelessWidget
 {
   final Widget child;
+  final double? marginHorizontal;
+  final double? marginVertical;
 
-  const MapEventWidgetContainer({required this.child});
+  const MapEventWidgetContainer({required this.child , this.marginHorizontal , this.marginVertical});
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     var colorScheme = Theme.of(context).colorScheme;
     return Container(
-        margin: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 10
+        margin: EdgeInsets.symmetric(
+          horizontal: marginHorizontal ?? 20,
+          vertical: marginVertical ?? 10
         ),
         padding: const EdgeInsets.symmetric(
           horizontal: 16,

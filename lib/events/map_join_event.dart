@@ -27,7 +27,7 @@ class _MapJoinEvent extends State<MapJoinEvent>{
     return DraggableScrollableSheet(
         minChildSize: 0.2,
         maxChildSize: 0.8,
-        initialChildSize: 0.5,
+        initialChildSize: 0.8,
         builder: (context, scrollController) {
           return MapEventPanelContainer(
               child: Column(

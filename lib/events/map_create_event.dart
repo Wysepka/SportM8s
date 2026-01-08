@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:sportm8s/core/enums/enums_container.dart';
+import 'package:sportm8s/core/styles/map_event_widget_text_style.dart';
 import 'package:sportm8s/core/utility/sport_utility.dart';
 import 'package:sportm8s/events/map_create_event_date_picker.dart';
 import 'package:sportm8s/events/map_event_top_panel.dart';
@@ -63,6 +64,7 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
     return DraggableScrollableSheet(
         minChildSize: 0.2,
         maxChildSize: 0.8,
@@ -80,14 +82,13 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
                             children: [
                               Text(
                                 "Event Name",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
                               ),
                               TextField(
                                 textAlign: TextAlign.center,
                                 controller: eventNameController,
+                                minLines: 1,
+                                maxLines: null,
                                 decoration: InputDecoration(
                                   label: Text(eventNameController.text.isNotEmpty ? "" : "Event Name"),
                                   contentPadding: EdgeInsets.only(
@@ -108,14 +109,13 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
                             children: [
                               Text(
                                 "Event Description",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
                               ),
                               TextField(
                                 textAlign: TextAlign.center,
                                 controller: eventDescriptionController,
+                                minLines: 1,
+                                maxLines: null,
                                 decoration: InputDecoration(
                                   label: Text(eventDescriptionController.text.isNotEmpty ? "" : "Event Description"),
                                   contentPadding: EdgeInsets.only(
@@ -136,14 +136,13 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
                             children: [
                               Text(
                                 "Max Participants",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
                               ),
                               TextField(
                                 textAlign: TextAlign.center,
                                 controller: eventMaxParticipantsController,
+                                minLines: 1,
+                                maxLines: null,
                                 decoration: InputDecoration(
                                     label: Text(eventMaxParticipantsController.text.isNotEmpty ? "" : "Max Participants"),
                                     contentPadding: EdgeInsets.only(
@@ -165,10 +164,7 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
                                 children: [
                                   Text(
                                     "Sport Type",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
                                   ),
                                   SportEventUtils.getSportTypeDropdownButton(_onDropdownSportEventTypeChanged , _getSelectedSportEventType ,20)
                                 ]

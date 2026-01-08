@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sportm8s/core/styles/map_event_widget_text_style.dart';
 import 'package:sportm8s/map/panels/map_view_bottom_panel_controller.dart';
 
 import '../../core/enums/enums_container.dart';
@@ -78,29 +79,8 @@ class _MapViewBottomPanel extends State<MapViewBottomPanel>{
         bottom: 0,
         child: SizedBox(
           width: double.infinity,
-          height: 50,
-          child: ElevatedButton.icon(
-              /*
-              style: ElevatedButton.styleFrom(
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(4))
-                ),
-                foregroundColor: Colors.black,
-                backgroundColor: Colors.yellow,
-              ),
-
-               */
-              icon: Icon(Icons.add, size: 35),
-              onPressed: widget.onCreateEventEvent,
-              //TODO Add localisation
-              label: Text(
-                "Create Event",
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 35,
-                ),
-              )
-          ),
+          height: 80,
+          child: _getMapEventPopupButton("   Create Event", widget.onCreateEventEvent)
         ),
       );
     }
@@ -111,36 +91,42 @@ class _MapViewBottomPanel extends State<MapViewBottomPanel>{
         bottom: 0,
         child: SizedBox(
           width: double.infinity,
-          height: 50,
-          child: ElevatedButton.icon(
-              /*
-              style: ElevatedButton.styleFrom(
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(4)
-                  ),
-                ),
-                foregroundColor: Colors.black,
-                backgroundColor: Colors.yellow,
-              ),
-
-               */
-              icon: Icon(Icons.add, size: 35),
-              onPressed: widget.onJoinEventEvent,
-              //TODO Add localisation
-              label: Text(
-                "View Event",
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 35,
-                ),
-              )
-          ),
+          height: 80,
+          child: _getMapEventPopupButton("   Join Event", widget.onJoinEventEvent)
         ),
       );
     }
     else{
       return SizedBox.shrink();
     }
+  }
+
+  Widget _getMapEventPopupButton(String buttonLabel, Function() onClicked){
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        vertical: 10,
+        horizontal: 16,
+      ),
+      child: Material(
+        elevation: 8,
+        shadowColor: colorScheme.shadow,
+        borderRadius: BorderRadius.circular(20),
+        child: ElevatedButton.icon(
+            icon: Icon(
+              Icons.add,
+              size: 35 ,
+              color: Colors.white,
+            ),
+            onPressed: onClicked,
+            //TODO Add localisation
+            label: Text(
+              buttonLabel,
+              style: Theme.of(context).textTheme.titleLarge?.mapEventWidgetTitle(context),
+            ),
+        ),
+      ),
+    );
   }
 
 }

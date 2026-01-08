@@ -54,11 +54,9 @@ class MapEventTopPanel extends StatelessWidget{
 
                     style: IconButton.styleFrom(
                       backgroundColor: colorScheme.primary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                      ),
-
+                      shape: const CircleBorder(),
                     ),
+                  )
                     /*
                     label: Text(
                       '',
@@ -77,7 +75,7 @@ class MapEventTopPanel extends StatelessWidget{
                   child: Text(
                     panelName,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.w800,
                       color: colorScheme.onSurface,
                     )

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sportm8s/core/enums/enums_container.dart';
 import 'package:sportm8s/core/extensions/string_extensions.dart';
+import 'package:sportm8s/core/styles/map_event_widget_text_style.dart';
 import 'package:sportm8s/dto/api_result.dart';
 import 'package:sportm8s/dto/list_response.dart';
 import 'package:sportm8s/events/map_event_join_button.dart';
@@ -31,42 +32,56 @@ class _MapEventJoinScrollView extends State<MapEventJoinScrollView>{
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
     return ListView(
       children: [
         MapEventWidgetContainer(
             child: Column(children: [
-              Text("Event Name"),
+              Text("Event Name",
+                style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
+              ),
               Text(widget.mapEventData.eventName),
             ])
         ),
         MapEventWidgetContainer(
             child: Column(children: [
-              Text("Event Description"),
+              Text("Event Description",
+                style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
+              ),
               Text(widget.mapEventData.eventDescription),
             ])
         ),
         MapEventWidgetContainer(
             child: Column(children: [
-              Text("Event Type"),
+              Text("Event Type",
+                style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
+              ),
               Text(widget.mapEventData.sportEventType.toString()),
             ])
         ),
         MapEventWidgetContainer(
             child: Column(children: [
-              Text("Event Start Date"),
+              Text("Event Start Date",
+                style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
+              ),
               Text(widget.mapEventData.eventStartDate.toDate()),
             ])
         ),
         MapEventWidgetContainer(
             child: Column(children: [
-              Text("Event Time"),
+              Text("Event Time",
+                style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
+              ),
               Text(widget.mapEventData.eventDuration.to24h()),
             ])
         ),
 
         MapEventWidgetContainer(
             child: Column(children: [
-              Text("Event Participants"),
+              Text(
+                  "Event Participants",
+                  style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
+              ),
               FutureBuilder<List<String>>(
                 future: _getEventParticipantsDisplayNames(),
                 builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
