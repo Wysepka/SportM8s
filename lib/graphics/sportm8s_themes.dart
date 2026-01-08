@@ -2,50 +2,147 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 
+
 class SportM8sColors {
-  // Core
-  static const primary = Color(0xFF0F1C2E); // Midnight Navy (scaffold/app shell)
-  static const surface = Color(0xFF18283A); // Dark Steel (cards/sheets)
-  static const accent = Color(0xFFFF8C1A); // Sport Orange (CTA)
-  static const success = Color(0xFF2FBF71); // Active Green
+  // =========================
+  // Core brand
+  // =========================
+  static const primary = Color(0xFF0F1C2E); // App shell / navy
+  static const surface = Color(0xFF18283A); // Cards / sheets
+  static const accent = Color(0xFFFF8C1A);  // Sport orange (CTA)
 
-  // Text
-  static const textPrimary = Color(0xFFF5F7FA);
-  static const textSecondary = Color(0xFFA1ACB8);
-
-  // UI
-  static const divider = Color(0xFF243447);
-  static const disabled = Color(0xFF5F6B78);
-
-  // Status
+  // =========================
+  // State colors
+  // =========================
+  static const success = Color(0xFF2FBF71);
   static const warning = Color(0xFFF2B705);
   static const error = Color(0xFFD94C4C);
   static const info = Color(0xFF3A7CA5);
 
-  static const surfaceContainerHighest = const Color(0xC11C2538);
+  // =========================
+  // Text
+  // =========================
+  static const textPrimary = Color(0xFFF5F7FA);
+  static const textSecondary = Color(0xFFA1ACB8);
+
+  // =========================
+  // UI helpers
+  // =========================
+  static const divider = Color(0xFF243447);
+  static const disabled = Color(0xFF5F6B78);
+
+  // =========================
+  // Orange containers
+  // =========================
+  static const primaryContainer = Color(0xFFFFA24D);
+  static const onPrimaryContainer = primary;
+
+  // =========================
+  // Success containers
+  // =========================
+  static const secondaryContainer = Color(0xFF1F4A39);
+  static const onSecondaryContainer = textPrimary;
+
+  // =========================
+  // Info containers
+  // =========================
+  static const tertiaryContainer = Color(0xFF23455A);
+  static const onTertiaryContainer = textPrimary;
+
+  // =========================
+  // Error containers
+  // =========================
+  static const errorContainer = Color(0xFF4B1F22);
+  static const onErrorContainer = textPrimary;
+
+  // =========================
+  // Surface hierarchy (Material 3)
+  // =========================
+  static const surfaceDim = Color(0xFF0B1420);
+  static const surfaceBright = Color(0xFF223447);
+
+  static const surfaceContainerLowest = Color(0xFF0C1726);
+  static const surfaceContainerLow = Color(0xFF122235);
+  static const surfaceContainer = surface;
+  static const surfaceContainerHigh = Color(0xFF1A2D41);
+  static const surfaceContainerHighest = Color(0xC11C2538);
+
+  // =========================
+  // Outlines
+  // =========================
+  static const outline = divider;
+  static const outlineVariant = Color(0xFF2D3E54);
+
+  // =========================
+  // Inverse (for SnackBars etc.)
+  // =========================
+  static const inverseSurface = textPrimary;
+  static const onInverseSurface = primary;
+  static const inversePrimary = accent;
+
+  // =========================
+  // Misc
+  // =========================
+  static const shadow = Colors.black;
+  static const scrim = Colors.black;
+  static const surfaceTint = accent;
 }
 
 class SportM8sTheme {
   static ColorScheme darkScheme = const ColorScheme.dark(
-    primary: SportM8sColors.primary,
-    onPrimary: SportM8sColors.textPrimary,
+    brightness: Brightness.dark,
 
-    secondary: SportM8sColors.accent,
-    onSecondary: Color(0xFF0F1C2E), // readable on orange
+    // Brand
+    primary: SportM8sColors.accent,
+    onPrimary: SportM8sColors.primary,
+    primaryContainer: SportM8sColors.primaryContainer,
+    onPrimaryContainer: SportM8sColors.onPrimaryContainer,
 
-    tertiary: SportM8sColors.success,
-    onTertiary: Color(0xFF0F1C2E),
+    secondary: SportM8sColors.success,
+    onSecondary: SportM8sColors.primary,
+    secondaryContainer: SportM8sColors.secondaryContainer,
+    onSecondaryContainer: SportM8sColors.onSecondaryContainer,
 
+    tertiary: SportM8sColors.info,
+    onTertiary: SportM8sColors.textPrimary,
+    tertiaryContainer: SportM8sColors.tertiaryContainer,
+    onTertiaryContainer: SportM8sColors.onTertiaryContainer,
+
+    // Errors
+    error: SportM8sColors.error,
+    onError: SportM8sColors.textPrimary,
+    errorContainer: SportM8sColors.errorContainer,
+    onErrorContainer: SportM8sColors.onErrorContainer,
+
+    // Surfaces
     surface: SportM8sColors.surface,
     onSurface: SportM8sColors.textPrimary,
+    surfaceDim: SportM8sColors.surfaceDim,
+    surfaceBright: SportM8sColors.surfaceBright,
 
+    surfaceContainerLowest: SportM8sColors.surfaceContainerLowest,
+    surfaceContainerLow: SportM8sColors.surfaceContainerLow,
+    surfaceContainer: SportM8sColors.surfaceContainer,
+    surfaceContainerHigh: SportM8sColors.surfaceContainerHigh,
+    surfaceContainerHighest: SportM8sColors.surfaceContainerHighest,
+
+    // Background
     background: SportM8sColors.primary,
     onBackground: SportM8sColors.textPrimary,
 
-    error: SportM8sColors.error,
-    onError: SportM8sColors.textPrimary,
+    // Outlines
+    outline: SportM8sColors.outline,
+    outlineVariant: SportM8sColors.outlineVariant,
 
-    surfaceContainerHighest: SportM8sColors.surfaceContainerHighest,
+    // Inverse
+    inverseSurface: SportM8sColors.inverseSurface,
+    onInverseSurface: SportM8sColors.onInverseSurface,
+    inversePrimary: SportM8sColors.inversePrimary,
+
+    // Misc
+    shadow: SportM8sColors.shadow,
+    scrim: SportM8sColors.scrim,
+    surfaceTint: SportM8sColors.surfaceTint,
 
   );
 

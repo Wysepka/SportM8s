@@ -50,12 +50,14 @@ class MapEventTopPanel extends StatelessWidget{
                     tooltip: "Back",
                     icon: Icon(Icons.keyboard_return),
                     onPressed: _onDismissCreateEventTap,
-                    color: colorScheme.onSurface,
+                    color: colorScheme.surfaceContainerHighest,
+
                     style: IconButton.styleFrom(
-                      backgroundColor: colorScheme.surfaceContainerHighest,
+                      backgroundColor: colorScheme.primary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
                       ),
+
                     ),
                     /*
                     label: Text(
