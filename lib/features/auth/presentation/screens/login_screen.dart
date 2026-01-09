@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:sportm8s/gen/assets.gen.dart';
 import '../../../../core/services/auth_service.dart';
 import '../../../../services/server_service.dart';
 import '../../../../core/logger/logger_config.dart';
@@ -24,12 +25,13 @@ class LoginScreen extends ConsumerWidget {
         ),
       );
     }
-
+    this.log.i('APP_ENV = ${ServerService.appEnv}');
     return Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Image.asset(Assets.logos.sportM8sLogoSplashOrange.path),
             ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(context, "/email-signin");

@@ -1,0 +1,15 @@
+flutter_native_splash:
+  # Color is mostly irrelevant here because the image is full-bleed,
+  # but keep it to avoid edge flashes on some devices.
+  color: "#0F1C2E"
+  image: assets/splash/SportM8s_FullLogo_PeopleTraining_Transparent.png
+  #image: assets/splash/SportM8s_Logo_Splash_Orange.png
+
+  android: true
+  ios: true
+  web: false
+
+  android_12:
+    color: "#0F1C2E"
+    image: assets/splash/SportM8s_FullLogo_PeopleTraining_Transparent.png
+    #image: assets/splash/SportM8s_Logo_Splash_Orange.png

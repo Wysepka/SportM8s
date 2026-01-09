@@ -164,8 +164,9 @@ class SportEventUtils {
   }
 
   //TODO Add localisation
-  static DropdownButton<String> getSportTypeDropdownButton(Function(String?)? onChanged , String Function() getValue , double iconSize){
+  static DropdownButton<String> getSportTypeDropdownButton(Function(String?)? onChanged , String Function() getValue , double iconSize , FocusNode focusNode){
     return DropdownButton<String>(
+      //focusNode: focusNode,
       value: getValue(),
       alignment: Alignment.center,
       items: [

@@ -4,30 +4,45 @@ import 'package:flutter/material.dart';
 class MapEventWidgetContainer extends StatelessWidget
 {
   final Widget child;
+  final double? marginHorizontal;
+  final double? marginVertical;
 
-  const MapEventWidgetContainer({required this.child});
+  const MapEventWidgetContainer({required this.child , this.marginHorizontal , this.marginVertical});
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+    var colorScheme = Theme.of(context).colorScheme;
     return Container(
-        margin: EdgeInsets.all(20),
+        margin: EdgeInsets.symmetric(
+          horizontal: marginHorizontal ?? 20,
+          vertical: marginVertical ?? 10
+        ),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14
+        ),
         decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.grey ,
-          width: 2),
-        boxShadow:[
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5), // shadow color
-            //blurRadius: 2,                         // softens the shadow
-            blurRadius: 0,                         // softens the shadow
-            spreadRadius: 0,                       // extends the shadow
-            //offset: Offset(1, 2),                  // moves shadow right & down
-            ),
-        ],
+          color: colorScheme.surfaceContainerHigh,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: colorScheme.outlineVariant.withOpacity(0.8) ,
+            width: 1),
+          boxShadow:[
+            BoxShadow(
+              color: colorScheme.shadow.withOpacity(0.18), // shadow color
+              //blurRadius: 2,                         // softens the shadow
+              blurRadius: 10,                         // softens the shadow
+              offset: Offset(0, 6),                  // moves shadow right & down
+              ),
+          ],
       ),
-      child: child,
+
+      child: DefaultTextStyle.merge(
+          style: TextStyle(
+              color: colorScheme.onSurface),
+          child: child
+      ),
     );
   }
 

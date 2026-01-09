@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sportm8s/core/extensions/string_extensions.dart';
 import 'package:sportm8s/events/map_event_widget_container.dart';
+import 'package:sportm8s/graphics/sportm8s_themes.dart';
 
 class MapCreateEventDatePicker extends StatefulWidget{
   final Function(DateTime) dateTimeSelectedFunction;
@@ -37,10 +38,14 @@ class _MapCreateEventDatePicker extends State<MapCreateEventDatePicker>{
           Container(
               child: Text(
                 selectedEventDate != null ? selectedEventDate!.toDate() : "" ,
+
+                /*
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 16,
                 ),
+
+                 */
               )
           ),
           ElevatedButton(
@@ -51,10 +56,13 @@ class _MapCreateEventDatePicker extends State<MapCreateEventDatePicker>{
           [
               Text(
                 selectedEventTime != null ? selectedEventTime!.to24h() : "",
+                /*
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 16,
                 ),
+
+                 */
               ),
               ElevatedButton(
                 onPressed: _showTimePicker,
@@ -70,7 +78,12 @@ class _MapCreateEventDatePicker extends State<MapCreateEventDatePicker>{
     final date = await showDatePicker(
       context: context,
       firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(Duration(days: 365)));
+      lastDate: DateTime.now().add(Duration(days: 365)),
+      builder: (context , child){
+        return SportM8sTheme.datePickerTheme(child, context);
+      }
+    );
+
 
     if(date != null) {
       setState(() {
@@ -84,6 +97,9 @@ class _MapCreateEventDatePicker extends State<MapCreateEventDatePicker>{
     final time = await showTimePicker(
         context: context,
         initialTime: TimeOfDay.now(),
+        builder: (context, child) {
+          return SportM8sTheme.timePickerTheme(child, context);
+        }
     );
 
     if(time != null) {

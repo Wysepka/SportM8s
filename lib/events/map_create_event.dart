@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:sportm8s/core/enums/enums_container.dart';
+import 'package:sportm8s/core/styles/map_event_widget_text_style.dart';
 import 'package:sportm8s/core/utility/sport_utility.dart';
 import 'package:sportm8s/events/map_create_event_date_picker.dart';
 import 'package:sportm8s/events/map_event_top_panel.dart';
@@ -42,6 +43,26 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
   bool eventTimeSelected = false;
   TimeOfDay? eventTime;
 
+  double _currentDraggableSheetSize = 0.5;
+
+  FocusNode nameFieldFocusNode = FocusNode(
+      debugLabel:  "NameFieldFocusNode"
+  );
+
+  FocusNode descriptionFieldFocusNode = FocusNode(
+    debugLabel: "DescriptionFieldFocusNode"
+  );
+
+  FocusNode maxParticipantsFocusNode = FocusNode(
+    debugLabel: "MaxParticipantsFocusNode"
+  );
+
+  FocusNode sportTypeFocusNode = FocusNode(
+    debugLabel: "SportTypeFocusNode"
+  );
+
+  int focusStack = 0;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -49,6 +70,11 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
     eventNameController.addListener(_onEventNameChanged);
     eventDescriptionController.addListener(_onEventDescriptionChanged);
     eventMaxParticipantsController.addListener(_onEventMaxParticipantsChanged);
+
+    nameFieldFocusNode.addListener(() => onFocusComponentChanged(nameFieldFocusNode));
+    descriptionFieldFocusNode.addListener(() => onFocusComponentChanged(descriptionFieldFocusNode));
+    maxParticipantsFocusNode.addListener(() => onFocusComponentChanged(maxParticipantsFocusNode));
+    sportTypeFocusNode.addListener(() => onFocusComponentChanged(sportTypeFocusNode));
   }
 
   @override
@@ -58,15 +84,21 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
     eventNameController.removeListener(_onEventNameChanged);
     eventDescriptionController.removeListener(_onEventDescriptionChanged);
     eventMaxParticipantsController.removeListener(_onEventMaxParticipantsChanged);
+
+    nameFieldFocusNode.dispose();
+    descriptionFieldFocusNode.dispose();
+    maxParticipantsFocusNode.dispose();
+    sportTypeFocusNode.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
     return DraggableScrollableSheet(
         minChildSize: 0.2,
-        maxChildSize: 0.8,
-        initialChildSize: 0.5,
+        maxChildSize: 0.9,
+        initialChildSize: _currentDraggableSheetSize,
         builder: (context, scrollController) {
           return MapEventPanelContainer(
             child: Column(
@@ -80,14 +112,14 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
                             children: [
                               Text(
                                 "Event Name",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
                               ),
                               TextField(
+                                focusNode: nameFieldFocusNode,
                                 textAlign: TextAlign.center,
                                 controller: eventNameController,
+                                minLines: 1,
+                                maxLines: null,
                                 decoration: InputDecoration(
                                   label: Text(eventNameController.text.isNotEmpty ? "" : "Event Name"),
                                   contentPadding: EdgeInsets.only(
@@ -108,14 +140,14 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
                             children: [
                               Text(
                                 "Event Description",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
                               ),
                               TextField(
+                                focusNode: descriptionFieldFocusNode,
                                 textAlign: TextAlign.center,
                                 controller: eventDescriptionController,
+                                minLines: 1,
+                                maxLines: null,
                                 decoration: InputDecoration(
                                   label: Text(eventDescriptionController.text.isNotEmpty ? "" : "Event Description"),
                                   contentPadding: EdgeInsets.only(
@@ -136,14 +168,14 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
                             children: [
                               Text(
                                 "Max Participants",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
                               ),
                               TextField(
+                                focusNode: maxParticipantsFocusNode,
                                 textAlign: TextAlign.center,
                                 controller: eventMaxParticipantsController,
+                                minLines: 1,
+                                maxLines: null,
                                 decoration: InputDecoration(
                                     label: Text(eventMaxParticipantsController.text.isNotEmpty ? "" : "Max Participants"),
                                     contentPadding: EdgeInsets.only(
@@ -165,12 +197,9 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
                                 children: [
                                   Text(
                                     "Sport Type",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
                                   ),
-                                  SportEventUtils.getSportTypeDropdownButton(_onDropdownSportEventTypeChanged , _getSelectedSportEventType ,20)
+                                  SportEventUtils.getSportTypeDropdownButton(_onDropdownSportEventTypeChanged , _getSelectedSportEventType ,20 , sportTypeFocusNode)
                                 ]
                             ),
                         ),
@@ -186,6 +215,43 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
           );
         }
     );
+  }
+
+  void onFocusComponentChanged(FocusNode focusNode){
+    if(focusNode.hasFocus){
+      focusStack++;
+    }
+    else{
+      focusStack--;
+    }
+
+    setState(() {
+      if(focusStack > 0){
+        _currentDraggableSheetSize = 0.9;
+      }
+      else{
+        _currentDraggableSheetSize = 0.5;
+      }
+    });
+  }
+
+  void onNameFocusNode(){
+  }
+
+  void onDescriptionFocusNode(){
+
+  }
+
+  void onMaxParticipantsFocusNode(){
+
+  }
+
+  void onSportTypeFocusNode(){
+
+  }
+
+  void updateDraggableSheetSize(){
+
   }
 
   String _getSelectedSportEventType(){

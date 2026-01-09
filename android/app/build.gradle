@@ -54,6 +54,17 @@ android {
         }
     }
 
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def appName = "SportM8s"
+            def buildType = variant.buildType.name   // debug / release
+            def versionName = variant.versionName ?: "0.1.0"
+            def versionCode = variant.versionCode ?: 000001
+
+            outputFileName = "${appName}-${buildType}-v${versionName}(${versionCode}).apk"
+        }
+    }
+
     buildTypes {
         debug {
             signingConfig signingConfigs.debug

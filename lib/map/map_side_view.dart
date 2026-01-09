@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:logger/logger.dart';
 import 'package:sportm8s/app_consts.dart';
@@ -60,6 +61,9 @@ class _MapSideView extends State<MapSideView>{
 
   late MapIconCreateEvent mapIconCreateEvent;
 
+  bool locationInitialized = false;
+  LatLng initialLocation = LatLng(52, 21);
+
   @override void initState() {
     // TODO: implement initState
     super.initState();
@@ -87,18 +91,84 @@ class _MapSideView extends State<MapSideView>{
     }
     else {
       // TODO: implement build
-      return Stack(
+      return SafeArea(
+        child: locationInitialized ?
+          getMapWidget(initialLocation) :
+          FutureBuilder(
+          future: getCurrentUserLocation(),
+          builder: (context, snapshot){
+            if(snapshot.connectionState == ConnectionState.waiting){
+              return Center(
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children:[ 
+                      Text("Loading Map..."),
+                      CircularProgressIndicator()
+                    ]),
+              );
+            }
+
+            if(snapshot.hasError){
+              locationInitialized = true;
+              loggerService.error("Could not initialize current user location. Error: ${snapshot.error}");
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                setState(() {
+
+                });
+              });
+
+              return Center(
+                child: Text("Error while trying to get current user Geolocation !"),
+              );
+            }
+            
+            if(!snapshot.hasData){
+              initialLocation = snapshot.data!;
+              locationInitialized = true;
+              loggerService.error("Could not initialize current user location, location is empty !");
+
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                setState(() {
+
+                });
+              });
+
+              return Center(
+                child: Text("Current Geolocation of user is incorrect"),
+              );
+            }
+
+            locationInitialized = true;
+            initialLocation = snapshot.data!;
+            loggerService.info("Current user location initialized properly");
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              setState(() {
+
+              });
+            });
+
+            return Center(
+              child: Text("Location Initialized"),
+            );
+          },
+        ),
+      );
+    }
+  }
+
+  Widget getMapWidget(LatLng initialPosition){
+    return Stack(
         children: [
           Positioned.fill(
             child: FlutterMap(
                 mapController: mapController,
                 options: MapOptions(
                   //TODO add LatLng info getting from phone localization
-                  initialCenter: LatLng(52.237049, 21.017532),
+                  initialCenter: initialPosition,
                   initialZoom: 13.0,
                   onMapEvent: (event) {
                     if(event is MapEventDoubleTapZoomEnd || event is MapEventDoubleTapZoomStart
-                    || event is MapEventMoveStart || event is MapEventMoveEnd){
+                        || event is MapEventMoveStart || event is MapEventMoveEnd){
                       setState(() {
                         zoomValue = event.camera.zoom;
                         sportEventEngine.updateRectsNoAddition(mapController.camera.visibleBounds);
@@ -124,27 +194,27 @@ class _MapSideView extends State<MapSideView>{
                   ),
                   //MarkerLayer(markers: RandomUtility.getMarkers_Test(_getMarkerWidth, _getMarkerHeight, _getMapIcon , _getZoomMultiplier))
                   MarkerLayer(markers:_getMarkers())
-              ]
+                ]
             ),
           ),
 
           if(_isJoiningEvent)...[
-              if(_currentClickedMapEvent != null)...[
-                MapJoinEvent(_currentClickedMapEvent! , _applyJoinEvent , _onDismissJoinEvent , sportEventEngine.sportService , _onUserDeletedEvent),
-              ]
-              else...[
-                Center(
-                  child: MapEventWidgetContainer(
-                    child: Text(
-                      "Could not Join Event, _currentClickedMapEvent is null !",
-                      style: TextStyle(
+            if(_currentClickedMapEvent != null)...[
+              MapJoinEvent(_currentClickedMapEvent! , _applyJoinEvent , _onDismissJoinEvent , sportEventEngine.sportService , _onUserDeletedEvent),
+            ]
+            else...[
+              Center(
+                child: MapEventWidgetContainer(
+                  child: Text(
+                    "Could not Join Event, _currentClickedMapEvent is null !",
+                    style: TextStyle(
                         fontWeight: FontWeight.w400,
                         fontSize: 30
-                      ),
                     ),
                   ),
-                )
-              ]
+                ),
+              )
+            ]
           ],
 
           if(_isCreatingEvent)...[
@@ -174,7 +244,37 @@ class _MapSideView extends State<MapSideView>{
             )
           ]
         ]
-      );
+    );
+  }
+
+  Future<LatLng> getCurrentUserLocation() async {
+    try {
+      var isGeolocatorEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!isGeolocatorEnabled) {
+        loggerService.error("Geolocator service is not enabled on smartphone");
+        return initialLocation;
+      }
+
+      LocationPermission locationPermission = await Geolocator
+          .checkPermission();
+      int iterator = 0;
+      while ((locationPermission == LocationPermission.denied ||
+          locationPermission == LocationPermission.deniedForever)) {
+        locationPermission = await Geolocator.requestPermission();
+        iterator++;
+        if (iterator > 5) {
+          loggerService.info(
+              "Geolocator does not obtained permissions for geocaching");
+          break;
+        }
+      }
+
+      Position position = await Geolocator.getCurrentPosition();
+      return LatLng(position.latitude, position.longitude);
+    }
+    catch(e , stacktrace){
+      loggerService.error("Error while trying to get current user location: Ex: ${e} | StackTrace: ${stacktrace}");
+      return LatLng(52, 21);
     }
   }
 

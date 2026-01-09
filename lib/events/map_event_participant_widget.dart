@@ -54,7 +54,10 @@ class _MapEventParticipantWidget extends ConsumerState<MapEventParticipantWidget
                 }
 
                 return MapEventWidgetContainer(
+                  marginHorizontal: 3,
+                  marginVertical: 3,
                   child: Row(
+                    mainAxisSize: MainAxisSize.max,
                     children: [
                       Padding(
                         padding: EdgeInsets.only(
@@ -87,8 +90,12 @@ class _MapEventParticipantWidget extends ConsumerState<MapEventParticipantWidget
   }
 
   Widget _userDisplayNameWidget(int participantIndex){
-    return Center(
-      child: Text("$participantIndex. ${widget.displayName}") ,
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
+    return Expanded(
+      child: Text(
+        "$participantIndex. ${widget.displayName}",
+        overflow: TextOverflow.ellipsis,
+      ),
     );
   }
 }
