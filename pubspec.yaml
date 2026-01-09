@@ -50,6 +50,8 @@ dependencies:
   flutter_gen_runner: ^5.4.0
   build_runner: ^2.4.0
   geolocator: ^11.0.0
+  flutter_native_splash: ^2.4.4
+  flutter_launcher_icons: ^0.13.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -116,3 +118,13 @@ flutter:
     - assets/icons/sport_icons_fixed/
     - assets/icons/sport_icons_fixed_transparent_v2/
     - assets/icons/events/
+    - assets/splash/
+    - assets/logos/
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/logos/SportM8s_Logo_Foreground.png"
+
+  adaptive_icon_foreground: "assets/logos/SportM8s_Logo_Foreground.png"
+  adaptive_icon_background: "assets/logos/SportM8s_Logo_Background_WithoutOrange.png"

@@ -27,6 +27,46 @@ class $AssetsIconsGen {
           const $AssetsIconsSportIconsFixedTransparentV2Gen();
 }
 
+class $AssetsLogosGen {
+  const $AssetsLogosGen();
+
+  /// File path: assets/logos/SportM8s_Logo_Background_WithoutOrange.png
+  AssetGenImage get sportM8sLogoBackgroundWithoutOrange => const AssetGenImage(
+      'assets/logos/SportM8s_Logo_Background_WithoutOrange.png');
+
+  /// File path: assets/logos/SportM8s_Logo_Foreground.png
+  AssetGenImage get sportM8sLogoForeground =>
+      const AssetGenImage('assets/logos/SportM8s_Logo_Foreground.png');
+
+  /// File path: assets/logos/SportM8s_Logo_Splash_Orange.png
+  AssetGenImage get sportM8sLogoSplashOrange =>
+      const AssetGenImage('assets/logos/SportM8s_Logo_Splash_Orange.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [
+        sportM8sLogoBackgroundWithoutOrange,
+        sportM8sLogoForeground,
+        sportM8sLogoSplashOrange
+      ];
+}
+
+class $AssetsSplashGen {
+  const $AssetsSplashGen();
+
+  /// File path: assets/splash/SportM8s_FullLogo_PeopleTraining_Transparent.png
+  AssetGenImage get sportM8sFullLogoPeopleTrainingTransparent =>
+      const AssetGenImage(
+          'assets/splash/SportM8s_FullLogo_PeopleTraining_Transparent.png');
+
+  /// File path: assets/splash/SportM8s_Logo_AndroidStudio.svg
+  String get sportM8sLogoAndroidStudio =>
+      'assets/splash/SportM8s_Logo_AndroidStudio.svg';
+
+  /// List of all assets
+  List<dynamic> get values =>
+      [sportM8sFullLogoPeopleTrainingTransparent, sportM8sLogoAndroidStudio];
+}
+
 class $AssetsTextGen {
   const $AssetsTextGen();
 
@@ -250,6 +290,8 @@ class Assets {
   const Assets._();
 
   static const $AssetsIconsGen icons = $AssetsIconsGen();
+  static const $AssetsLogosGen logos = $AssetsLogosGen();
+  static const $AssetsSplashGen splash = $AssetsSplashGen();
   static const $AssetsTextGen text = $AssetsTextGen();
 }
 
