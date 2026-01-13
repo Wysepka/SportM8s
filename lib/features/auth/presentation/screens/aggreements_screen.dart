@@ -8,6 +8,7 @@ import 'package:sportm8s/features/auth/presentation/screens/privacy_policy_scree
 import 'package:flutter/scheduler.dart';
 import 'package:sportm8s/core/logger/logger_service.dart';
 import 'package:sportm8s/core/logger/logger_config.dart';
+import 'package:sportm8s/graphics/sportm8s_themes.dart';
 import 'package:sportm8s/services/server_user_service.dart';
 import 'package:sportm8s/core/models/server_response.dart';
 
@@ -47,13 +48,13 @@ class _AggreementsScreenState extends ConsumerState<AggreementsScreen>{
   Future<String> getPrivacyPolicyHtml() async
   {
     _logger.debug('Loading privacy policy HTML content');
-    return await rootBundle.loadString('assets/text/privacyPolicyAndroidExample.txt');
+    return await rootBundle.loadString('assets/text/privacyPolicyV3.txt');
   }
 
   Future<String> getTermsOfServiceHtml() async
   {
     _logger.debug('Loading terms of service HTML content');
-    return await rootBundle.loadString('assets/text/termsOfServiceExample.txt');
+    return await rootBundle.loadString('assets/text/termsOfServiceV2.txt');
   }
 
   Map<String, Style> _getHtmlStylesTermsOfService() {
@@ -62,19 +63,19 @@ class _AggreementsScreenState extends ConsumerState<AggreementsScreen>{
         fontSize: FontSize(20),
         fontWeight: FontWeight.bold,
         margin: Margins.only(top: 24, bottom: 12),
-        color: Colors.black87,
+        color: SportM8sColors.textPrimary,
       ),
       "p": Style(
         fontSize: FontSize(16),
         lineHeight: LineHeight(1.5),
         margin: Margins.only(bottom: 12),
-        color: Colors.black54,
+        color: SportM8sColors.textPrimary,
       ),
       "li": Style(
         fontSize: FontSize(16),
         lineHeight: LineHeight(1.5),
         margin: Margins.only(left: 16, bottom: 8),
-        color: Colors.black54,
+        color: SportM8sColors.textPrimary,
       ),
       "ul": Style(
         margin: Margins.only(left: 16, top: 8, bottom: 16),
@@ -85,13 +86,15 @@ class _AggreementsScreenState extends ConsumerState<AggreementsScreen>{
   Map<String, Style> _getPrivacyPolicyHtmlStyles() {
     return {
       "h2": Style(
-        color: Colors.blue,
+        color: SportM8sColors.textPrimary,
         fontSize: FontSize(24),
       ),
       "p": Style(
+        color: SportM8sColors.textPrimary,
         fontSize: FontSize(16),
       ),
       "li": Style(
+        color: SportM8sColors.textPrimary,
         margin: Margins.only(left: 16),
       ),
     };
@@ -170,13 +173,13 @@ class _AggreementsScreenState extends ConsumerState<AggreementsScreen>{
             if (!privacySnapshot.data!) {
               _logger.debug('Showing Privacy Policy screen');
               return PrivacyPolicyScreen(
-                aggrementNameKey: "aggreementPrivacyPolicy",
+                aggrementNameKey: "Privacy Policy",
                 useHtmlMarking: true,
                 aggreementType: AggreementType.PrivacyPolicy,
                 aggreementTypeCallback: onAggreementApplied,
                 loadAggrementHtmlText: getPrivacyPolicyHtml,
                 textHtmlStyle: _getPrivacyPolicyHtmlStyles(),
-                consentTextKey: "consentPrivacyPolicy",
+                consentTextKey: "I have read all document",
               );
             }
 
@@ -192,13 +195,13 @@ class _AggreementsScreenState extends ConsumerState<AggreementsScreen>{
                 if (!termsSnapshot.data!) {
                   _logger.debug('Showing Terms of Service screen');
                   return PrivacyPolicyScreen(
-                    aggrementNameKey: "aggreementTermsOfService",
+                    aggrementNameKey: "Terms of Service",
                     useHtmlMarking: true,
                     aggreementType: AggreementType.TermsOfService,
                     aggreementTypeCallback: onAggreementApplied,
                     loadAggrementHtmlText: getTermsOfServiceHtml,
                     textHtmlStyle: _getHtmlStylesTermsOfService(),
-                    consentTextKey: "consentTermsOfService",
+                    consentTextKey: "I have read all document",
                   );
                 }
 

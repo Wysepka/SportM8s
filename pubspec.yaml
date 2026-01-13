@@ -113,8 +113,7 @@ flutter:
   # see https://flutter.dev/to/font-from-package
 
   assets:
-    - assets/text/privacyPolicyAndroidExample.txt
-    - assets/text/termsOfServiceExample.txt
+    - assets/text/
     - assets/icons/sport_icons_fixed/
     - assets/icons/sport_icons_fixed_transparent_v2/
     - assets/icons/events/

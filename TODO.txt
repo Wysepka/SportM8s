@@ -1,14 +1,14 @@
 1.Add localization features everywhere
 2.Replace tile server with my own server on commercial ready product
-3.Add latlng data get from user phone
+3.Add latlng data get from user phone - DONE
 4.Change server auth to check boolean from AppConsts
-5.Add backend for getting markers from server
-6.Add check in ChangeDisplayProfileScreen about not all results being sent to server
-7. Add different kind of outline border for OSM marker
+5.Add backend for getting markers from server - DONE
+6.Add check in ChangeDisplayProfileScreen about not all results being sent to server - DONE
+7. Add different kind of outline border for OSM marker - DONE
 8. Check app code styling with Cursor
 9. Check navigation between sites, and replace pushReplacementNamed with pushNamed
 10. ListTile can have a onTap method instead of inserting Button in it
-11. Replace in MapCreateEvent text input values with seperate class widget
+11. Replace in MapCreateEvent text input values with seperate class widget - DONE
 12. Add Animations in starting create event (including shaders)
 12. Add Animations in waiting for event to send to the server (including Shaders)
 13. Add Hero anim when starting to create event
@@ -17,6 +17,10 @@
 16. Increase CreateEvent location icon size
 17. Optimize ServerSportService to send only EventID instead of whole SportEventData
 18. Change post methods in ServerSportService to use only eventID instead of sending while MapEventData
+19. Add icons color as primaryText(black) for all Button.icon widgets
+20. Find a way to disable MapSideView setState on join/leave event
+21. Change color of View/Create event cta button to black/secondaryText
+22. Change SportEventType colors to more matte/dark
 
 1. Clone repository on Laptop and check whats missing and poppin
 
