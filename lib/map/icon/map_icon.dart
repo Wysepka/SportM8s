@@ -98,7 +98,7 @@ class _MapIcon extends State<MapIcon>{
                     maxWidth: 160,
                     minHeight: 200,
                     maxHeight: 360,),
-                decoration: BoxDecoration(color: SportEventUtils.getSportEventBackgroundColor(mapEventData!.sportEventType),
+                decoration: BoxDecoration(color: SportEventUtils.getSportEventBackgroundColor(type: mapEventData!.sportEventType),
                     borderRadius: BorderRadius.circular(
                         8 * getZoomMultiplier()),
                     border: Border.all(
@@ -206,7 +206,7 @@ class _MapIcon extends State<MapIcon>{
                   maxHeight: 260,  // keep it reasonable on map
                 ),
                 decoration: BoxDecoration(
-                  color: SportEventUtils.getSportEventBackgroundColor(sportType),
+                  color: SportEventUtils.getSportEventBackgroundColor(type: sportType),
                   borderRadius: BorderRadius.circular(10 * zoom),
                   border: Border.all(
                     color: SportEventUtils.getSportEventColor(sportType),
