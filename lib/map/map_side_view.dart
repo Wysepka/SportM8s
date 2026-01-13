@@ -200,7 +200,7 @@ class _MapSideView extends State<MapSideView>{
 
           if(_isJoiningEvent)...[
             if(_currentClickedMapEvent != null)...[
-              MapJoinEvent(_currentClickedMapEvent! , _applyJoinEvent , _onDismissJoinEvent , sportEventEngine.sportService , _onUserDeletedEvent),
+              MapJoinEvent(_currentClickedMapEvent! , _applyJoinEvent , _onDismissJoinEvent , sportEventEngine.sportService , _onUserDeletedEvent , _onUserButtonRequestSend , sportEventEngine.eventRepository),
             ]
             else...[
               Center(
@@ -276,6 +276,21 @@ class _MapSideView extends State<MapSideView>{
       loggerService.error("Error while trying to get current user location: Ex: ${e} | StackTrace: ${stacktrace}");
       return LatLng(52, 21);
     }
+  }
+
+  Future<void> _onUserButtonRequestSend(UserEventRequestType requestType) async {
+    await sportEventEngine.update(force: true);
+
+    setState(() {
+      var updateClickedMapEvent = sportEventEngine.eventRepository.getMapSportEventDataBasedOnID(_currentClickedMapEvent!.eventID);
+      if(updateClickedMapEvent.success) {
+        _currentClickedMapEvent = updateClickedMapEvent.data!.eventData;
+      }
+    });
+
+    //setState(() {
+    //
+    //});
   }
 
   void _onUserDeletedEvent(){

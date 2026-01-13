@@ -11,10 +11,10 @@ import '../map/models/map_event_data.dart';
 class MapEventJoinButton extends StatefulWidget{
   final ServerSportService _sportService;
   final MapEventData _mapEventData;
-  void Function(UserEventRequestType request) _onButtonRequestReceived;
+  void Function(UserEventRequestType request) _onButtonRequestSend;
   void Function() _onDeleteButtonClicked;
 
-  MapEventJoinButton(this._sportService , this._mapEventData , this._onButtonRequestReceived , this._onDeleteButtonClicked);
+  MapEventJoinButton(this._sportService , this._mapEventData , this._onButtonRequestSend , this._onDeleteButtonClicked);
 
   @override
   State<StatefulWidget> createState() => _MapEventJoinButton();
@@ -74,7 +74,7 @@ class _MapEventJoinButton extends State<MapEventJoinButton>{
                 bool isCurrentUserCreator = false;
                 ApiResult<bool> apiResult = results[1] as ApiResult<bool>;
                 if(apiResult is OkResult<bool>){
-                  isCurrentUserCreator = (apiResult as OkResult<bool>).data;
+                  isCurrentUserCreator = (apiResult).data;
                 }
 
                 bool alreadyParticipant = widget._mapEventData.participantsIDs.containsKey(userID);
@@ -88,34 +88,44 @@ class _MapEventJoinButton extends State<MapEventJoinButton>{
                     onPressed: _isSendingDataThroughNetwork ? null :
                       alreadyParticipant
                           ? () async {
-                          setState(() {
-                            _isSendingDataThroughNetwork = true;
-                          });
-                          if(isCurrentUserCreator){
-                            var result = await widget._sportService.deleteSportEvent(widget._mapEventData);
-                            widget._onDeleteButtonClicked();
-                          }
-                          else {
-                            var result = await widget._sportService
-                                .leaveSportEvent(
-                                widget._mapEventData);
-                          }
-                          setState(() {
-                            _isSendingDataThroughNetwork = false;
-                          });
+                            setState(() {
+                              _isSendingDataThroughNetwork = true;
+                            });
+                            if(isCurrentUserCreator){
+                              var result = await widget._sportService.deleteSportEvent(widget._mapEventData);
+                              widget._onDeleteButtonClicked();
+                            }
+                            else {
+                              var result = await widget._sportService
+                                  .leaveSportEvent(
+                                  widget._mapEventData);
+                              widget._onButtonRequestSend(UserEventRequestType.Leave);
+                            }
+                            setState(() {
+                              _isSendingDataThroughNetwork = false;
+                            });
                           }    // ⬅ disables & greys out the button
-                          : () {
+                      : () async {
                         setState(() {
                           _isSendingDataThroughNetwork = true;
                         });
-                        widget._sportService.joinSportEvent(widget
+                        var result = await widget._sportService.joinSportEvent(widget
                             ._mapEventData);
+                        widget._onButtonRequestSend(UserEventRequestType.Join);
                         setState(() {
                           _isSendingDataThroughNetwork = false;
                         });
                       },
                     label: Text(_isSendingDataThroughNetwork ? sendingThroughNetworkDisplayText : notSendingThroughNetworkDisplayText),
-                    icon: _isSendingDataThroughNetwork ? CircularProgressIndicator() : Icon(alreadyParticipant ? Icons.close : Icons.add_circle),
+                    icon: _isSendingDataThroughNetwork ?
+                      SizedBox(
+                          height: 28,
+                          width: 28,
+                          child: CircularProgressIndicator(),
+                      ) :
+                      Icon(
+                          alreadyParticipant ? Icons.close : Icons.add_circle
+                      ),
                   ),
                 );
               }

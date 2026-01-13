@@ -1,24 +1,96 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
+import 'package:sportm8s/core/logger/logger_service.dart';
+import 'package:sportm8s/gen/assets.gen.dart';
+import 'package:sportm8s/services/server_service.dart';
 import '../logger/logger_config.dart';
 
 class AuthResult {
   final User? user;
   final String? error;
+  final bool succesfull;
   
-  AuthResult({this.user, this.error});
+  AuthResult({this.user, this.error ,required this.succesfull});
   
   AuthResult.error(String errorMessage) 
       : error = errorMessage,
-        user = null;
+        user = null,
+        succesfull = false;
 }
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final LoggerService loggerService = LoggerService();
+
+
+  Future<AuthResult> connectToBackendServer(AuthResult previousResult , BuildContext context , ServerService serverService) async {
+    try {
+
+      if (previousResult.user != null) {
+        loggerService.info('User successfully signed in to FirebaseAuth');
+        // Try to connect to server after successful Google sign-in
+        final connected = await serverService.connectToServer();
+        if (!context.mounted) {
+          return AuthResult(succesfull: false);
+        }
+
+        if (!connected) {
+          loggerService.error('Failed to connect to server');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Failed to connect to server (Error ID: SERVER_CONNECTION_FAILED). Please try again later."),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 3),
+            ),
+          );
+          return AuthResult(succesfull: false , error: "Failed to connect to backend server !");
+        }
+        this.log.i('Successfully connected to server');
+
+        return AuthResult(succesfull: true);
+        //Navigator.pushReplacementNamed(context, "/aggreements");
+      } else if (previousResult != null) {
+        this.log.e('Google sign-in error: ${previousResult.error}');
+        // Handle specific authentication errors
+        String errorMessage = switch (previousResult.error) {
+          'user-disabled' => 'This account has been disabled',
+          'user-not-found' => 'No account found with this email',
+          'invalid-credential' => 'Invalid credentials provided',
+          'operation-not-allowed' => 'Google sign-in is not enabled',
+          'network-request-failed' => 'Network connection failed',
+          'popup-closed-by-user' => 'Sign-in cancelled by user',
+          _ => previousResult.error ?? 'An unknown error occurred'
+        };
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Failed to connect to server Error:${errorMessage}."),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+        return AuthResult(succesfull: false , error: errorMessage);
+      }
+    } catch (e) {
+      loggerService.error('Unexpected error during login Error:${e.toString()}');
+      if (!context.mounted) return AuthResult(succesfull: false ,error: e.toString());
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Could not connect to backend server."),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+      return AuthResult(succesfull: false , error: "Could not connect to backend server");
+    }
+
+    return AuthResult(succesfull: false);
+  }
 
   // Sign in with email and password
   Future<AuthResult> signInWithEmailPassword(String email, String password) async {
@@ -27,14 +99,20 @@ class AuthService {
         email: email,
         password: password,
       );
-      this.log.i('User signed in successfully with email');
-      return AuthResult(user: userCredential.user);
+      if(userCredential.user != null) {
+        loggerService.info('User signed in successfully with email');
+        return AuthResult(user: userCredential.user , succesfull: true);
+      }
+      else{
+        loggerService.info("Could not sign in with email: ${email} method");
+        return AuthResult(succesfull: false);
+      }
     } on FirebaseAuthException catch (e) {
-      this.log.e('Firebase Auth Exception during email sign-in', error: e);
-      return AuthResult(error: getSignInErrorMessage(e.code));
+      loggerService.error('Firebase Auth Exception during email sign-in Error:${e.toString()}');
+      return AuthResult(error: getSignInErrorMessage(e.code) , succesfull: false);
     } catch (e) {
-      this.log.e('Unexpected error during email sign-in', error: e);
-      return AuthResult(error: 'An error occurred. Please try again.');
+      loggerService.error('Unexpected error during email sign-in Error:${e.toString()}');
+      return AuthResult(error: 'An error occurred. Please try again.' , succesfull: false);
     }
   }
 
@@ -45,14 +123,21 @@ class AuthService {
         email: email,
         password: password,
       );
-      this.log.i('New user created successfully with email');
-      return AuthResult(user: userCredential.user);
+
+      if(userCredential.user != null) {
+        loggerService.info('New user created successfully with email');
+        return AuthResult(user: userCredential.user , succesfull: true);
+      }
+      else{
+        loggerService.info("Could not create a new account with email:${email}");
+        return AuthResult(succesfull: false);
+      }
     } on FirebaseAuthException catch (e) {
-      this.log.e('Firebase Auth Exception during sign-up', error: e);
-      return AuthResult(error: getSignUpErrorMessage(e.code));
+      loggerService.error('Firebase Auth Exception during sign-up Error:${e.toString()}');
+      return AuthResult(error: getSignUpErrorMessage(e.code) , succesfull: false);
     } catch (e) {
-      this.log.e('Unexpected error during sign-up', error: e);
-      return AuthResult(error: 'An error occurred. Please try again.');
+      loggerService.error('Unexpected error during sign-up Error:${e.toString()}');
+      return AuthResult(error: 'An error occurred. Please try again.' , succesfull:  false);
     }
   }
 
@@ -62,11 +147,11 @@ class AuthService {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       
       if (googleUser == null) {
-        this.log.w('Google sign-in was cancelled by user');
+        loggerService.warning('Google sign-in was cancelled by user');
         return AuthResult.error('Sign in was cancelled');
       }
 
-      this.log.d('Google sign-in successful, getting auth details');
+      loggerService.info('Google sign-in successful, getting auth details');
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
@@ -74,14 +159,14 @@ class AuthService {
       );
 
       final userCredential = await _auth.signInWithCredential(credential);
-      this.log.i('User successfully signed in with Google');
-      return AuthResult(user: userCredential.user);
+      loggerService.info('User successfully signed in with Google');
+      return AuthResult(user: userCredential.user , succesfull: true);
       
     } on PlatformException catch (e) {
-      this.log.e('Platform Exception during Google sign-in', error: e);
+      loggerService.error('Platform Exception during Google sign-in Error:${e.toString()}');
       return AuthResult.error(_getPlatformErrorMessage(e.code));
     } catch (e) {
-      this.log.e('Unexpected error during Google sign-in', error: e);
+      loggerService.error('Unexpected error during Google sign-in Error:${e.toString()}');
       return AuthResult.error('An unexpected error occurred');
     }
   }
@@ -103,9 +188,9 @@ class AuthService {
         await _auth.setPersistence(Persistence.NONE);
       }
 
-      this.log.i('User signed out successfully');
+      loggerService.info('User signed out successfully');
     } catch (e) {
-      this.log.e('Error during sign-out', error: e);
+      loggerService.error('Error during sign-out Error:${e.toString()}');
       throw Exception('Failed to sign out: $e');
     }
   }

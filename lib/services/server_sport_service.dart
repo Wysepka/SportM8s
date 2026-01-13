@@ -130,12 +130,13 @@ class ServerSportService
   }
 
   Future<ApiResult<bool>> joinSportEvent(MapEventData mapEventData) async {
-    final response = await serverService.post(
+    final response = await serverService.patch(
       "SportMap/joinSportEvent",
       body: {
         'eventName': mapEventData.eventName,
         'eventDescription': mapEventData.eventDescription,
         'sportEventType': mapEventData.sportEventType.index,
+        'eventID': mapEventData.eventID,
         'eventPosition':
         {
           'latitude': mapEventData.position.latitude,
@@ -151,7 +152,7 @@ class ServerSportService
             '${mapEventData.eventDuration.minute.toString().padLeft(2, '0')}:00',
       },);
 
-    if(response['okStatus'] != null){
+    if(response['okResult'] != null){
       return OkResult(data: true, statusCode: 200);
     }
 
@@ -176,12 +177,13 @@ class ServerSportService
   }
 
   Future<ApiResult<bool>> leaveSportEvent(MapEventData mapEventData) async {
-    final response = await serverService.post(
-      "SportMap/joinSportEvent",
+    final response = await serverService.patch(
+      "SportMap/leaveSportEvent",
       body: {
         'eventName': mapEventData.eventName,
         'eventDescription': mapEventData.eventDescription,
         'sportEventType': mapEventData.sportEventType.index,
+        'eventID': mapEventData.eventID,
         'eventPosition':
         {
           'latitude': mapEventData.position.latitude,
@@ -197,7 +199,7 @@ class ServerSportService
             '${mapEventData.eventDuration.minute.toString().padLeft(2, '0')}:00',
       },);
 
-    int statusCode = response['statusCode'] ?? response['okResult']['statusCode'];
+    int statusCode = response['errorCode'] ?? response['okResult']['statusCode'];
 
     if(statusCode == 500){
       String errorMsg =  response['detail'] ?? response['errorMessage'];
