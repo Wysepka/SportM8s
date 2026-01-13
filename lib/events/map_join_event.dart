@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:sportm8s/core/enums/enums_container.dart';
 import 'package:sportm8s/events/map_event_join_scroll_view.dart';
 import 'package:sportm8s/events/map_event_top_panel.dart';
+import 'package:sportm8s/map/engine/sport_event_repository.dart';
 import 'package:sportm8s/map/models/map_event_data.dart';
 import 'package:sportm8s/services/server_sport_service.dart';
 
@@ -13,8 +15,10 @@ class MapJoinEvent extends StatefulWidget
   final Function(MapEventData mapEventData) onApplyJointEventEvent;
   final Function() onUserDeletedEvent;
   final ServerSportService serverSportService;
+  final Future<void> Function(UserEventRequestType requestType) onUserButtonRequestSend;
+  final SportEventRepository sportRepository;
 
-  MapJoinEvent(this.mapEventData , this.onApplyJointEventEvent, this.onDismissJoinEventEvent , this.serverSportService , this.onUserDeletedEvent);
+  MapJoinEvent(this.mapEventData , this.onApplyJointEventEvent, this.onDismissJoinEventEvent , this.serverSportService , this.onUserDeletedEvent , this.onUserButtonRequestSend , this.sportRepository);
 
   @override
   State<StatefulWidget> createState() => _MapJoinEvent();
@@ -35,7 +39,7 @@ class _MapJoinEvent extends State<MapJoinEvent>{
                   MapEventTopPanel(_onDismissJoinEvent, "Join Event"),
                   Flexible(
                       fit: FlexFit.loose,
-                      child: MapEventJoinScrollView(widget.mapEventData , widget.serverSportService ,_onUserDeletedEvent)
+                      child: MapEventJoinScrollView(widget.mapEventData , widget.serverSportService ,_onUserDeletedEvent , _onUserButtonRequestSend , widget.sportRepository)
                   ),
                 ],
               )
@@ -50,5 +54,9 @@ class _MapJoinEvent extends State<MapJoinEvent>{
 
   void _onUserDeletedEvent(){
     widget.onUserDeletedEvent();
+  }
+
+  Future<void> _onUserButtonRequestSend(UserEventRequestType requestType) async {
+    await widget.onUserButtonRequestSend(requestType);
   }
 }

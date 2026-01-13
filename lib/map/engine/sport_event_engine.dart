@@ -40,9 +40,16 @@ class SportEventEngine{
     }
   }
 
-  void update() async {
+  Future<void> update({bool force = false}) async {
     final sportEvents = await sportService.fetchUpdate();
-    final updateResult = eventRepository.updateSportEvents(sportEvents);
+    UpdateSportEventsResult updateResult;
+
+    if(force){
+      updateResult = eventRepository.forceUpdateSportEvents(sportEvents);
+    }
+    else {
+      updateResult = eventRepository.updateSportEvents(sportEvents);
+    }
 
     if(updateResult.hasChanged){
       eventController.onSportEventChanged();

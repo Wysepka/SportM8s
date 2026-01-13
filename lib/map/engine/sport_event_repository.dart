@@ -13,44 +13,52 @@ abstract class SportEventRepository
   final LoggerService _logger = new LoggerService();
   List<MapMarkerRect> _osmMarkersRects = [];
   UpdateSportEventsResult updateSportEvents(List<MapSportEventData> events);
+  UpdateSportEventsResult forceUpdateSportEvents(List<MapSportEventData> events);
   void updateOSMMarkerRects(MapMarkerRect mapMarkerRect);
   List<Marker> getOSMMarkers();
   List<MapMarkerRect> getMarkerRects();
   MapSportIconWidgetResult getMapSportIconWidgetBasedOnID(String id);
   List<MapSportIconWidgetResult> getMapSportIconsWidgetBasedOnID(List<String> ids);
+  TryGetMapSportEventData getMapSportEventDataBasedOnID(String id);
 }
 
 class FakeSportEventRepository extends SportEventRepository
 {
-  final List<MapSportEventData> mapSportEventDatas = [];
+  List<MapSportEventData> _mapSportEventDatas = [];
 
   @override
   UpdateSportEventsResult updateSportEvents(List<MapSportEventData> events) {
 
     List<String> fetchedIDS = events.map((x) => x.eventData.eventID).toList();
-    List<String> currentIDs = mapSportEventDatas.map((x) => x.eventData.eventID).toList();
+    List<String> currentIDs = _mapSportEventDatas.map((x) => x.eventData.eventID).toList();
 
     List<String> idsToInclude = fetchedIDS.where((e) => !currentIDs.contains(e)).toList();
     List<String> idsToDelete = currentIDs.where((e) => !fetchedIDS.contains(e)).toList();
 
     for(int i=0; i < idsToDelete.length; i++){
-      MapSportEventData eventToDelete = mapSportEventDatas.where((e) => e.eventData.eventID == idsToDelete[i]).first;
-      mapSportEventDatas.remove(eventToDelete);
+      MapSportEventData eventToDelete = _mapSportEventDatas.where((e) => e.eventData.eventID == idsToDelete[i]).first;
+      _mapSportEventDatas.remove(eventToDelete);
     }
 
     for(int i = 0; i < idsToInclude.length; i++){
-      mapSportEventDatas.add(events.where((e) => e.eventData.eventID == idsToInclude[i]).first);
+      _mapSportEventDatas.add(events.where((e) => e.eventData.eventID == idsToInclude[i]).first);
     }
 
     return UpdateSportEventsResult(idsToInclude.isNotEmpty || idsToDelete.isNotEmpty);
   }
 
   @override
+  UpdateSportEventsResult forceUpdateSportEvents(List<MapSportEventData> events) {
+    _mapSportEventDatas = events;
+    return UpdateSportEventsResult(true);
+  }
+
+  @override
   List<Marker> getOSMMarkers() {
     List<Marker> markers = [];
 
-    for(int i = 0; i < mapSportEventDatas.length; i++){
-      markers.add(mapSportEventDatas[i].marker);
+    for(int i = 0; i < _mapSportEventDatas.length; i++){
+      markers.add(_mapSportEventDatas[i].marker);
     }
 
     return markers;
@@ -97,6 +105,22 @@ class FakeSportEventRepository extends SportEventRepository
     }
     return results;
   }
+
+  @override
+  TryGetMapSportEventData getMapSportEventDataBasedOnID(String id) {
+    for(int i=0; i < _mapSportEventDatas.length; i++){
+      if(_mapSportEventDatas[i].eventData.eventID == id){
+        return TryGetMapSportEventData(true, _mapSportEventDatas[i]);
+      }
+    }
+    return TryGetMapSportEventData(false, null);
+  }
+}
+
+class TryGetMapSportEventData{
+  bool success = false;
+  MapSportEventData? data;
+  TryGetMapSportEventData(this.success , this.data);
 }
 
 class UpdateSportEventsResult{

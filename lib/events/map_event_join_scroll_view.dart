@@ -11,6 +11,7 @@ import 'package:sportm8s/events/map_event_participant_widget.dart';
 import 'package:sportm8s/events/map_event_widget_container.dart';
 import 'package:sportm8s/map/containers/map_event_panel_container.dart';
 import 'package:sportm8s/map/engine/sport_event_controller.dart';
+import 'package:sportm8s/map/engine/sport_event_repository.dart';
 import 'package:sportm8s/map/models/map_event_data.dart';
 import 'package:sportm8s/services/server_sport_service.dart';
 import 'package:sportm8s/services/server_user_service.dart';
@@ -18,11 +19,13 @@ import 'package:sportm8s/services/server_user_service.dart';
 import '../core/services/storage_service.dart';
 
 class MapEventJoinScrollView extends StatefulWidget{
-  final MapEventData mapEventData;
+  MapEventData mapEventData;
   final ServerSportService sportService;
+  final SportEventRepository sportRepository;
   final Function() onUserDeletedEvent;
+  final Future<void> Function(UserEventRequestType requestType) onUserButtonRequestSend;
 
-  MapEventJoinScrollView(this.mapEventData , this.sportService , this.onUserDeletedEvent);
+  MapEventJoinScrollView(this.mapEventData , this.sportService , this.onUserDeletedEvent, this.onUserButtonRequestSend , this.sportRepository);
 
   @override
   State<StatefulWidget> createState() => _MapEventJoinScrollView();
@@ -121,8 +124,13 @@ class _MapEventJoinScrollView extends State<MapEventJoinScrollView>{
     );
   }
 
-  void _onUserEventButtonRequestReceived(UserEventRequestType requestType){
+  void _onUserEventButtonRequestReceived(UserEventRequestType requestType) async {
+    await widget.onUserButtonRequestSend(requestType);
     setState(() {
+      var tryGetMapEventUpdated = widget.sportRepository.getMapSportEventDataBasedOnID(widget.mapEventData.eventID);
+      if(tryGetMapEventUpdated.success){
+        widget.mapEventData = tryGetMapEventUpdated.data!.eventData;
+      }
     });
   }
 
