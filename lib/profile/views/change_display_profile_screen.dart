@@ -7,6 +7,7 @@ import 'package:sportm8s/core/services/storage_service.dart';
 import 'package:sportm8s/features/auth/presentation/widgets/profile_picture_widget.dart';
 import "package:sportm8s/core/enums/enums_container.dart";
 import 'package:sportm8s/services/server_user_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChangeDisplayProfileScreen extends ConsumerStatefulWidget
 {
@@ -74,9 +75,10 @@ class _ChangeDisplayProfileScreen extends ConsumerState<ChangeDisplayProfileScre
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+    final l10n = AppLocalizations.of(context);
     var storageServiceAsync = ref.watch(storageServiceInitializerProvider);
     return Scaffold(
-        appBar: AppBar(title: Text("Edit Profile"),),
+        appBar: AppBar(title: Text(l10n?.profile_Title_EditProfile ?? "Edit Profile"),),
         body: SafeArea(
           child: Stack(
             children: [
@@ -89,11 +91,11 @@ class _ChangeDisplayProfileScreen extends ConsumerState<ChangeDisplayProfileScre
                     ProfilePictureWidget(pictureRadius: 60),
                     SizedBox(height: 10,),
                     Text(
-                      "Public Info",
+                      l10n?.profile_Subtitle_PublicInfo ?? "Public Info",
                       style: Theme.of(context).textTheme.titleMedium,),
                     SizedBox(height: 5,),
                     Text(
-                      "Update your name , surname, and display name shown for other users",
+                      l10n?.profile_Subtitle_UpdatePublicData ?? "Update your name , surname, and display name shown for other users",
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Theme.of(context).colorScheme.onSurfaceVariant
                       ),
@@ -140,6 +142,8 @@ class _ChangeDisplayProfileScreen extends ConsumerState<ChangeDisplayProfileScre
     bool sendValuesAllGood = _nameFieldLoadedValue!.isNotEmpty &&
                              _surnameFieldLoadedValue!.isNotEmpty &&
                              _displayNameFieldLoadedValue!.isNotEmpty;
+
+    final l10n = AppLocalizations.of(context);
 
     return SizedBox(
       height: 48,
@@ -206,7 +210,7 @@ class _ChangeDisplayProfileScreen extends ConsumerState<ChangeDisplayProfileScre
              */
           },
           label: Text(
-            sendValuesAllGood ? (hasChangedAnything ? "Save" : "Continue") : "Data Malformed",
+            sendValuesAllGood ? (hasChangedAnything ? l10n?.profile_Button_Save ?? "Save" : l10n?.profile_Button_Continue ?? "Continue") : l10n?.profile_Button_DataMalformed ?? "Data Malformed",
           ),
           icon: _isSendingValuesOverNetwork ? const SizedBox(
             width: 18,
@@ -233,6 +237,8 @@ class _ChangeDisplayProfileScreen extends ConsumerState<ChangeDisplayProfileScre
   }
 
   Widget _buildUserPropTypeWidget(AsyncValue<StorageService> storageServiceAsync , ProfileDisplayPropertyType type) {
+    final l10n = AppLocalizations.of(context);
+
     return storageServiceAsync.when(
       data: (service) => FutureBuilder<String>(
         future: _getUserTypeFomService(service , type),
@@ -262,8 +268,8 @@ class _ChangeDisplayProfileScreen extends ConsumerState<ChangeDisplayProfileScre
             widgetTextField = TextFormField(
               focusNode: nameFocus,
               decoration: InputDecoration(
-                  labelText: "Name",
-                  hintText: "e.g. Jacob",
+                  labelText: l10n?.profile_Name ??  "Name",
+                  hintText: l10n?.profile_NameExample ?? "e.g. Jacob",
                 prefixIcon: Icon(Icons.badge_outlined),
               ),
               controller: nameTextController,
@@ -290,14 +296,14 @@ class _ChangeDisplayProfileScreen extends ConsumerState<ChangeDisplayProfileScre
             widgetTextField = TextFormField(
               focusNode: surnameFocus,
               decoration: InputDecoration(
-                  labelText: "Surname",
-                  hintText: "e.g. Smith",
+                  labelText: l10n?.profile_Surname ?? "Surname",
+                  hintText: l10n?.profile_SurnameExample ?? "e.g. Smith",
                   prefixIcon: Icon(Icons.badge_outlined),
               ),
               controller: surnameTextController,
               textInputAction: TextInputAction.next,
               autofillHints: const [AutofillHints.familyName],
-              validator: (v) => _requiredValidator(v , 20 , "Surname"),
+              validator: (v) => _requiredValidator(v , 20 , l10n?.profile_Surname ?? "Surname"),
               onFieldSubmitted: (v) => _revalidateAllFields(),
             );
             surnameTextField = widgetTextField;
@@ -317,14 +323,14 @@ class _ChangeDisplayProfileScreen extends ConsumerState<ChangeDisplayProfileScre
             widgetTextField = TextFormField(
               focusNode: displayNameFocus,
               decoration: InputDecoration(
-                helperText: "What other users will se when displaying your participation in event",
-                labelText: "Display Name",
-                hintText: "What other users will see",
+                helperText: l10n?.profile_DisplayNameHelper ?? "What other users will see when displaying your participation in event",
+                labelText: l10n?.profile_DisplayNameLabel ?? "Display Name",
+                hintText: l10n?.profile_DisplayNameHint ?? "What other users will see",
                 prefixIcon: Icon(Icons.alternate_email)),
               controller: displayNameTextController,
               textInputAction: TextInputAction.done,
               autofillHints: const [AutofillHints.nickname],
-              validator: (v) => _requiredValidator(v , 15 , "Display Name"),
+              validator: (v) => _requiredValidator(v , 15 , l10n?.profile_DisplayNameLabel ?? "Display Name"),
               onFieldSubmitted: (v) => _revalidateAllFields(),
             );
             displayNameTextField = widgetTextField;
@@ -339,9 +345,10 @@ class _ChangeDisplayProfileScreen extends ConsumerState<ChangeDisplayProfileScre
   }
 
   String? _requiredValidator(String? v, int max, String label) {
+    final l10n = AppLocalizations.of(context);
     final value = v?.trim() ?? '';
-    if (value.isEmpty) return '$label cannot be empty';
-    if (value.length > max) return '$label is too long';
+    if (value.isEmpty) return '$label ${l10n?.profile_CannotBeEmpty ?? "cannot be empty"}';
+    if (value.length > max) return '$label ${l10n?.profile_IsTooLong ?? "is too long"}';
     return null;
   }
 

@@ -5,6 +5,7 @@ import 'package:sportm8s/core/logger/logger_service.dart';
 import '../../../../core/services/auth_service.dart';
 import '../../../../graphics/sportm8s_themes.dart';
 import '../../../../services/server_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EmailAuthScreen extends ConsumerStatefulWidget {
   final bool isSignIn;
@@ -27,12 +28,12 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
 
   @override
   Widget build(BuildContext context) {
-
+    final l10n = AppLocalizations.of(context);
     final serverService = ref.read(serverServiceProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.isSignIn ? 'Sign In with Email' : 'Sign Up with Email'),
+        title: Text(widget.isSignIn ? l10n?.signInWithEmail ?? 'Sign In with Email' : l10n?.signUpWithEmail ?? 'Sign Up with Email'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -44,7 +45,7 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
               TextFormField(
                 controller: _emailController,
                 decoration: _sportM8sAuthFieldDecoration(
-                  labelText: "Email",
+                  labelText: l10n?.email ?? "Email",
                   hintText: "you@gmail.com",
                   errorText: emailValidationData.rejectionReason,
                   iconData: Icons.email_outlined
@@ -58,8 +59,8 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
               TextFormField(
                 controller: _passwordController,
                 decoration: _sportM8sAuthFieldDecoration(
-                    labelText: "Password",
-                    hintText: 'Min 8 chars, A-Z, 0-9',
+                    labelText: l10n?.password ?? "Password",
+                    hintText: l10n?.loginPasswordCharsReq ?? 'Min 8 chars, A-Z, 0-9',
                     errorText: passwordValidationData.rejectionReason,
                     iconData: Icons.lock_outline,
                 ),
@@ -103,8 +104,8 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
                           else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text(widget.isSignIn
-                                  ? "Could not sign in"
-                                  : "Could not sign up")),
+                                  ? l10n?.errorLoginIn ?? "Could not sign in"
+                                  : l10n?.errorSignUp ?? "Could not sign up")),
                             );
                           }
                         }
@@ -119,7 +120,7 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
                   }
                 },
                 icon: Icon(Icons.check),
-                label: Text(widget.isSignIn ? 'Sign In' : 'Sign Up'),
+                label: Text(widget.isSignIn ? l10n?.signIn ?? 'Sign In' : l10n?.signUp ?? 'Sign Up'),
               ),
             ],
           ),
@@ -130,8 +131,10 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
 
   String? _onEmailSubmitted(String? value){
 
+    final l10n = AppLocalizations.of(context);
+
     if(value == null){
-      return "Write you email";
+      return l10n?.authError_writeYourEmail ?? "Write your email";
     }
 
     final email = value.trim();
@@ -141,7 +144,7 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
     );
 
     if (email.isEmpty) {
-      String rejectionReason = "Email is required";
+      String rejectionReason = l10n?.authError_emailIsRequired ?? "Email is required";
       emailValidationData.isProperlyValidated = false;
       emailValidationData.rejectionReason = rejectionReason;
       debugPrint(rejectionReason);
@@ -149,7 +152,7 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
     }
 
     if (!emailRegex.hasMatch(email)) {
-      String rejectionReason = "Invalid email format";
+      String rejectionReason = l10n?.authError_wrongEmailFormat ?? "Invalid email format";
       emailValidationData.isProperlyValidated = false;
       emailValidationData.rejectionReason = rejectionReason;
       debugPrint(rejectionReason);
@@ -163,12 +166,14 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
   }
 
   String? _onPasswordSumbitted(String? password){
+    final l10n = AppLocalizations.of(context);
+
     if(password == null){
-      return "Type your password";
+      return l10n?.auth_typeYourPassword ?? "Type your password";
     }
 
     if (password.isEmpty) {
-      String rejectionReason = "Password is required";
+      String rejectionReason = l10n?.auth_passwordIsRequired ?? "Password is required";
       passwordValidationData.isProperlyValidated = false;
       passwordValidationData.rejectionReason = rejectionReason;
       debugPrint(rejectionReason);
@@ -176,7 +181,7 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
     }
 
     if (password.length < 8) {
-      String rejectionReason = "Password must be minimum of 8 chars";
+      String rejectionReason = l10n?.auth_passwordMinChars ?? "Password must be minimum of 8 chars";
       passwordValidationData.isProperlyValidated = false;
       passwordValidationData.rejectionReason = rejectionReason;
       debugPrint(rejectionReason);
@@ -184,7 +189,7 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
     }
 
     if (!RegExp(r'[A-Z]').hasMatch(password)) {
-      String rejectionReason = "Password must have one uppercase letter";
+      String rejectionReason = l10n?.auth_passwordMinOneUppercaseChar ?? "Password must have one uppercase letter";
       passwordValidationData.isProperlyValidated = false;
       passwordValidationData.rejectionReason = rejectionReason;
       debugPrint(rejectionReason);
@@ -192,7 +197,7 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
     }
 
     if (!RegExp(r'[0-9]').hasMatch(password)) {
-      String rejectionReason = "Password must have at least one number";
+      String rejectionReason = l10n?.auth_passwordMinOneNumber ?? "Password must have at least one number";
       passwordValidationData.isProperlyValidated = false;
       passwordValidationData.rejectionReason = rejectionReason;
       debugPrint(rejectionReason);

@@ -12,6 +12,7 @@ import 'package:sportm8s/events/map_event_widget_container.dart';
 import '../map/containers/map_event_panel_container.dart';
 import '../map/models/map_event_data.dart';
 import '../services/server_sport_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MapCreateEventPanel extends StatefulWidget{
   void Function() onDismissClicked;
@@ -95,6 +96,8 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
   Widget build(BuildContext context) {
     // TODO: implement build
     ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
+
     return DraggableScrollableSheet(
         minChildSize: 0.2,
         maxChildSize: 0.9,
@@ -103,7 +106,7 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
           return MapEventPanelContainer(
             child: Column(
                 children: [
-                  MapEventTopPanel(_onDismissCreateEvent, "Create Event"),
+                  MapEventTopPanel(_onDismissCreateEvent, l10n?.event_Title_CreateEvent ?? "Create Event"),
                   Expanded(
                     child: ListView(
                       children: [
@@ -111,7 +114,7 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
                           child: Column(
                             children: [
                               Text(
-                                "Event Name",
+                                l10n?.event_Title_EventName ?? "Event Name",
                                 style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
                               ),
                               TextField(
@@ -139,7 +142,7 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
                           child: Column(
                             children: [
                               Text(
-                                "Event Description",
+                                l10n?.event_Title_EventDescription ?? "Event Description",
                                 style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
                               ),
                               TextField(
@@ -167,7 +170,7 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
                           child: Column(
                             children: [
                               Text(
-                                "Max Participants",
+                                l10n?.event_Title_MaxParticipants ?? "Max Participants",
                                 style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
                               ),
                               TextField(
@@ -177,7 +180,7 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
                                 minLines: 1,
                                 maxLines: null,
                                 decoration: InputDecoration(
-                                    label: Text(eventMaxParticipantsController.text.isNotEmpty ? "" : "Max Participants"),
+                                    label: Text(eventMaxParticipantsController.text.isNotEmpty ? "" : l10n?.event_Title_MaxParticipants ?? "Max Participants"),
                                     contentPadding: EdgeInsets.only(
                                       left: 10,
                                       right: 10,
@@ -196,7 +199,7 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
                             Column(
                                 children: [
                                   Text(
-                                    "Sport Type",
+                                    l10n?.event_Title_SportType ?? "Sport Type",
                                     style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
                                   ),
                                   SportEventUtils.getSportTypeDropdownButton(_onDropdownSportEventTypeChanged , _getSelectedSportEventType ,20 , sportTypeFocusNode)
@@ -206,7 +209,9 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
                         MapCreateEventDatePicker(_onEventDateTimeSelected, eventDate, _onEventTimeOfDatSelected , eventTime),
                         ElevatedButton(
                             onPressed: _onAppliedCreateEvent,
-                            child: Text("Submit !"))
+                            child: Text(
+                                l10n?.event_Button_Submit ?? "Submit"
+                            ))
                       ],
                     ),
                   )
@@ -285,33 +290,36 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
   }
 
   bool _checkIfMissingSomeData(){
+
+    final l10n = AppLocalizations.of(context);
+
     if(!eventNameSelected){
-      _showMissingDataSnackbar("Event Name not edited, Write Event Name.");
+      _showMissingDataSnackbar( l10n?.event_Validation_EventNameEmpty ?? "Event Name not edited, Write Event Name.");
       return true;
     }
 
     if(!eventDescriptionSelected){
-      _showMissingDataSnackbar("Event Description not edited, Write Event Description");
+      _showMissingDataSnackbar(l10n?.event_Validation_EventDescriptionEmpty ?? "Event Description not edited, Write Event Description");
       return true;
     }
 
     if(!sportEventTypeSelected){
-      _showMissingDataSnackbar("Event Type not selected. Choose activity type");
+      _showMissingDataSnackbar(l10n?.event_Validation_EventTypeEmpty ?? "Event Type not selected. Choose activity type");
       return true;
     }
 
     if(!maxParticipantsSelected){
-      _showMissingDataSnackbar("Max Participants not selected , choose how many Sport M8s can join");
+      _showMissingDataSnackbar(l10n?.event_Validation_MaxParticipantsEmpty ?? "Max Participants not selected , choose how many Sport M8s can join");
       return true;
     }
 
     if(!eventDataSelected){
-      _showMissingDataSnackbar("Event Date not selected. Select Date of this activity");
+      _showMissingDataSnackbar(l10n?.event_Validation_EventStartDateEmpty ?? "Event Date not selected. Select Date of this activity");
       return true;
     }
 
     if(!eventTimeSelected){
-      _showMissingDataSnackbar("Event Time not selected. Select time of this Activity");
+      _showMissingDataSnackbar(l10n?.event_Validation_EventTimeEmpty ?? "Event Time not selected. Select time of this Activity");
       return true;
     }
 

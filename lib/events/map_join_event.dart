@@ -7,6 +7,7 @@ import 'package:sportm8s/map/models/map_event_data.dart';
 import 'package:sportm8s/services/server_sport_service.dart';
 
 import '../map/containers/map_event_panel_container.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MapJoinEvent extends StatefulWidget
 {
@@ -26,8 +27,12 @@ class MapJoinEvent extends StatefulWidget
 }
 
 class _MapJoinEvent extends State<MapJoinEvent>{
+
   @override
   Widget build(BuildContext context) {
+
+    final l10n = AppLocalizations.of(context);
+
     return DraggableScrollableSheet(
         minChildSize: 0.2,
         maxChildSize: 0.9,
@@ -36,7 +41,7 @@ class _MapJoinEvent extends State<MapJoinEvent>{
           return MapEventPanelContainer(
               child: Column(
                 children: [
-                  MapEventTopPanel(_onDismissJoinEvent, "Join Event"),
+                  MapEventTopPanel(_onDismissJoinEvent, l10n?.map_JoinEvent ?? "Join Event"),
                   Flexible(
                       fit: FlexFit.loose,
                       child: MapEventJoinScrollView(widget.mapEventData , widget.serverSportService ,_onUserDeletedEvent , _onUserButtonRequestSend , widget.sportRepository)

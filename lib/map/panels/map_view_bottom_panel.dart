@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sportm8s/core/styles/map_event_widget_text_style.dart';
 import 'package:sportm8s/map/panels/map_view_bottom_panel_controller.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../core/enums/enums_container.dart';
 
 class MapViewBottomPanel extends StatefulWidget{
@@ -54,6 +54,7 @@ class _MapViewBottomPanel extends State<MapViewBottomPanel>{
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     if(widget.controller.bottomPanelType == MapViewBottomPanelType.Invalid){
       return Positioned.fill(
           child: IgnorePointer(
@@ -64,7 +65,7 @@ class _MapViewBottomPanel extends State<MapViewBottomPanel>{
                 child: Column(
                   children: [
                     CircularProgressIndicator(),
-                    Text("Loading...")
+                    Text(l10n?.loading ?? "Loading...")
                   ],
                 ),
               ),
@@ -80,7 +81,7 @@ class _MapViewBottomPanel extends State<MapViewBottomPanel>{
         child: SizedBox(
           width: double.infinity,
           height: 80,
-          child: _getMapEventPopupButton("Create Event", widget.onCreateEventEvent)
+          child: _getMapEventPopupButton(l10n?.event_Title_CreateEvent ?? "Create Event", widget.onCreateEventEvent)
         ),
       );
     }
@@ -92,7 +93,7 @@ class _MapViewBottomPanel extends State<MapViewBottomPanel>{
         child: SizedBox(
           width: double.infinity,
           height: 80,
-          child: _getMapEventPopupButton("Join Event", widget.onJoinEventEvent)
+          child: _getMapEventPopupButton(l10n?.map_JoinEvent ?? "Join Event", widget.onJoinEventEvent)
         ),
       );
     }

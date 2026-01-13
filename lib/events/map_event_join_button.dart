@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sportm8s/core/enums/enums_container.dart';
 import 'package:sportm8s/dto/api_result.dart';
 import 'package:sportm8s/services/server_sport_service.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../core/services/storage_service.dart';
 import '../map/models/map_event_data.dart';
 
@@ -26,6 +26,7 @@ class _MapEventJoinButton extends State<MapEventJoinButton>{
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     // TODO: implement build
     return Consumer(
       builder: (BuildContext context, WidgetRef ref, Widget? child) {
@@ -79,8 +80,11 @@ class _MapEventJoinButton extends State<MapEventJoinButton>{
 
                 bool alreadyParticipant = widget._mapEventData.participantsIDs.containsKey(userID);
 
-                String sendingThroughNetworkDisplayText = alreadyParticipant ? isCurrentUserCreator ? "Deleting..." : "Leaving..." : "Joining...";
-                String notSendingThroughNetworkDisplayText = alreadyParticipant ? isCurrentUserCreator ? "Delete Event" : "Leave Event" : "Join Event";
+                String sendingNetworkCurrentUserCreatorText = isCurrentUserCreator ? l10n?.map_Event_Button_Deleting ?? "Deleting..." : l10n?.map_Event_Button_Leaving ?? "Leaving...";
+                String notSendingNetworkCurrentUserCreatorText = isCurrentUserCreator ? l10n?.map_Event_Button_Delete ?? "Delete Event" : l10n?.map_Event_Button_Leave ?? "Leave Event";
+
+                String sendingThroughNetworkDisplayText = alreadyParticipant ? sendingNetworkCurrentUserCreatorText : l10n?.map_Event_Button_Joining ?? "Joining...";
+                String notSendingThroughNetworkDisplayText = alreadyParticipant ? notSendingNetworkCurrentUserCreatorText : l10n?.map_Event_Button_Join ?? "Join Event";
 
                 return SizedBox(
                   height: 48,
