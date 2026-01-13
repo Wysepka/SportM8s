@@ -281,12 +281,14 @@ class _MapSideView extends State<MapSideView>{
   Future<void> _onUserButtonRequestSend(UserEventRequestType requestType) async {
     await sportEventEngine.update(force: true);
 
+
     setState(() {
       var updateClickedMapEvent = sportEventEngine.eventRepository.getMapSportEventDataBasedOnID(_currentClickedMapEvent!.eventID);
       if(updateClickedMapEvent.success) {
         _currentClickedMapEvent = updateClickedMapEvent.data!.eventData;
       }
     });
+
 
     //setState(() {
     //
