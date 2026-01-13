@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -50,13 +52,23 @@ class _AggreementsScreenState extends ConsumerState<AggreementsScreen>{
   Future<String> getPrivacyPolicyHtml() async
   {
     _logger.debug('Loading privacy policy HTML content');
-    return await rootBundle.loadString('assets/text/privacyPolicyV3.txt');
+    if(PlatformDispatcher.instance.locale.countryCode == "PL"){
+      return await rootBundle.loadString('assets/text/privacyPolicyV3_PL.txt');
+    }
+    else {
+      return await rootBundle.loadString('assets/text/privacyPolicyV3.txt');
+    }
   }
 
   Future<String> getTermsOfServiceHtml() async
   {
     _logger.debug('Loading terms of service HTML content');
-    return await rootBundle.loadString('assets/text/termsOfServiceV2.txt');
+    if(PlatformDispatcher.instance.locale.countryCode == "PL"){
+      return await rootBundle.loadString('assets/text/termsOfServiceV2_PL.txt');
+    }
+    else {
+      return await rootBundle.loadString('assets/text/termsOfServiceV2.txt');
+    }
   }
 
   Map<String, Style> _getHtmlStylesTermsOfService() {

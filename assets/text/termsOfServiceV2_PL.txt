@@ -1,0 +1,130 @@
+<h1>Regulamin świadczenia usług</h1>
+<p>Ostatnia aktualizacja: 13 stycznia 2026</p>
+<p>Niniejszy Regulamin („Terms of Service”) reguluje Twój dostęp do Usługi oraz korzystanie z niej. Uzyskując dostęp do Usługi lub korzystając z niej, zgadzasz się na związanie niniejszym Regulaminem. Jeśli nie zgadzasz się z jakąkolwiek częścią niniejszego Regulaminu, nie możesz uzyskać dostępu do Usługi.</p>
+<p>Niniejszy Regulamin został przygotowany z pomocą powszechnych szablonów branżowych i jest przeznaczony do stosowania łącznie z naszą Polityką Prywatności.</p>
+
+<h2>Interpretacja i definicje</h2>
+<h3>Interpretacja</h3>
+<p>Słowa, których pierwsza litera jest pisana wielką literą, mają znaczenia zdefiniowane w poniższych warunkach. Poniższe definicje mają to samo znaczenie niezależnie od tego, czy występują w liczbie pojedynczej, czy mnogiej.</p>
+
+<h3>Definicje</h3>
+<p>Na potrzeby niniejszego Regulaminu:</p>
+<ul>
+  <li>
+    <p><strong>Konto</strong> oznacza unikalne konto utworzone dla Ciebie w celu uzyskania dostępu do naszej Usługi lub jej części.</p>
+  </li>
+  <li>
+    <p><strong>Aplikacja</strong> odnosi się do SportM8s, programu udostępnianego przez Firmę.</p>
+  </li>
+  <li>
+    <p><strong>Firma</strong> (określana w niniejszym Regulaminie jako &quot;Firma&quot;, &quot;My&quot;, &quot;Nam&quot; lub &quot;Nasze&quot;) odnosi się do SportM8s (Marcin Wysocki Usługi Programistyczne).</p>
+  </li>
+  <li>
+    <p><strong>Treści</strong> oznaczają wszelki tekst, obrazy, informacje profilowe, informacje o wydarzeniach, wiadomości, informacje o grupach lub inne materiały, które są tworzone, przesyłane, publikowane, udostępniane lub w inny sposób udostępniane przez Ciebie lub innych użytkowników za pośrednictwem Usługi.</p>
+  </li>
+  <li>
+    <p><strong>Kraj</strong> odnosi się do: Polska</p>
+  </li>
+  <li>
+    <p><strong>Urządzenie</strong> oznacza każde urządzenie, które może uzyskać dostęp do Usługi, takie jak komputer, telefon komórkowy lub tablet.</p>
+  </li>
+  <li>
+    <p><strong>Grupy</strong> oznaczają społecznościowe lub prywatne grupy, które mogą być tworzone w ramach Usługi i do których użytkownicy mogą dołączać zgodnie z zasadami lub ustawieniami dostępu dostępnymi w Usłudze.</p>
+  </li>
+  <li>
+    <p><strong>Wydarzenia</strong> oznaczają wydarzenia sportowe lub aktywności tworzone i/lub do których można dołączyć za pośrednictwem Usługi.</p>
+  </li>
+  <li>
+    <p><strong>Usługa</strong> odnosi się do Aplikacji oraz wszelkich powiązanych usług, funkcji i funkcjonalności udostępnianych przez Firmę, a w przyszłości może również obejmować stronę internetową.</p>
+  </li>
+  <li>
+    <p><strong>Usługi stron trzecich</strong> oznaczają usługi, platformy i dostawców wykorzystywanych do wspierania Usługi, w tym między innymi Microsoft Azure, Firebase Authentication oraz OpenStreetMap.</p>
+  </li>
+  <li>
+    <p><strong>Ty</strong> oznacza osobę uzyskującą dostęp do Usługi lub z niej korzystającą, albo firmę lub inny podmiot prawny, w imieniu którego taka osoba uzyskuje dostęp do Usługi lub z niej korzysta, w zależności od przypadku.</p>
+  </li>
+</ul>
+
+<h2>Potwierdzenie</h2>
+<p>Niniejszy Regulamin stanowi warunki korzystania z Usługi oraz umowę obowiązującą pomiędzy Tobą a Firmą. Regulamin określa prawa i obowiązki wszystkich użytkowników w związku z korzystaniem z Usługi.</p>
+<p>Twój dostęp do Usługi oraz korzystanie z niej jest uzależnione od akceptacji i przestrzegania niniejszego Regulaminu. Regulamin ma zastosowanie do wszystkich odwiedzających, użytkowników oraz innych osób uzyskujących dostęp do Usługi lub z niej korzystających.</p>
+<p>Uzyskując dostęp do Usługi lub korzystając z niej, zgadzasz się na związanie niniejszym Regulaminem. Jeśli nie zgadzasz się z jakąkolwiek częścią Regulaminu, nie możesz uzyskać dostępu do Usługi.</p>
+
+<h2>Uprawnienia i wymóg wieku</h2>
+<p>Oświadczasz, że masz co najmniej 18 lat. Usługa nie jest przeznaczona dla osób poniżej 18. roku życia.</p>
+
+<h2>Twoje konto</h2>
+<p>Zakładając Konto w Usłudze, musisz podać informacje, które są dokładne, kompletne i aktualne w każdym czasie. Niewywiązanie się z tego obowiązku stanowi naruszenie niniejszego Regulaminu i może skutkować natychmiastowym zakończeniem lub zawieszeniem Twojego Konta w Usłudze.</p>
+<p>Odpowiadasz za ochronę hasła używanego do dostępu do Usługi oraz za wszelkie czynności wykonywane przy użyciu Twojego hasła. Zobowiązujesz się nie ujawniać hasła żadnej stronie trzeciej. Musisz niezwłocznie powiadomić nas, gdy dowiesz się o naruszeniu bezpieczeństwa lub nieautoryzowanym użyciu Twojego Konta.</p>
+<p>Nie możesz używać jako nazwy użytkownika nazwy innej osoby lub podmiotu, nazwy, do której nie masz praw, nazwy lub znaku towarowego podlegającego prawom osoby trzeciej (bez odpowiedniego upoważnienia) ani nazwy w inny sposób obraźliwej, wulgarnej lub nieprzyzwoitej.</p>
+
+<h2>Usunięcie konta</h2>
+<p>Usługa obecnie nie udostępnia samodzielnego usuwania Konta przez użytkownika. Usunięcie Konta może zostać wykonane przez administratora według uznania Firmy, w tym gdy jest to wymagane przez obowiązujące prawo.</p>
+<p>Aby zgłosić żądanie usunięcia, możesz skontaktować się z nami. Pamiętaj, że możemy być zobowiązani do zachowania niektórych informacji, jeśli mamy obowiązek prawny lub inną podstawę prawną do ich przechowywania.</p>
+
+<h2>Wytyczne społeczności i dozwolone korzystanie</h2>
+<p>Zobowiązujesz się korzystać z Usługi wyłącznie w celach zgodnych z prawem i zgodnie z niniejszym Regulaminem. Zobowiązujesz się nie korzystać z Usługi:</p>
+<ul>
+  <li>W sposób naruszający jakiekolwiek obowiązujące przepisy krajowe lub międzynarodowe.</li>
+  <li>W celu nękania, znęcania się, grożenia, zniesławiania lub w inny sposób krzywdzenia innych użytkowników, lub promowania przemocy bądź dyskryminacji.</li>
+  <li>Do publikowania lub przesyłania spamu, oszustw, treści wprowadzających w błąd lub nieautoryzowanej reklamy.</li>
+  <li>Do przesyłania lub udostępniania treści nielegalnych, obscenicznych, nienawistnych lub w inny sposób nieodpowiednich.</li>
+  <li>Do prób uzyskania nieautoryzowanego dostępu do Usługi, innych kont lub systemów powiązanych z Usługą.</li>
+  <li>Do zakłócania lub utrudniania integralności albo działania Usługi.</li>
+  <li>Do zbierania lub pozyskiwania informacji o innych użytkownikach bez ich zgody.</li>
+</ul>
+<p>Firma może zawiesić lub zakończyć Konta naruszające niniejszy Regulamin lub w inny sposób stwarzające ryzyko dla innych użytkowników lub Usługi.</p>
+
+<h2>Treści użytkownika</h2>
+<p>Nasza Usługa umożliwia publikowanie, linkowanie, przechowywanie, udostępnianie i w inny sposób udostępnianie określonych informacji, tekstu, grafiki, wideo lub innych materiałów. Odpowiadasz za Treści, które publikujesz w Usłudze, w tym za ich legalność, rzetelność i adekwatność.</p>
+<p>Przyjmujesz do wiadomości, że inni użytkownicy mogą mieć możliwość przeglądania Treści, które udostępniasz w obszarach publicznych lub grupowych Usługi. Wyłącznie Ty decydujesz, jakie Treści udostępniać, w tym czy ujawniać dane osobowe, takie jak numery telefonów lub inne dane kontaktowe.</p>
+
+<h3>Licencja na treści</h3>
+<p>Publikując Treści w Usłudze, udzielasz nam niewyłącznej, ogólnoświatowej, nieodpłatnej, podlegającej sublicencjonowaniu i przenoszalnej licencji na wykorzystywanie, reprodukowanie, wyświetlanie, rozpowszechnianie oraz modyfikowanie (w celach technicznych, takich jak formatowanie i kompatybilność) tych Treści wyłącznie w celu prowadzenia, rozwijania, świadczenia i ulepszania Usługi.</p>
+<p>Oświadczasz i gwarantujesz, że: (i) Treści należą do Ciebie (jesteś ich właścicielem(-ką)) lub masz prawo je wykorzystywać i udzielić nam praw oraz licencji przewidzianych w niniejszym Regulaminie oraz (ii) publikowanie Twoich Treści w Usłudze lub za jej pośrednictwem nie narusza praw do prywatności, praw do wizerunku, praw autorskich, praw wynikających z umów ani żadnych innych praw jakiejkolwiek osoby.</p>
+
+<h3>Usuwanie treści</h3>
+<p>Zastrzegamy sobie prawo (lecz nie obowiązek) do przeglądania, monitorowania lub usuwania Treści według naszego wyłącznego uznania, w dowolnym czasie i z dowolnego powodu, bez wcześniejszego powiadomienia, w tym jeśli uznamy, że naruszają niniejszy Regulamin, obowiązujące prawo lub mogą szkodzić użytkownikom albo Usłudze.</p>
+
+<h2>Wydarzenia, grupy i interakcje użytkowników</h2>
+<p>Usługa może umożliwiać tworzenie lub dołączanie do Wydarzeń i Grup, komunikowanie się z innymi użytkownikami oraz udostępnianie Treści.</p>
+<p>Rozumiesz i zgadzasz się, że Wydarzenia i Grupy są tworzone i zarządzane przez użytkowników. Firma nie organizuje, nie nadzoruje ani nie kontroluje Wydarzeń lub Grup oraz nie weryfikuje tożsamości użytkowników, dokładności szczegółów Wydarzeń ani adekwatności, bezpieczeństwa, legalności lub jakości jakiegokolwiek Wydarzenia, Grupy, miejsca lub uczestnika.</p>
+<p>Bierzesz udział w Wydarzeniach i wchodzisz w interakcje z innymi użytkownikami na własne ryzyko. Odpowiadasz za swoje zachowanie, bezpieczeństwo oraz przestrzeganie obowiązujących przepisów i zasad w każdym czasie.</p>
+
+<h2>Funkcje lokalizacji</h2>
+<p>Usługa może obejmować funkcje wykorzystujące dane lokalizacyjne (na przykład w celu wyświetlania Wydarzeń w pobliżu, dostarczania map lub udostępniania lokalizacji w związku z aktywnościami). Niektóre funkcje lokalizacji mogą wymagać Twojej zgody na Urządzeniu.</p>
+<p>Możesz włączyć lub wyłączyć uprawnienia lokalizacji w dowolnym momencie w ustawieniach Urządzenia. Przyjmujesz do wiadomości, że wyłączenie uprawnień lokalizacji może ograniczyć niektóre funkcje Usługi.</p>
+
+<h2>Zastrzeżenie dotyczące zdrowia i bezpieczeństwa</h2>
+<p>Sport i aktywności fizyczne wiążą się z nieodłącznym ryzykiem, w tym ryzykiem urazu. Przyjmujesz do wiadomości i zgadzasz się, że wyłącznie Ty odpowiadasz za ocenę swojej kondycji i zdolności do udziału w aktywnościach oraz za podjęcie odpowiednich środków ostrożności.</p>
+<p>Korzystając z Usługi, rozumiesz, że spotkania i komunikacja z innymi użytkownikami mogą wiązać się z ryzykiem. Zobowiązujesz się zachować rozsądne środki bezpieczeństwa i przestrzegać obowiązującego prawa. Firma nie ponosi odpowiedzialności za incydenty wynikające z interakcji użytkowników, Wydarzeń lub Grup.</p>
+
+<h2>Opłaty i funkcje premium</h2>
+<p>Usługa jest obecnie udostępniana bezpłatnie. W przyszłości Firma może oferować płatne funkcje, konta premium, subskrypcje lub inne płatne usługi.</p>
+<p>Jeśli zostaną wprowadzone płatne funkcje, przedstawimy dodatkowe warunki, informacje o cenach oraz wszelkie obowiązujące zasady w momencie wyboru korzystania z takich funkcji lub ich zakupu. Jeśli w przypadku niektórych zakupów nie będą oferowane zwroty, zostanie to ujawnione w momencie zakupu, jeśli wymagają tego przepisy.</p>
+
+<h2>Usługi stron trzecich i linki</h2>
+<p>Usługa może integrować się z Usługami stron trzecich lub na nich polegać (w tym między innymi Microsoft Azure, Firebase Authentication oraz OpenStreetMap). Korzystanie z Usług stron trzecich może podlegać ich własnym warunkom i politykom.</p>
+<p>Nasza Usługa może zawierać linki do stron internetowych lub usług stron trzecich, które nie są własnością ani nie są kontrolowane przez Firmę. Firma nie ma kontroli nad treściami, politykami prywatności ani praktykami jakichkolwiek stron internetowych lub usług stron trzecich i nie ponosi za nie odpowiedzialności.</p>
+
+<h2>Własność intelektualna</h2>
+<p>Usługa oraz jej oryginalne treści (z wyłączeniem Treści dostarczanych przez użytkowników), funkcje i funkcjonalność są i pozostaną wyłączną własnością Firmy oraz jej licencjodawców. Usługa jest chroniona prawem autorskim, prawem znaków towarowych oraz innymi przepisami zarówno w Kraju, jak i w innych państwach.</p>
+<p>Nasze znaki towarowe oraz identyfikacja wizualna nie mogą być używane w związku z jakimkolwiek produktem lub usługą bez uprzedniej pisemnej zgody Firmy.</p>
+
+<h2>Zawieszenie i zakończenie</h2>
+<p>Możemy zawiesić lub zakończyć Twoje Konto natychmiast, bez wcześniejszego powiadomienia i bez odpowiedzialności, z dowolnego powodu, w tym jeśli naruszysz niniejszy Regulamin.</p>
+<p>Po zakończeniu Twoje prawo do korzystania z Usługi wygasa natychmiast. Jeśli chcesz zażądać usunięcia Konta, możesz skontaktować się z nami.</p>
+
+<h2>Dostępność, zmiany i aktualizacje</h2>
+<p>Zastrzegamy sobie prawo do modyfikowania, zawieszania lub zaprzestania, czasowo lub na stałe, świadczenia Usługi (lub dowolnej jej części) z powiadomieniem lub bez. Nie ponosimy odpowiedzialności wobec Ciebie ani wobec osób trzecich za jakąkolwiek modyfikację, zawieszenie lub zaprzestanie świadczenia Usługi.</p>
+
+<h2>Wyłączenie gwarancji</h2>
+<p>Usługa jest udostępniana „TAK JAK JEST” oraz „W MIARĘ DOSTĘPNOŚCI”, wraz ze wszystkimi wadami i usterkami, bez jakiejkolwiek gwarancji. W maksymalnym zakresie dozwolonym przez obowiązujące prawo Firma wyraźnie wyłącza wszelkie gwarancje – wyraźne, dorozumiane, ustawowe lub inne – dotyczące Usługi.</p>
+<p>Bez ograniczeń Firma nie gwarantuje, że Usługa spełni Twoje wymagania, będzie działać bez przerw, będzie bezpieczna, wolna od błędów ani że usterki zostaną naprawione.</p>
+
+<h2>Ograniczenie odpowiedzialności</h2>
+<p>W maksymalnym zakresie dozwolonym przez obowiązujące prawo Firma w żadnym wypadku nie ponosi odpowiedzialności za jakiekolwiek szkody szczególne, uboczne, pośrednie lub wynikowe (w tym między innymi szkody z tytułu utraconych zysków, utraty danych, przerwy w działalności, uszczerbku na zdrowiu lub jakiejkolwiek innej straty) wynikające z korzystania z Usługi lub niemożności korzystania z niej lub w jakikolwiek sposób z tym związane.</p>
+<p>W maksymalnym zakresie dozwolonym przez obowiązujące prawo łączna odpowiedzialność Firmy za wszelkie roszczenia wynikające z Usługi lub z nią związane będzie ograniczona do kwoty zapłaconej przez Ciebie za Usługę w ciągu 12 miesięcy przed zdarzeniem powodującym roszczenie albo do 0 PLN, jeśli nic nie zapłaciłeś(-aś).</p>
+
+<h2>Zabezpieczenie roszczeń</h2>
+<p>Zobowiązujesz się bronić, zwolnić z odpowiedzialności i zabezpieczyć Firmę oraz jej podmioty powiązane, licencjodawców i dostawców usług, a także ich odpowiednich członków władz, dyrektorów, pracowników
