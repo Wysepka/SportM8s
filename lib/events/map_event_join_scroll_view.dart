@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sportm8s/core/enums/enums_container.dart';
 import 'package:sportm8s/core/extensions/string_extensions.dart';
 import 'package:sportm8s/core/styles/map_event_widget_text_style.dart';
+import 'package:sportm8s/core/utility/sport_utility.dart';
 import 'package:sportm8s/dto/api_result.dart';
 import 'package:sportm8s/dto/list_response.dart';
 import 'package:sportm8s/events/map_event_join_button.dart';
@@ -59,7 +60,7 @@ class _MapEventJoinScrollView extends State<MapEventJoinScrollView>{
                 l10n?.event_Title_EventType ?? "Event Type",
                 style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
               ),
-              Text(widget.mapEventData.sportEventType.toString()),
+              Text(SportEventUtils.getSportEventTypeToLocValue(widget.mapEventData.sportEventType , AppLocalizations.of(context))),
             ])
         ),
         MapEventWidgetContainer(

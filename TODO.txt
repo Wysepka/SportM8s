@@ -23,6 +23,7 @@
 22. Change SportEventType colors to more matte/dark
 23. Add localization for error codes (low prio)
 24. Mark debug buttons only developer only
+25. Remove SelectSport = Invalid entry from sport selection dropdown
 
 1. Clone repository on Laptop and check whats missing and poppin
 
@@ -36,3 +37,8 @@ CREDITS
 7. https://www.flaticon.com/free-icon/event_9983554?term=event+name&page=1&position=12&origin=search&related_id=9983554
 8. https://www.flaticon.com/free-icon/event_1636027?term=event+description&page=1&position=3&origin=search&related_id=1636027
 9. https://www.flaticon.com/free-icon/clock_2838590?term=hour&page=2&position=66&origin=search&related_id=2838590
+10. https://www.flaticon.com/free-icon/climbing-wall_3604260
+11. https://www.flaticon.com/free-icon/climb_2808276
+12. https://www.flaticon.com/free-icon/climbing_12258381?term=climbing&page=3&position=14&origin=search&related_id=12258381
+13. https://www.flaticon.com/free-icon/cross-country-skiing_15367063?term=cross+country+skiing&page=1&position=3&origin=search&related_id=15367063
+14. https://www.flaticon.com/free-icon/balls-sports_5540420?term=sport&page=1&position=21&origin=search&related_id=5540420

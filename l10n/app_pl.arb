@@ -73,6 +73,20 @@
     "map_Event_Button_Deleting": "Usuwanie...",
     "map_Event_Button_Join": "Dołącz do Wydarzenia",
     "map_Event_Button_Leave": "Opuść Wydarzenie",
-    "map_Event_Button_Delete": "Usuń Wydarzenie"
+    "map_Event_Button_Delete": "Usuń Wydarzenie",
+
+    "sportEventType_Name_Soccer": "Piłka Nożna",
+    "sportEventType_Name_Volleyball": "Siatkówka",
+    "sportEventType_Name_Basketball": "Koszykówka",
+    "sportEventType_Name_Tennis": "Tenis",
+    "sportEventType_Name_Running": "Bieganie",
+    "sportEventType_Name_Cycling": "Jazda na Rowerze",
+    "sportEventType_Name_Climbing_Bouldering": "Wspinanie Bouldering",
+    "sportEventType_Name_Climbing_Leading": "Wspinanie Prowadzenie",
+    "sportEventType_Name_Climbing_TopRope": "Wspinanie na Wędke",
+    "sportEventType_Name_CrossCountrySkiing": "Biegówki",
+    "sportEventType_Name_Other": "Inne",
+
+    "sportEventType_Dropdown_SelectSport": "Wybierz Sport"
 
 }

@@ -21,6 +21,11 @@ enum SportEventType{
   Tennis,
   Running,
   Cycling,
+  ClimbingBouldering,
+  ClimbingLeading,
+  ClimbingTopRope,
+  CrossCountrySkiing,
+  Other
 }
 
 enum EventParamType{

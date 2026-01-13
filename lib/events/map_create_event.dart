@@ -202,7 +202,7 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
                                     l10n?.event_Title_SportType ?? "Sport Type",
                                     style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
                                   ),
-                                  SportEventUtils.getSportTypeDropdownButton(_onDropdownSportEventTypeChanged , _getSelectedSportEventType ,20 , sportTypeFocusNode)
+                                  SportEventUtils.getSportTypeDropdownButton(_onDropdownSportEventTypeChanged , _getSelectedSportEventType ,20 , sportTypeFocusNode , context)
                                 ]
                             ),
                         ),

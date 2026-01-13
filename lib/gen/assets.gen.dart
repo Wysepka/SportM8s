@@ -74,12 +74,34 @@ class $AssetsTextGen {
   String get privacyPolicyAndroidExample =>
       'assets/text/privacyPolicyAndroidExample.txt';
 
+  /// File path: assets/text/privacyPolicyV2.txt
+  String get privacyPolicyV2 => 'assets/text/privacyPolicyV2.txt';
+
+  /// File path: assets/text/privacyPolicyV3.txt
+  String get privacyPolicyV3 => 'assets/text/privacyPolicyV3.txt';
+
+  /// File path: assets/text/privacyPolicyV3_PL.txt
+  String get privacyPolicyV3PL => 'assets/text/privacyPolicyV3_PL.txt';
+
   /// File path: assets/text/termsOfServiceExample.txt
   String get termsOfServiceExample => 'assets/text/termsOfServiceExample.txt';
 
+  /// File path: assets/text/termsOfServiceV2.txt
+  String get termsOfServiceV2 => 'assets/text/termsOfServiceV2.txt';
+
+  /// File path: assets/text/termsOfServiceV2_PL.txt
+  String get termsOfServiceV2PL => 'assets/text/termsOfServiceV2_PL.txt';
+
   /// List of all assets
-  List<String> get values =>
-      [privacyPolicyAndroidExample, termsOfServiceExample];
+  List<String> get values => [
+        privacyPolicyAndroidExample,
+        privacyPolicyV2,
+        privacyPolicyV3,
+        privacyPolicyV3PL,
+        termsOfServiceExample,
+        termsOfServiceV2,
+        termsOfServiceV2PL
+      ];
 }
 
 class $AssetsIconsEventsGen {
@@ -249,6 +271,26 @@ class $AssetsIconsSportIconsFixedTransparentV2Gen {
   AssetGenImage get iconSoccer => const AssetGenImage(
       'assets/icons/sport_icons_fixed_transparent_v2/Icon_Soccer.png');
 
+  /// File path: assets/icons/sport_icons_fixed_transparent_v2/Icon_Sport_Climbing_Bouldering.png
+  AssetGenImage get iconSportClimbingBouldering => const AssetGenImage(
+      'assets/icons/sport_icons_fixed_transparent_v2/Icon_Sport_Climbing_Bouldering.png');
+
+  /// File path: assets/icons/sport_icons_fixed_transparent_v2/Icon_Sport_Climbing_Leading.png
+  AssetGenImage get iconSportClimbingLeading => const AssetGenImage(
+      'assets/icons/sport_icons_fixed_transparent_v2/Icon_Sport_Climbing_Leading.png');
+
+  /// File path: assets/icons/sport_icons_fixed_transparent_v2/Icon_Sport_Climbing_TopRope.png
+  AssetGenImage get iconSportClimbingTopRope => const AssetGenImage(
+      'assets/icons/sport_icons_fixed_transparent_v2/Icon_Sport_Climbing_TopRope.png');
+
+  /// File path: assets/icons/sport_icons_fixed_transparent_v2/Icon_Sport_Other.png
+  AssetGenImage get iconSportOther => const AssetGenImage(
+      'assets/icons/sport_icons_fixed_transparent_v2/Icon_Sport_Other.png');
+
+  /// File path: assets/icons/sport_icons_fixed_transparent_v2/Icon_Sport_Skiing_CrossCountry.png
+  AssetGenImage get iconSportSkiingCrossCountry => const AssetGenImage(
+      'assets/icons/sport_icons_fixed_transparent_v2/Icon_Sport_Skiing_CrossCountry.png');
+
   /// File path: assets/icons/sport_icons_fixed_transparent_v2/Icon_Sports.png
   AssetGenImage get iconSports => const AssetGenImage(
       'assets/icons/sport_icons_fixed_transparent_v2/Icon_Sports.png');
@@ -279,6 +321,11 @@ class $AssetsIconsSportIconsFixedTransparentV2Gen {
         iconRugby,
         iconRunning,
         iconSoccer,
+        iconSportClimbingBouldering,
+        iconSportClimbingLeading,
+        iconSportClimbingTopRope,
+        iconSportOther,
+        iconSportSkiingCrossCountry,
         iconSports,
         iconTennis,
         iconVoleyball,

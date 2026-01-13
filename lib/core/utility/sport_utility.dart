@@ -1,9 +1,9 @@
 import 'dart:math';
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:sportm8s/gen/assets.gen.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../graphics/sportm8s_themes.dart';
 import '../enums/enums_container.dart';
 
 class SportEventUtils {
@@ -20,6 +20,16 @@ class SportEventUtils {
       return SportEventType.Volleyball;
     } else if (lowerTitle.contains('running') || lowerTitle.contains('marathon')) {
       return SportEventType.Running;
+    } else if (lowerTitle.contains('climbing') && lowerTitle.contains("bouldering")) {
+      return SportEventType.ClimbingBouldering;
+    } else if (lowerTitle.contains('climbing') && lowerTitle.contains("leading")) {
+      return SportEventType.ClimbingLeading;
+    } else if (lowerTitle.contains('climbing') && lowerTitle.contains("toprope")) {
+      return SportEventType.ClimbingTopRope;
+    } else if (lowerTitle.contains('skiing') && lowerTitle.contains("crosscountry")) {
+      return SportEventType.ClimbingTopRope;
+    } else if (lowerTitle.contains('other')) {
+      return SportEventType.Other;
     } else {
       return SportEventType.Invalid;
     }
@@ -51,6 +61,16 @@ class SportEventUtils {
         return (random.nextInt(1) + 1, random.nextInt(50) + 30); // 1-2 min, 30–79 max
       case SportEventType.Invalid:
         return (random.nextInt(2) + 2, random.nextInt(20) + 5);   // 2–3 min, 5–24 max
+      case SportEventType.ClimbingBouldering:
+        return (random.nextInt(2) + 1, random.nextInt(20) + 10);   // 2–3 min, 5–24 max
+      case SportEventType.ClimbingLeading:
+        return (random.nextInt(1) + 1, random.nextInt(1) + 1);   // 1 min, 2 max
+      case SportEventType.ClimbingTopRope:
+        return (random.nextInt(1) + 1, random.nextInt(1) + 1);   // 1 min, 2 max
+      case SportEventType.CrossCountrySkiing:
+        return (random.nextInt(2) + 2, random.nextInt(20) + 5);   // 2–3 min, 5–24 max
+      case SportEventType.Other:
+        return (random.nextInt(1) + 1, random.nextInt(50) + 30); // 1-2 min, 30–79 max
     }
   }
 
@@ -73,6 +93,21 @@ class SportEventUtils {
 
       case SportEventType.Cycling:
         return Image.asset(Assets.icons.sportIconsFixedTransparentV2.iconCycling.path, width: width , height: height);
+
+      case SportEventType.ClimbingBouldering:
+        return Image.asset(Assets.icons.sportIconsFixedTransparentV2.iconSportClimbingBouldering.path , width: width, height: height,);
+
+      case SportEventType.ClimbingLeading:
+        return Image.asset(Assets.icons.sportIconsFixedTransparentV2.iconSportClimbingLeading.path , width: width, height: height,);
+
+      case SportEventType.ClimbingTopRope:
+        return Image.asset(Assets.icons.sportIconsFixedTransparentV2.iconSportClimbingTopRope.path , width: width, height: height,);
+
+      case SportEventType.CrossCountrySkiing:
+        return Image.asset(Assets.icons.sportIconsFixedTransparentV2.iconSportSkiingCrossCountry.path , width: width, height: height,);
+
+      case SportEventType.Other:
+        return Image.asset(Assets.icons.sportIconsFixedTransparentV2.iconSportOther.path , width: width, height: height,);
 
       default:
         return Image.asset(Assets.icons.sportIconsFixedTransparentV2.iconSports.path, width: width , height: height);
@@ -99,6 +134,21 @@ class SportEventUtils {
       case SportEventType.Cycling:
         return "Cycling";
 
+      case SportEventType.ClimbingBouldering:
+        return "Climbing Bouldering";
+
+      case SportEventType.ClimbingLeading:
+        return "Climbing Leading";
+
+      case SportEventType.ClimbingTopRope:
+        return "Climbing Top Rope";
+
+      case SportEventType.CrossCountrySkiing:
+        return "Cross-Country Skiing";
+
+      case SportEventType.Other:
+        return "Other";
+
       default:
         return "NotFound!";
     }
@@ -107,64 +157,61 @@ class SportEventUtils {
   static Color getSportEventColor(SportEventType type) {
     switch (type) {
       case SportEventType.Soccer:
-      // football pitch green
-        return const Color(0xFF2E7D32); // green[800]
+        return const Color(0xFF2E7D32);
 
       case SportEventType.Volleyball:
-      // bright, energetic yellow
-        return const Color(0xFFFFB300); // amber[600]
+        return const Color(0xFFFFB300);
 
       case SportEventType.Basketball:
-      // classic orange ball
-        return const Color(0xFFF4511E); // deepOrange[600]
+        return const Color(0xFFF4511E);
 
       case SportEventType.Tennis:
-      // tennis ball / lime-ish
-        return const Color(0xFFC0CA33); // lime[600-700 vibe]
+        return const Color(0xFFC0CA33);
 
       case SportEventType.Running:
-      // dynamic, fast blue
-        return const Color(0xFF1E88E5); // blue[600]
+        return const Color(0xFF1E88E5);
 
       case SportEventType.Cycling:
-      // fresh teal/cyan for outdoors
-        return const Color(0xFF00897B); // teal[600]
+        return const Color(0xFF00897B);
+
+    // Give each climbing type its own “sporty” accent:
+      case SportEventType.ClimbingBouldering:
+        return const Color(0xFFFF7043); // warm chalk/rock
+
+      case SportEventType.ClimbingLeading:
+        return const Color(0xFF7E57C2); // rope/purple
+
+      case SportEventType.ClimbingTopRope:
+        return const Color(0xFF26A69A); // teal
+
+      case SportEventType.CrossCountrySkiing:
+        return const Color(0xFF90CAF9); // icy blue
+
+      case SportEventType.Other:
+        return Colors.white;
 
       case SportEventType.Invalid:
       default:
-      // fallback / unknown
-        return const Color(0xFFBDBDBD); // grey[400]
+        return const Color(0xFFBDBDBD);
     }
   }
 
-  static Color getSportEventBackgroundColor(SportEventType type) {
-    switch (type) {
-      case SportEventType.Soccer:
-        return const Color(0xFFE8F5E9); // very light green
+  static Color getSportEventBackgroundColor({required SportEventType type}) {
+    final accent = getSportEventColor(type);
 
-      case SportEventType.Volleyball:
-        return const Color(0xFFFFF8E1); // very light amber/yellow
+    // Light neutral base that works with black text
+    const base = Color(0xFFF7F9FC);
 
-      case SportEventType.Basketball:
-        return const Color(0xFFFBE9E7); // very light orange
-
-      case SportEventType.Tennis:
-        return const Color(0xFFF0F4C3); // very light lime
-
-      case SportEventType.Running:
-        return const Color(0xFFE3F2FD); // very light blue
-
-      case SportEventType.Cycling:
-        return const Color(0xFFE0F2F1); // very light teal
-
-      case SportEventType.Invalid:
-      default:
-        return const Color(0xFFF5F5F5); // near white
-    }
+    // Tint lightly with sport color
+    return Color.alphaBlend(
+      accent.withOpacity(0.20),
+      base,
+    );
   }
 
   //TODO Add localisation
-  static DropdownButton<String> getSportTypeDropdownButton(Function(String?)? onChanged , String Function() getValue , double iconSize , FocusNode focusNode){
+  static DropdownButton<String> getSportTypeDropdownButton(Function(String?)? onChanged , String Function() getValue , double iconSize , FocusNode focusNode , BuildContext context){
+    final l10n = AppLocalizations.of(context);
     return DropdownButton<String>(
       //focusNode: focusNode,
       value: getValue(),
@@ -172,14 +219,14 @@ class SportEventUtils {
       items: [
         DropdownMenuItem(
           value: "Invalid",
-          child: Text("Select sport"),
+          child: Text(l10n?.sportEventType_Dropdown_SelectSport ?? "Select sport"),
         ),
         DropdownMenuItem(
             value: "Soccer",
             child: Row(
               children: [
                 getTransparentIconBasedOnSportEventType(SportEventType.Soccer , iconSize, iconSize),
-                Text("Soccer")
+                Text(l10n?.sportEventType_Name_Soccer ?? "Soccer")
               ],
             )
         ),
@@ -188,7 +235,7 @@ class SportEventUtils {
             child: Row(
               children: [
                 getTransparentIconBasedOnSportEventType(SportEventType.Volleyball , iconSize, iconSize),
-                Text("Volleyball")
+                Text(l10n?.sportEventType_Name_Volleyball ?? "Volleyball")
               ],
             )
         ),
@@ -197,7 +244,7 @@ class SportEventUtils {
             child: Row(
               children: [
                 getTransparentIconBasedOnSportEventType(SportEventType.Basketball , iconSize, iconSize),
-                Text("Basketball")
+                Text(l10n?.sportEventType_Name_Basketball ?? "Basketball")
               ],
             )
         ),
@@ -206,7 +253,7 @@ class SportEventUtils {
             child: Row(
               children: [
                 getTransparentIconBasedOnSportEventType(SportEventType.Tennis , iconSize, iconSize),
-                Text("Tennis")
+                Text(l10n?.sportEventType_Name_Tennis ?? "Tennis")
               ],
             )
         ),
@@ -215,7 +262,7 @@ class SportEventUtils {
             child: Row(
               children: [
                 getTransparentIconBasedOnSportEventType(SportEventType.Running , iconSize, iconSize),
-                Text("Running")
+                Text(l10n?.sportEventType_Name_Running ?? "Running")
               ],
             )
         ),
@@ -224,11 +271,85 @@ class SportEventUtils {
             child: Row(
               children: [
                 getTransparentIconBasedOnSportEventType(SportEventType.Cycling, iconSize, iconSize),
-                Text("Cycling")
+                Text(l10n?.sportEventType_Name_Cycling ?? "Cycling")
+              ],
+            )
+        ),
+        DropdownMenuItem(
+            value: "ClimbingBouldering",
+            child: Row(
+              children: [
+                getTransparentIconBasedOnSportEventType(SportEventType.ClimbingBouldering, iconSize, iconSize),
+                Text(l10n?.sportEventType_Name_Climbing_Bouldering ?? "Climbing Bouldering")
+              ],
+            )
+        ),
+        DropdownMenuItem(
+            value: "ClimbingLeading",
+            child: Row(
+              children: [
+                getTransparentIconBasedOnSportEventType(SportEventType.ClimbingLeading, iconSize, iconSize),
+                Text(l10n?.sportEventType_Name_Climbing_Leading ?? "Climbing Leading")
+              ],
+            )
+        ),
+        DropdownMenuItem(
+            value: "ClimbingTopRope",
+            child: Row(
+              children: [
+                getTransparentIconBasedOnSportEventType(SportEventType.ClimbingTopRope, iconSize, iconSize),
+                Text(l10n?.sportEventType_Name_Climbing_TopRope ?? "Climbing Top Rope")
+              ],
+            )
+        ),
+        DropdownMenuItem(
+            value: "CrossCountrySkiing",
+            child: Row(
+              children: [
+                getTransparentIconBasedOnSportEventType(SportEventType.CrossCountrySkiing, iconSize, iconSize),
+                Text(l10n?.sportEventType_Name_CrossCountrySkiing ?? "Cross-Country Skiing")
+              ],
+            )
+        ),
+        DropdownMenuItem(
+            value: "Other",
+            child: Row(
+              children: [
+                getTransparentIconBasedOnSportEventType(SportEventType.Other, iconSize, iconSize),
+                Text(l10n?.sportEventType_Name_Other ?? "Cross-Country Skiing")
               ],
             )
         ),
       ], onChanged: (x) => onChanged!(x),
     );
+  }
+
+  static String getSportEventTypeToLocValue(SportEventType sportEventType , AppLocalizations? l10n){
+    switch(sportEventType){
+      case SportEventType.Invalid:
+        return l10n?.sportEventType_Name_Other ?? "Other";
+      case SportEventType.Soccer:
+        return l10n?.sportEventType_Name_Soccer ?? "Soccer";
+      case SportEventType.Volleyball:
+        return l10n?.sportEventType_Name_Volleyball ?? "Volleyball";
+      case SportEventType.Basketball:
+        return l10n?.sportEventType_Name_Basketball ?? "Basketball";
+      case SportEventType.Tennis:
+        return l10n?.sportEventType_Name_Tennis ?? "Tennis";
+      case SportEventType.Running:
+        return l10n?.sportEventType_Name_Running ?? "Running";
+      case SportEventType.Cycling:
+        return l10n?.sportEventType_Name_Cycling ?? "Cycling";
+      case SportEventType.ClimbingBouldering:
+        return l10n?.sportEventType_Name_Climbing_Bouldering ?? "ClimbingBouldering";
+      case SportEventType.ClimbingLeading:
+        return l10n?.sportEventType_Name_Climbing_Leading ?? "ClimbingLeading";
+      case SportEventType.ClimbingTopRope:
+        return l10n?.sportEventType_Name_Climbing_TopRope ?? "ClimbingTopRope";
+      case SportEventType.CrossCountrySkiing:
+        return l10n?.sportEventType_Name_CrossCountrySkiing ?? "CrossCountrySkiing";
+      case SportEventType.Other:
+        return l10n?.sportEventType_Name_Other ?? "Other";
+    }
   }
 }
