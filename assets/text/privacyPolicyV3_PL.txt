@@ -1,0 +1,122 @@
+<h1>Polityka prywatności</h1>
+<p>Ostatnia aktualizacja: 13 stycznia 2026</p>
+
+<p>Niniejsza Polityka Prywatności opisuje nasze zasady i procedury dotyczące zbierania, wykorzystywania oraz ujawniania Twoich informacji podczas korzystania z Usługi oraz informuje o Twoich prawach dotyczących prywatności i o tym, w jaki sposób prawo Cię chroni.</p>
+
+<p>Wykorzystujemy Twoje Dane Osobowe, aby świadczyć i ulepszać Usługę. Korzystając z Usługi, wyrażasz zgodę na zbieranie i wykorzystywanie informacji zgodnie z niniejszą Polityką Prywatności.</p>
+
+<h2>Interpretacja i definicje</h2>
+
+<h3>Interpretacja</h3>
+<p>Słowa, których pierwsza litera jest pisana wielką literą, mają znaczenia zdefiniowane w poniższych warunkach. Poniższe definicje mają to samo znaczenie niezależnie od tego, czy występują w liczbie pojedynczej, czy mnogiej.</p>
+
+<h3>Definicje</h3>
+<p>Na potrzeby niniejszej Polityki Prywatności:</p>
+
+<ul>
+  <li><p><strong>Konto</strong> oznacza unikalne konto utworzone dla Ciebie w celu uzyskania dostępu do naszej Usługi lub jej części.</p></li>
+  <li><p><strong>Aplikacja</strong> odnosi się do SportM8s, programu udostępnianego przez Firmę.</p></li>
+  <li><p><strong>Firma</strong> (określana jako „Firma”, „My”, „Nam” lub „Nasze”) odnosi się do SportM8s.</p></li>
+  <li><p><strong>Kraj</strong> odnosi się do: Polska</p></li>
+  <li><p><strong>Urządzenie</strong> oznacza każde urządzenie, które może uzyskać dostęp do Usługi, takie jak komputer, telefon komórkowy lub tablet.</p></li>
+  <li><p><strong>Dane osobowe</strong> to wszelkie informacje dotyczące zidentyfikowanej lub możliwej do zidentyfikowania osoby fizycznej.</p></li>
+  <li><p><strong>Usługa</strong> odnosi się do Aplikacji oraz wszelkiej przyszłej strony internetowej prowadzonej przez Firmę.</p></li>
+  <li><p><strong>Dostawca usług</strong> oznacza każdą osobę fizyczną lub prawną, która przetwarza dane w imieniu Firmy.</p></li>
+  <li><p><strong>Dane użytkowania</strong> odnoszą się do danych zbieranych automatycznie, generowanych w wyniku korzystania z Usługi lub z infrastruktury Usługi.</p></li>
+  <li><p><strong>Ty</strong> oznacza osobę uzyskującą dostęp do Usługi lub z niej korzystającą.</p></li>
+</ul>
+
+<h2>Podstawa prawna przetwarzania danych osobowych (RODO)</h2>
+<p>Firma przetwarza Dane Osobowe na następujących podstawach prawnych:</p>
+<ul>
+  <li><strong>Zgoda</strong> – gdy udzieliłeś(-aś) wyraźnej zgody (np. dane lokalizacyjne, powiadomienia).</li>
+  <li><strong>Wykonanie umowy</strong> – gdy przetwarzanie jest niezbędne do świadczenia Usługi, zarządzania Kontami, Wydarzeniami i Grupami.</li>
+  <li><strong>Uzasadnione interesy</strong> – w zakresie bezpieczeństwa, analiz, zapobiegania oszustwom oraz ulepszania Usługi.</li>
+  <li><strong>Obowiązek prawny</strong> – gdy przetwarzanie jest wymagane w celu spełnienia obowiązków wynikających z przepisów prawa.</li>
+</ul>
+
+<h2>Zbieranie i wykorzystywanie Twoich danych osobowych</h2>
+
+<h3>Rodzaje zbieranych danych</h3>
+
+<h4>Dane osobowe</h4>
+<p>Podczas korzystania z naszej Usługi możemy poprosić Cię o podanie pewnych danych umożliwiających identyfikację, w tym między innymi:</p>
+<ul>
+  <li>Adres e-mail</li>
+  <li>Imię i nazwisko</li>
+  <li>Zdjęcia profilowe</li>
+  <li>Informacje o wydarzeniach i treści tworzone przez użytkownika</li>
+  <li>Dane użytkowania</li>
+</ul>
+
+<h4>Dane użytkowania</h4>
+<p>Dane użytkowania są zbierane automatycznie i mogą obejmować adres IP, identyfikatory urządzenia, typ przeglądarki, system operacyjny oraz dane diagnostyczne.</p>
+
+<h4>Dane lokalizacyjne</h4>
+<p>Za Twoją zgodą możemy zbierać informacje dotyczące Twojej lokalizacji, aby udostępniać funkcje takie jak wydarzenia w pobliżu, mapy oraz odkrywanie aktywności.</p>
+<p>Możesz włączyć lub wyłączyć dostęp do lokalizacji w dowolnym momencie w ustawieniach Urządzenia.</p>
+
+<h3>Wykorzystywanie Twoich danych osobowych</h3>
+<p>Firma może wykorzystywać Dane Osobowe w następujących celach:</p>
+<ul>
+  <li>Aby świadczyć i utrzymywać Usługę</li>
+  <li>Aby zarządzać Twoim Kontem</li>
+  <li>Aby komunikować się z Tobą (e-mail, powiadomienia push, wiadomości w aplikacji)</li>
+  <li>Aby ulepszać i analizować sposób korzystania z Usługi</li>
+  <li>Aby zapewnić bezpieczeństwo i zapobiegać nadużyciom</li>
+  <li>W związku z przyszłymi płatnymi lub premium funkcjami</li>
+</ul>
+
+<h3>Pliki cookie, analityka i technologie śledzące</h3>
+<p>Usługa może wykorzystywać pliki cookie, pamięć lokalną, narzędzia analityczne oraz technologie raportowania awarii w celu działania i poprawy funkcjonalności.</p>
+<p>Możesz zarządzać plikami cookie i preferencjami śledzenia w ustawieniach przeglądarki lub urządzenia.</p>
+
+<h3>Treści tworzone przez użytkownika</h3>
+<p>Wszelkie treści, które udostępniasz (takie jak informacje profilowe, szczegóły wydarzeń, posty w grupach), mogą być widoczne dla innych użytkowników Usługi. Ponosisz odpowiedzialność za Dane Osobowe, które zdecydujesz się udostępnić.</p>
+
+<h3>Usunięcie konta</h3>
+<p>Użytkownicy mogą zażądać usunięcia Konta, kontaktując się z Firmą drogą mailową. Usunięcie konta jest wykonywane przez administratora. Niektóre dane mogą zostać zachowane, jeśli jest to wymagane prawem.</p>
+
+<h2>Przechowywanie Twoich danych osobowych</h2>
+<p>Firma przechowuje Dane Osobowe wyłącznie tak długo, jak jest to konieczne do realizacji celów opisanych w niniejszej Polityce Prywatności, chyba że dłuższy okres przechowywania jest wymagany przez prawo.</p>
+
+<h2>Przekazywanie Twoich danych osobowych</h2>
+<p>Twoje informacje mogą być przetwarzane i przechowywane poza Twoim krajem. Firma zapewnia odpowiednie zabezpieczenia w celu ochrony Twoich danych.</p>
+
+<h2>Ujawnianie Twoich danych osobowych</h2>
+<p>Twoje Dane Osobowe mogą zostać ujawnione Dostawcom Usług, partnerom biznesowym lub organom, jeśli jest to wymagane przez prawo.</p>
+
+<h2>Zautomatyzowane podejmowanie decyzji</h2>
+<p>Firma obecnie nie stosuje zautomatyzowanego podejmowania decyzji ani profilowania. Jeśli ulegnie to zmianie w przyszłości, niniejsza Polityka Prywatności zostanie zaktualizowana.</p>
+
+<h2>Bezpieczeństwo Twoich danych osobowych</h2>
+<p>Stosujemy komercyjnie uzasadnione środki w celu ochrony Twoich Danych Osobowych, jednak żadna metoda transmisji ani przechowywania nie jest w 100% bezpieczna.</p>
+
+<h2>Twoje prawa w zakresie ochrony danych (RODO)</h2>
+<p>Masz prawo do:</p>
+<ul>
+  <li>Dostępu do swoich Danych Osobowych</li>
+  <li>Sprostowania nieprawidłowych danych</li>
+  <li>Żądania usunięcia swoich danych</li>
+  <li>Ograniczenia przetwarzania</li>
+  <li>Wniesienia sprzeciwu wobec przetwarzania</li>
+  <li>Żądania przenoszenia danych</li>
+  <li>Cofnięcia zgody w dowolnym momencie</li>
+</ul>
+
+<p>Masz również prawo złożyć skargę do polskiego organu ochrony danych (UODO) lub do właściwego organu nadzorczego.</p>
+
+<h2>Prywatność dzieci</h2>
+<p>Usługa nie jest przeznaczona dla osób poniżej 18. roku życia. Nie zbieramy świadomie danych od osób niepełnoletnich.</p>
+
+<h2>Usługi stron trzecich</h2>
+<p>Usługa może opierać się na dostawcach zewnętrznych, takich jak Microsoft Azure, Firebase Authentication, usługi analityczne oraz OpenStreetMap.</p>
+
+<h2>Zmiany w niniejszej Polityce Prywatności</h2>
+<p>Możemy od czasu do czasu aktualizować niniejszą Politykę Prywatności. Zmiany wchodzą w życie z chwilą opublikowania na tej stronie.</p>
+
+<h2>Skontaktuj się z nami</h2>
+<p>Jeśli masz pytania dotyczące niniejszej Polityki Prywatności, możesz skontaktować się z nami:</p>
+<ul>
+  <li>Mailowo: sportm8s.app@gmail.com</li>
+</ul>

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AggreementWidget extends StatefulWidget
 {
@@ -63,6 +64,8 @@ class _AggreementWidgetState extends State<AggreementWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Column(
       children: [
         Expanded(
@@ -82,7 +85,7 @@ class _AggreementWidgetState extends State<AggreementWidget> {
                 Center(child:
                   ElevatedButton(
                     onPressed: _hasScrolledToBottom && _hasClickedCheckbox ? widget.onAggrementAppliedPressed : null,
-                    child: Text("Agree")
+                    child: Text(l10n?.agreement_ConfirmButton_Accept ?? "Accept")
                   )
               )
             )

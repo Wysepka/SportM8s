@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -11,6 +13,8 @@ import 'package:sportm8s/core/logger/logger_config.dart';
 import 'package:sportm8s/graphics/sportm8s_themes.dart';
 import 'package:sportm8s/services/server_user_service.dart';
 import 'package:sportm8s/core/models/server_response.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class AggreementsScreen extends ConsumerStatefulWidget
 {
@@ -48,13 +52,23 @@ class _AggreementsScreenState extends ConsumerState<AggreementsScreen>{
   Future<String> getPrivacyPolicyHtml() async
   {
     _logger.debug('Loading privacy policy HTML content');
-    return await rootBundle.loadString('assets/text/privacyPolicyV3.txt');
+    if(PlatformDispatcher.instance.locale.countryCode == "PL"){
+      return await rootBundle.loadString('assets/text/privacyPolicyV3_PL.txt');
+    }
+    else {
+      return await rootBundle.loadString('assets/text/privacyPolicyV3.txt');
+    }
   }
 
   Future<String> getTermsOfServiceHtml() async
   {
     _logger.debug('Loading terms of service HTML content');
-    return await rootBundle.loadString('assets/text/termsOfServiceV2.txt');
+    if(PlatformDispatcher.instance.locale.countryCode == "PL"){
+      return await rootBundle.loadString('assets/text/termsOfServiceV2_PL.txt');
+    }
+    else {
+      return await rootBundle.loadString('assets/text/termsOfServiceV2.txt');
+    }
   }
 
   Map<String, Style> _getHtmlStylesTermsOfService() {
@@ -158,6 +172,7 @@ class _AggreementsScreenState extends ConsumerState<AggreementsScreen>{
       );
     }
 
+    final l10n = AppLocalizations.of(context);
     final storageService = ref.watch(storageServiceInitializerProvider);
     return storageService.when(
       data: (storageService) {
@@ -173,13 +188,13 @@ class _AggreementsScreenState extends ConsumerState<AggreementsScreen>{
             if (!privacySnapshot.data!) {
               _logger.debug('Showing Privacy Policy screen');
               return PrivacyPolicyScreen(
-                aggrementNameKey: "Privacy Policy",
+                aggrementNameKey: l10n?.agreement_Title_PrivacyPolicy ?? "Privacy Policy",
                 useHtmlMarking: true,
                 aggreementType: AggreementType.PrivacyPolicy,
                 aggreementTypeCallback: onAggreementApplied,
                 loadAggrementHtmlText: getPrivacyPolicyHtml,
                 textHtmlStyle: _getPrivacyPolicyHtmlStyles(),
-                consentTextKey: "I have read all document",
+                consentTextKey: l10n?.agreement_ConfirmCheckbox_ReadWholeDoc ?? "I have read whole document",
               );
             }
 
@@ -195,13 +210,13 @@ class _AggreementsScreenState extends ConsumerState<AggreementsScreen>{
                 if (!termsSnapshot.data!) {
                   _logger.debug('Showing Terms of Service screen');
                   return PrivacyPolicyScreen(
-                    aggrementNameKey: "Terms of Service",
+                    aggrementNameKey: l10n?.agreement_Title_TermsOfService ?? "Terms of Service",
                     useHtmlMarking: true,
                     aggreementType: AggreementType.TermsOfService,
                     aggreementTypeCallback: onAggreementApplied,
                     loadAggrementHtmlText: getTermsOfServiceHtml,
                     textHtmlStyle: _getHtmlStylesTermsOfService(),
-                    consentTextKey: "I have read all document",
+                    consentTextKey: l10n?.agreement_ConfirmCheckbox_ReadWholeDoc ?? "I have read whole document",
                   );
                 }
 

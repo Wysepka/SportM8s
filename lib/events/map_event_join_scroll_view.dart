@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sportm8s/core/enums/enums_container.dart';
 import 'package:sportm8s/core/extensions/string_extensions.dart';
 import 'package:sportm8s/core/styles/map_event_widget_text_style.dart';
@@ -9,14 +8,11 @@ import 'package:sportm8s/dto/list_response.dart';
 import 'package:sportm8s/events/map_event_join_button.dart';
 import 'package:sportm8s/events/map_event_participant_widget.dart';
 import 'package:sportm8s/events/map_event_widget_container.dart';
-import 'package:sportm8s/map/containers/map_event_panel_container.dart';
-import 'package:sportm8s/map/engine/sport_event_controller.dart';
 import 'package:sportm8s/map/engine/sport_event_repository.dart';
 import 'package:sportm8s/map/models/map_event_data.dart';
 import 'package:sportm8s/services/server_sport_service.dart';
-import 'package:sportm8s/services/server_user_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../core/services/storage_service.dart';
 
 class MapEventJoinScrollView extends StatefulWidget{
   MapEventData mapEventData;
@@ -35,12 +31,14 @@ class _MapEventJoinScrollView extends State<MapEventJoinScrollView>{
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+    final l10n = AppLocalizations.of(context);
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     return ListView(
       children: [
         MapEventWidgetContainer(
             child: Column(children: [
-              Text("Event Name",
+              Text(
+                l10n?.event_Title_EventName ?? "Event Name",
                 style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
               ),
               Text(widget.mapEventData.eventName),
@@ -48,7 +46,8 @@ class _MapEventJoinScrollView extends State<MapEventJoinScrollView>{
         ),
         MapEventWidgetContainer(
             child: Column(children: [
-              Text("Event Description",
+              Text(
+                l10n?.event_Title_EventDescription ?? "Event Description",
                 style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
               ),
               Text(widget.mapEventData.eventDescription),
@@ -56,7 +55,8 @@ class _MapEventJoinScrollView extends State<MapEventJoinScrollView>{
         ),
         MapEventWidgetContainer(
             child: Column(children: [
-              Text("Event Type",
+              Text(
+                l10n?.event_Title_EventType ?? "Event Type",
                 style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
               ),
               Text(widget.mapEventData.sportEventType.toString()),
@@ -64,7 +64,8 @@ class _MapEventJoinScrollView extends State<MapEventJoinScrollView>{
         ),
         MapEventWidgetContainer(
             child: Column(children: [
-              Text("Event Start Date",
+              Text(
+                l10n?.event_Title_EventStartDate ?? "Event Start Date",
                 style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
               ),
               Text(widget.mapEventData.eventStartDate.toDate()),
@@ -72,7 +73,8 @@ class _MapEventJoinScrollView extends State<MapEventJoinScrollView>{
         ),
         MapEventWidgetContainer(
             child: Column(children: [
-              Text("Event Time",
+              Text(
+                l10n?.event_Title_EventStartTime ?? "Event Time",
                 style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
               ),
               Text(widget.mapEventData.eventDuration.to24h()),
@@ -82,7 +84,7 @@ class _MapEventJoinScrollView extends State<MapEventJoinScrollView>{
         MapEventWidgetContainer(
             child: Column(children: [
               Text(
-                  "Event Participants",
+                  l10n?.event_Title_EventParticipants ?? "Event Participants",
                   style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
               ),
               FutureBuilder<List<String>>(

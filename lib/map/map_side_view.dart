@@ -32,6 +32,7 @@ import 'package:sportm8s/map/panels/map_view_bottom_panel.dart';
 import 'package:sportm8s/map/panels/map_view_bottom_panel_controller.dart';
 import 'package:sportm8s/services/server_service.dart';
 import 'package:sportm8s/services/server_sport_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../core/models/server_response.dart';
 import '../events/map_create_event.dart';
@@ -86,6 +87,8 @@ class _MapSideView extends State<MapSideView>{
   @override
   Widget build(BuildContext context) {
 
+    final l10n = AppLocalizations.of(context);
+
     if(AppConsts.IS_PRODUCTION){
       return Center(child: Text("Production Ready map is not available !"));
     }
@@ -102,7 +105,7 @@ class _MapSideView extends State<MapSideView>{
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children:[ 
-                      Text("Loading Map..."),
+                      Text(l10n?.map_MapIsLoading ?? "Loading Map..."),
                       CircularProgressIndicator()
                     ]),
               );
@@ -148,7 +151,7 @@ class _MapSideView extends State<MapSideView>{
             });
 
             return Center(
-              child: Text("Location Initialized"),
+              child: Text(l10n?.map_LocalisationInit ?? "Location Initialized"),
             );
           },
         ),

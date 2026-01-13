@@ -47,6 +47,7 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     return MaterialApp(
       title: 'SportM8s',
       theme: SportM8sTheme.dark(),
@@ -64,7 +65,7 @@ class MyApp extends ConsumerWidget {
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text('Go Back'),
+                      child: Text(l10n?.event_Button_Back_Tooltip ?? 'Go Back'),
                     ),
                   ],
                 ),

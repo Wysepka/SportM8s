@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MapEventTopPanel extends StatelessWidget{
   final Function() _onDismissCreateEventTap;
@@ -9,6 +10,7 @@ class MapEventTopPanel extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     var colorScheme = Theme.of(context).colorScheme;
     return SafeArea(
       bottom: false,
@@ -47,7 +49,7 @@ class MapEventTopPanel extends StatelessWidget{
                   //widthFactor: 0.1,
                   alignment: Alignment.centerLeft,
                   child: IconButton(
-                    tooltip: "Back",
+                    tooltip: l10n?.event_Button_Back_Tooltip ?? "Back",
                     icon: Icon(Icons.keyboard_return),
                     onPressed: _onDismissCreateEventTap,
                     color: colorScheme.surfaceContainerHighest,

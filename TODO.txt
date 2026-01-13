@@ -14,13 +14,15 @@
 13. Add Hero anim when starting to create event
 14. Add Color customization in create event when EventType is selected
 15. Add timeout bigger and renewal when app client is blocked
-16. Increase CreateEvent location icon size
+16. Increase CreateEvent location icon size - DONE
 17. Optimize ServerSportService to send only EventID instead of whole SportEventData
 18. Change post methods in ServerSportService to use only eventID instead of sending while MapEventData
 19. Add icons color as primaryText(black) for all Button.icon widgets
 20. Find a way to disable MapSideView setState on join/leave event
 21. Change color of View/Create event cta button to black/secondaryText
 22. Change SportEventType colors to more matte/dark
+23. Add localization for error codes (low prio)
+24. Mark debug buttons only developer only
 
 1. Clone repository on Laptop and check whats missing and poppin
 
