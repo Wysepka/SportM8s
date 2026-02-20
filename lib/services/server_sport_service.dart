@@ -265,6 +265,7 @@ class ServerSportService
         'eventName': mapEventData.eventName,
         'eventDescription': mapEventData.eventDescription,
         'sportEventType': mapEventData.sportEventType.index,
+        'eventID': mapEventData.eventID,
         'eventPosition':
         {
           'latitude': mapEventData.position.latitude,

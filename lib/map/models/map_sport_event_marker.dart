@@ -17,7 +17,19 @@ class MapSportEventData
   factory MapSportEventData.fromJson(Map<String,dynamic> value , OSMMarkerData markerData){
     MapSportEventData mapSportEventDataParsed;
     
-    LatLng position = LatLng(value['eventPosition']['latitude'] as double, value['eventPosition']['longitude'] as double);
+    LatLng position;
+    if(value['eventPosition']['latitude'] is double && value['eventPosition']['longitude'] is double) {
+      position = LatLng(value['eventPosition']['latitude'] as double,
+          value['eventPosition']['longitude'] as double);
+    }
+    else if(value['eventPosition']['latitude'] is int && value['eventPosition']['longitude'] is int){
+      position = LatLng((value['eventPosition']['latitude'] as int).toDouble(),
+          (value['eventPosition']['longitude'] as int).toDouble());
+    }
+    else{
+      throw Exception("Could not parse EventPosition for Event: ${value['eventName']} , ID: ${value['eventID']}");
+    }
+
     SportEventType sportEventType = SportEventUtils.parseIntToSportEventType(value['sportEventType']);
 
     final Map<String, Participant> participantsIDs =

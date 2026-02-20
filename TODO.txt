@@ -25,6 +25,8 @@
 24. Mark debug buttons only developer only
 25. Remove SelectSport = Invalid entry from sport selection dropdown
 
+ ----- 26. IMPORTANT !!! Replace UserModel.id with GUID -----
+
 1. Clone repository on Laptop and check whats missing and poppin
 
 CREDITS
