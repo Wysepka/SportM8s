@@ -48,6 +48,12 @@
     "map_LocalisationInit": "Location Initialized",
     "map_JoinEvent": "Join Event",
 
+    "map_StyleIsLoading": "Loading Map Style...",
+    "map_StyleInitialized": "Location Initialized",
+
+    "map_LoadingDataError": "Error while initializing map",
+    "map_LoadedDataEmpty": "Loaded map data is empty",
+
     "event_Title_EventName": "Event Name",
     "event_Title_EventDescription": "Event Description",
     "event_Title_EventType": "Event Type",

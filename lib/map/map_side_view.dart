@@ -32,8 +32,8 @@ import 'package:sportm8s/map/panels/map_view_bottom_panel.dart';
 import 'package:sportm8s/map/panels/map_view_bottom_panel_controller.dart';
 import 'package:sportm8s/services/server_service.dart';
 import 'package:sportm8s/services/server_sport_service.dart';
+import 'package:vector_map_tiles/vector_map_tiles.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 import '../core/models/server_response.dart';
 import '../events/map_create_event.dart';
 import 'engine/sport_event_engine.dart';
@@ -63,7 +63,11 @@ class _MapSideView extends State<MapSideView>{
   late MapIconCreateEvent mapIconCreateEvent;
 
   bool locationInitialized = false;
+  bool styleInitialized = false;
+  late Style darkStyle;
   LatLng initialLocation = LatLng(52, 21);
+
+  late Future<void> _initializationFuture;
 
   @override void initState() {
     // TODO: implement initState
@@ -78,6 +82,8 @@ class _MapSideView extends State<MapSideView>{
     OSMMarkerData markerData = OSMMarkerData(_getMapIconEvent, _getMarkerWidth, _getMarkerHeight, _getZoomMultiplier);
     sportEventEngine.eventController.addListener(onSportEventsChanged);
     sportEventEngine.initialize(markerData);
+
+    _initializationFuture = initializeMapData();
   }
 
   void onSportEventsChanged(){
@@ -89,168 +95,387 @@ class _MapSideView extends State<MapSideView>{
 
     final l10n = AppLocalizations.of(context);
 
-    if(AppConsts.IS_PRODUCTION){
-      return Center(child: Text("Production Ready map is not available !"));
-    }
-    else {
-      // TODO: implement build
-      return SafeArea(
-        child: locationInitialized ?
-          getMapWidget(initialLocation) :
-          FutureBuilder(
-          future: getCurrentUserLocation(),
-          builder: (context, snapshot){
-            if(snapshot.connectionState == ConnectionState.waiting){
-              return Center(
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children:[ 
-                      Text(l10n?.map_MapIsLoading ?? "Loading Map..."),
-                      CircularProgressIndicator()
-                    ]),
-              );
-            }
-
-            if(snapshot.hasError){
-              locationInitialized = true;
-              loggerService.error("Could not initialize current user location. Error: ${snapshot.error}");
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                setState(() {
-
-                });
-              });
-
-              return Center(
-                child: Text("Error while trying to get current user Geolocation !"),
-              );
-            }
-            
-            if(!snapshot.hasData){
-              initialLocation = snapshot.data!;
-              locationInitialized = true;
-              loggerService.error("Could not initialize current user location, location is empty !");
-
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                setState(() {
-
-                });
-              });
-
-              return Center(
-                child: Text("Current Geolocation of user is incorrect"),
-              );
-            }
-
-            locationInitialized = true;
-            initialLocation = snapshot.data!;
-            loggerService.info("Current user location initialized properly");
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              setState(() {
-
-              });
-            });
-
-            return Center(
-              child: Text(l10n?.map_LocalisationInit ?? "Location Initialized"),
-            );
-          },
-        ),
-      );
-    }
-  }
-
-  Widget getMapWidget(LatLng initialPosition){
-    return Stack(
-        children: [
-          Positioned.fill(
-            child: FlutterMap(
-                mapController: mapController,
-                options: MapOptions(
-                  //TODO add LatLng info getting from phone localization
-                  initialCenter: initialPosition,
-                  initialZoom: 13.0,
-                  onMapEvent: (event) {
-                    if(event is MapEventDoubleTapZoomEnd || event is MapEventDoubleTapZoomStart
-                        || event is MapEventMoveStart || event is MapEventMoveEnd){
-                      setState(() {
-                        zoomValue = event.camera.zoom;
-                        sportEventEngine.updateRectsNoAddition(mapController.camera.visibleBounds);
-                        _currentCenteredPosition = event.camera.center;
-                        _currentMapPixelsSize = event.camera.size;
-                        double offsetByPxInHeight = _currentMapPixelsSize.y * -0.25;
-                        _currentMapIconCreateEventPosition = offsetPositionByPixels(_currentCenteredPosition, 0, offsetByPxInHeight);
-                        _currentClickedMapEvent = null;
-                        _isJoiningEvent = false;
-                        _trySetBottomPanelEventType(MapViewBottomPanelType.CreatingEvent);
-                      });
-                    }
-                    if(event is MapEventTap){
-                      _currentClickedMapEvent = null;
-                      _isJoiningEvent = false;
-                      _trySetBottomPanelEventType(MapViewBottomPanelType.CreatingEvent);
-                    }
-                  },
-                ),
-                children: [
-                  TileLayer(
-                    urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-                  ),
-                  //MarkerLayer(markers: RandomUtility.getMarkers_Test(_getMarkerWidth, _getMarkerHeight, _getMapIcon , _getZoomMultiplier))
-                  MarkerLayer(markers:_getMarkers())
-                ]
-            ),
-          ),
-
-          if(_isJoiningEvent)...[
-            if(_currentClickedMapEvent != null)...[
-              MapJoinEvent(_currentClickedMapEvent! , _applyJoinEvent , _onDismissJoinEvent , sportEventEngine.sportService , _onUserDeletedEvent , _onUserButtonRequestSend , sportEventEngine.eventRepository),
-            ]
-            else...[
-              Center(
-                child: MapEventWidgetContainer(
-                  child: Text(
-                    "Could not Join Event, _currentClickedMapEvent is null !",
-                    style: TextStyle(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 30
-                    ),
-                  ),
-                ),
-              )
-            ]
-          ],
-
-          if(_isCreatingEvent)...[
-            MapCreateEventPanel(_onDismissCreateEvent , _applyCreateEvent ,sportEventEngine.sportService),
-          ],
-
-          if(!_isCreatingEvent && !_isJoiningEvent)...[
-            bottomPanel = MapViewBottomPanel(MapViewBottomPanelController() , _onCreateEventTap, _onJoinEventTap),
-          ],
-
-          if(eventRequestType != EventServiceRequestType.Idle)...[
-            Positioned.fill(
-                child: IgnorePointer(
-                  ignoring: true,
-                  child: Container(
-                    color: Colors.white38.withOpacity(0.5),
-                    child: Center(
-                      child: Column(
-                        children: [
-                          CircularProgressIndicator(),
-                          Text(EventUtility.getLocalisedEventRequestTypeName(eventRequestType))
-                        ],
-                      ),
-                    ),
-                  ),
-                )
-            )
-          ]
-        ]
+    // TODO: implement build
+    return SafeArea(
+      child: (locationInitialized && styleInitialized) ?
+        getMapWidget(initialLocation , darkStyle) :
+        futureInitializeMapData()
     );
   }
 
-  Future<LatLng> getCurrentUserLocation() async {
+  Widget futureInitializeMapData(){
+    final l10n = AppLocalizations.of(context);
+
+    return FutureBuilder<void>(
+      future: _initializationFuture,
+      builder: (context, snapshot) {
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(l10n?.map_MapIsLoading ?? "Initializing Map..."),
+                const SizedBox(width: 10),
+                const CircularProgressIndicator(),
+              ],
+            ),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return Center(
+            child: Text(l10n?.map_LoadingDataError ??"Error while initializing map"),
+          );
+        }
+
+        if(!snapshot.hasData){
+          return Center(
+            child: Text(l10n?.map_LoadedDataEmpty ?? "Loaded map data is empty"),
+          );
+        }
+
+        return const SizedBox(); // or your actual Map widget
+      },
+    );
+
+  }
+
+  Future<void> initializeMapData() async {
+    try {
+      final location = await loadCurrentUserLocation();
+      initialLocation = location;
+      loggerService.info("Current user location initialized properly");
+
+      locationInitialized = true;
+
+      final style = await loadMapStyle();
+      // store style somewhere if needed
+      darkStyle = style;
+      loggerService.info("Map style loaded properly");
+
+      styleInitialized = true;
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+
+        });
+      });
+
+    } catch (e) {
+      loggerService.error("Initialization error: $e");
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+
+        });
+      });
+
+      rethrow;
+    }
+  }
+
+  /*
+  FutureBuilder loadUserLocalization(){
+    final l10n  = AppLocalizations.of(context);
+
+    return FutureBuilder(
+      future: loadCurrentUserLocation(),
+      builder: (context, snapshot){
+        if(snapshot.connectionState == ConnectionState.waiting){
+          return Center(
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children:[
+                  Text(l10n?.map_MapIsLoading ?? "Loading Map..."),
+                  CircularProgressIndicator()
+                ]),
+          );
+        }
+
+        if(snapshot.hasError){
+          locationInitialized = true;
+          loggerService.error("Could not initialize current user location. Error: ${snapshot.error}");
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            setState(() {
+
+            });
+          });
+
+          return Center(
+            child: Text("Error while trying to get current user Geolocation !"),
+          );
+        }
+
+        if(!snapshot.hasData){
+          initialLocation = snapshot.data!;
+          locationInitialized = true;
+          loggerService.error("Could not initialize current user location, location is empty !");
+
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            setState(() {
+
+            });
+          });
+
+          return Center(
+            child: Text("Current Geolocation of user is incorrect"),
+          );
+        }
+
+        locationInitialized = true;
+        initialLocation = snapshot.data!;
+        loggerService.info("Current user location initialized properly");
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          setState(() {
+
+          });
+        });
+
+        return Center(
+          child: Text(l10n?.map_LocalisationInit ?? "Location Initialized"),
+        );
+      },
+    );
+  }
+
+   */
+
+  /*
+
+  FutureBuilder getMapStyle(){
+    final l10n = AppLocalizations.of(context);
+    FutureBuilder<Style>(
+        future: loadMapStyle(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(l10n?.map_StyleIsLoading ?? "Loading Map Style..."),
+                    CircularProgressIndicator()
+                  ]),
+            );
+          }
+
+          if (snapshot.hasError) {
+            locationInitialized = true;
+            loggerService.error(
+                "Could not load map style. Error: ${snapshot.error}");
+
+            return Center(
+              child: Text("Error while trying to get map style !"),
+            );
+          }
+
+          if (!snapshot.hasData) {
+            locationInitialized = true;
+            loggerService.error(
+                "Could not initialize map style, style is empty !");
+
+            return Center(
+              child: Text("Current Map Style is incorrect"),
+            );
+          }
+
+          //return snapshot.data!;
+
+          return Center(
+            child: Text(l10n?.map_LocalisationInit ?? "Location Initialized"),
+          );          //return snapshot.data!;
+        }
+    );
+  }
+
+  */
+
+  /*
+  FutureBuilder getUserLocalization(){
+    final l10n = AppLocalizations.of(context);
+
+    return FutureBuilder(
+      future: loadCurrentUserLocation(),
+      builder: (context, snapshot){
+        if(snapshot.connectionState == ConnectionState.waiting){
+          return Center(
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children:[
+                  Text(l10n?.map_MapIsLoading ?? "Loading Map..."),
+                  CircularProgressIndicator()
+                ]),
+          );
+        }
+
+        if(snapshot.hasError){
+          locationInitialized = true;
+          loggerService.error("Could not initialize current user location. Error: ${snapshot.error}");
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            setState(() {
+
+            });
+          });
+
+          return Center(
+            child: Text("Error while trying to get current user Geolocation !"),
+          );
+        }
+
+        if(!snapshot.hasData){
+          initialLocation = snapshot.data!;
+          locationInitialized = true;
+          loggerService.error("Could not initialize current user location, location is empty !");
+
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            setState(() {
+
+            });
+          });
+
+          return Center(
+            child: Text("Current Geolocation of user is incorrect"),
+          );
+        }
+
+        locationInitialized = true;
+        initialLocation = snapshot.data!;
+        loggerService.info("Current user location initialized properly");
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          setState(() {
+
+          });
+        });
+
+        return Center(
+          child: Text(l10n?.map_LocalisationInit ?? "Location Initialized"),
+        );
+      },
+    );
+  }
+*/
+
+  Widget getMapWidget(LatLng initialPosition , Style mapStyle) {
+    final l10n = AppLocalizations.of(context);
+      return Stack(
+          children: [
+            Positioned.fill(
+              child: FlutterMap(
+                  mapController: mapController,
+                  options: MapOptions(
+                    //TODO add LatLng info getting from phone localization
+                    initialCenter: initialPosition,
+                    initialZoom: 13.0,
+                    onMapEvent: (event) {
+                      if (event is MapEventDoubleTapZoomEnd ||
+                          event is MapEventDoubleTapZoomStart
+                          || event is MapEventMoveStart ||
+                          event is MapEventMoveEnd) {
+                        setState(() {
+                          zoomValue = event.camera.zoom;
+                          sportEventEngine.updateRectsNoAddition(mapController
+                              .camera.visibleBounds);
+                          _currentCenteredPosition = event.camera.center;
+                          _currentMapPixelsSize = event.camera.size;
+                          double offsetByPxInHeight = _currentMapPixelsSize
+                              .y * -0.25;
+                          _currentMapIconCreateEventPosition =
+                              offsetPositionByPixels(
+                                  _currentCenteredPosition, 0,
+                                  offsetByPxInHeight);
+                          _currentClickedMapEvent = null;
+                          _isJoiningEvent = false;
+                          _trySetBottomPanelEventType(MapViewBottomPanelType
+                              .CreatingEvent);
+                        });
+                      }
+                      if (event is MapEventTap) {
+                        _currentClickedMapEvent = null;
+                        _isJoiningEvent = false;
+                        _trySetBottomPanelEventType(
+                            MapViewBottomPanelType.CreatingEvent);
+                      }
+                    },
+                  ),
+                  children: [
+                    VectorTileLayer(
+                      theme: mapStyle.theme,
+                      tileProviders: mapStyle.providers,
+                    ),
+                    //MarkerLayer(markers: RandomUtility.getMarkers_Test(_getMarkerWidth, _getMarkerHeight, _getMapIcon , _getZoomMultiplier))
+                    MarkerLayer(markers: _getMarkers())
+                  ]
+              ),
+            ),
+
+            if(_isJoiningEvent)...[
+              if(_currentClickedMapEvent != null)...[
+                MapJoinEvent(
+                    _currentClickedMapEvent!,
+                    _applyJoinEvent,
+                    _onDismissJoinEvent,
+                    sportEventEngine.sportService,
+                    _onUserDeletedEvent,
+                    _onUserButtonRequestSend,
+                    sportEventEngine.eventRepository),
+              ]
+              else
+                ...[
+                  Center(
+                    child: MapEventWidgetContainer(
+                      child: Text(
+                        "Could not Join Event, _currentClickedMapEvent is null !",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 30
+                        ),
+                      ),
+                    ),
+                  )
+                ]
+            ],
+
+            if(_isCreatingEvent)...[
+              MapCreateEventPanel(_onDismissCreateEvent, _applyCreateEvent,
+                  sportEventEngine.sportService),
+            ],
+
+            if(!_isCreatingEvent && !_isJoiningEvent)...[
+              bottomPanel = MapViewBottomPanel(
+                  MapViewBottomPanelController(), _onCreateEventTap,
+                  _onJoinEventTap),
+            ],
+
+            if(eventRequestType != EventServiceRequestType.Idle)...[
+              Positioned.fill(
+                  child: IgnorePointer(
+                    ignoring: true,
+                    child: Container(
+                      color: Colors.white38.withOpacity(0.5),
+                      child: Center(
+                        child: Column(
+                          children: [
+                            CircularProgressIndicator(),
+                            Text(
+                                EventUtility.getLocalisedEventRequestTypeName(
+                                    eventRequestType))
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+              )
+            ]
+          ]
+      );
+  }
+
+  Future<Style> loadMapStyle() => StyleReader(
+    uri: 'https://maps.sportm8s.app/styles/sportm8s-dark/style.json',
+    // apiKey: '', // not needed for your own server
+  ).read();
+
+  Future<LatLng> loadCurrentUserLocation() async {
     try {
       var isGeolocatorEnabled = await Geolocator.isLocationServiceEnabled();
       if (!isGeolocatorEnabled) {

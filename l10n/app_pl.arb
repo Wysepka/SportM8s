@@ -48,6 +48,12 @@
     "map_LocalisationInit": "Lokalizacja zaktualizowana",
     "map_JoinEvent": "Dołącz do wydarzenia",
 
+    "map_StyleIsLoading": "Ładowanie szablonu mapy...",
+    "map_StyleInitialized": "Szablon mapy załadowany",
+
+    "map_LoadingDataError": "Błąd w trakcie wczytywania mapy",
+    "map_LoadedDataEmpty": "Wczytane dane mapy są puste",
+
     "event_Title_EventName": "Nazwa Wydarzenia",
     "event_Title_EventDescription": "Opis Wydarzenia",
     "event_Title_EventType": "Rodzaj Wydarzenia",
