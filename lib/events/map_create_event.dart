@@ -240,25 +240,6 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
     });
   }
 
-  void onNameFocusNode(){
-  }
-
-  void onDescriptionFocusNode(){
-
-  }
-
-  void onMaxParticipantsFocusNode(){
-
-  }
-
-  void onSportTypeFocusNode(){
-
-  }
-
-  void updateDraggableSheetSize(){
-
-  }
-
   String _getSelectedSportEventType(){
     return sportEventTypeValue.name.split('.').last;
   }

@@ -1,31 +1,52 @@
-1.Add localization features everywhere
-2.Replace tile server with my own server on commercial ready product
-3.Add latlng data get from user phone - DONE
-4.Change server auth to check boolean from AppConsts
-5.Add backend for getting markers from server - DONE
-6.Add check in ChangeDisplayProfileScreen about not all results being sent to server - DONE
-7. Add different kind of outline border for OSM marker - DONE
+1.DONED Add localization features everywhere
+2.DONED Replace tile server with my own server on commercial ready product
+3.DONED Add latlng data get from user phone - DONE
+4.OBSOLETEChange server auth to check boolean from AppConsts
+5.DONED Add backend for getting markers from server - DONE
+6.DONED Add check in ChangeDisplayProfileScreen about not all results being sent to server - DONE
+7.DONED Add different kind of outline border for OSM marker - DONE
 8. Check app code styling with Cursor
 9. Check navigation between sites, and replace pushReplacementNamed with pushNamed
-10. ListTile can have a onTap method instead of inserting Button in it
-11. Replace in MapCreateEvent text input values with seperate class widget - DONE
+10.REJECTED ListTile can have a onTap method instead of inserting Button in it
+11.DONED Replace in MapCreateEvent text input values with seperate class widget - DONE
 12. Add Animations in starting create event (including shaders)
 12. Add Animations in waiting for event to send to the server (including Shaders)
 13. Add Hero anim when starting to create event
 14. Add Color customization in create event when EventType is selected
 15. Add timeout bigger and renewal when app client is blocked
-16. Increase CreateEvent location icon size - DONE
+16.DONED  Increase CreateEvent location icon size - DONE
 17. Optimize ServerSportService to send only EventID instead of whole SportEventData
-18. Change post methods in ServerSportService to use only eventID instead of sending while MapEventData
-19. Add icons color as primaryText(black) for all Button.icon widgets
+18. Change post methods in ServerSportService to use only eventID instead of sending whole MapEventData
+19.DONED Add icons color as primaryText(black) for all Button.icon widgets
 20. Find a way to disable MapSideView setState on join/leave event
 21. Change color of View/Create event cta button to black/secondaryText
-22. Change SportEventType colors to more matte/dark
+22.DONED Change SportEventType colors to more matte/dark
 23. Add localization for error codes (low prio)
 24. Mark debug buttons only developer only
 25. Remove SelectSport = Invalid entry from sport selection dropdown
 
- ----- 26. IMPORTANT !!! Replace UserModel.id with GUID -----
+ REJECTED ----- 26. IMPORTANT !!! Replace UserModel.id with GUID -----
+
+ 25.A Split MapSideView (location and style logic) to MapViewComponentLoader
+
+ 27. Calendar
+ 27.1 Calendar view with sorting options (date, distance, sport type), participating at top
+ 28. Left Map Panel (Calendar, Profile, Events Participating)
+ 28.1 Side Menu with buttons navigating to other views
+ 29. Editing by event creator (inviting, canceling events, editing data, push notifications)
+ 29.1 Creator Event View (seperate view fullscreen)
+ 29.2 All Current Data can be edited
+ 29.3 Inviting Popup with email input and email sending
+ 30. Notifications View
+ 30.1 Seperate view with linking to event view (if possible)
+ 31. Event Chats
+ 32. Editing Profile as Left Map Panel Button
+ 33. Change Splash Screen image to the Inkscape logo (only people with colors)
+ 34. Email confirmation popup when logging to unverified account
+ 35. Add in MapSideView in right top localization pin
+ 36. Add (one time after registering account ChangeDisplayProfile display)
+ 37. Fix UserParticipantWidget to have static height (CircularProgressIndicator changes size when loading)
+
 
 1. Clone repository on Laptop and check whats missing and poppin
 

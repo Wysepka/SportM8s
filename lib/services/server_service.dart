@@ -60,7 +60,7 @@ class ServerService {
       return 'http://192.168.100.33:32771';
     }
     // Production URL
-    return 'https://sportm8s-server.politedune-52601b72.westeurope.azurecontainerapps.io';
+    return 'https://api.sportm8s.app';
   }
 
   ServerService(this._client) {
