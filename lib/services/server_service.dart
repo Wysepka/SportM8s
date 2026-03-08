@@ -6,8 +6,10 @@ import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/io_client.dart';
+import 'package:sportm8s/core/enums/enums_container.dart';
 import 'dart:convert';
 import 'package:sportm8s/core/logger/logger_service.dart';
+import 'package:sportm8s/core/utility/auth_utility.dart';
 import 'package:sportm8s/services/server_user_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -47,7 +49,7 @@ class ServerService {
           return 'http://10.0.2.2:32771'; // Android emulator
         }
         //return 'http://192.168.33.11:44354'; // Physical Android device
-        return 'http://192.168.33.10:32783'; // Physical Android device
+        return 'http://192.168.33.15:32783'; // Physical Android device
       }
       // For iOS
       if (Platform.isIOS) {
@@ -60,7 +62,7 @@ class ServerService {
       return 'http://192.168.100.33:32771';
     }
     // Production URL
-    return 'https://sportm8s-server.politedune-52601b72.westeurope.azurecontainerapps.io';
+    return 'https://api.sportm8s.app';
   }
 
   ServerService(this._client) {
@@ -103,7 +105,7 @@ class ServerService {
     }
   }
   
-  Future<bool> connectToServer() async {
+  Future<bool> connectToServer(APIAuthConnectionType authConnectionType) async {
     final httpClient = HttpClient()
       ..badCertificateCallback = ((X509Certificate cert, String host, int port) => isRunningLocally);
     final client = IOClient(httpClient);
@@ -137,6 +139,9 @@ class ServerService {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
+        body: jsonEncode(
+            {'authConnectionType': AuthUtility.AuthConnectionTypeToString(authConnectionType)}
+        ),
       ).timeout(
         const Duration(seconds: 10),
         onTimeout: () {

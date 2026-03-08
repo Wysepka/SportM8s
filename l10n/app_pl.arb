@@ -23,6 +23,12 @@
     "auth_passwordMinOneUppercaseChar": "Wymagana jest jedna duża litera",
     "auth_passwordMinOneNumber": "Wymagana jest przynajmniej jedna cyfra",
 
+    "auth_EmailVerifyWaiting": "Zweryfikuj swój adres email",
+    "auth_AppIsLoading": "Aplikacja ładuje się",
+    "auth_NavigatingToApp": "Łączenie z aplikacją",
+    "auth_EmailVeryficationRefresh": "Odśwież",
+    "auth_EmailVeryficationContinue": "Przejdź do aplikacji",
+
     "agreement_Title_PrivacyPolicy": "Polityka Prywatności",
     "agreement_Title_TermsOfService": "Zasady użytkowania",
     "agreement_ConfirmCheckbox_ReadWholeDoc": "Przeczytałem cały dokument",

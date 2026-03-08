@@ -42,11 +42,16 @@ class $AssetsLogosGen {
   AssetGenImage get sportM8sLogoSplashOrange =>
       const AssetGenImage('assets/logos/SportM8s_Logo_Splash_Orange.png');
 
+  /// File path: assets/logos/SportM8s_colorLogo.png
+  AssetGenImage get sportM8sColorLogo =>
+      const AssetGenImage('assets/logos/SportM8s_colorLogo.png');
+
   /// List of all assets
   List<AssetGenImage> get values => [
         sportM8sLogoBackgroundWithoutOrange,
         sportM8sLogoForeground,
-        sportM8sLogoSplashOrange
+        sportM8sLogoSplashOrange,
+        sportM8sColorLogo
       ];
 }
 

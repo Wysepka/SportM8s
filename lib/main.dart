@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sportm8s/features/auth/presentation/screens/aggreements_screen.dart';
+import 'package:sportm8s/features/auth/presentation/screens/email_verify_screen.dart';
 import 'package:sportm8s/graphics/sportm8s_themes.dart';
 import 'package:sportm8s/map/map_root_screen.dart';
 import 'package:sportm8s/profile/views/change_display_profile_screen.dart';
@@ -83,6 +84,7 @@ class MyApp extends ConsumerWidget {
         '/aggreements': (context) => const AggreementsScreen(),
         '/change-profile-screen': (context) => const ChangeDisplayProfileScreen(),
         '/map-root-screen': (context) => const MapRootScreen(),
+        '/email-verify': (context) => const EmailVerifyScreen(),
       },
       localizationsDelegates: const[
         AppLocalizations.delegate,

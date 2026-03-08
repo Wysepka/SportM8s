@@ -196,18 +196,6 @@ class _ChangeDisplayProfileScreen extends ConsumerState<ChangeDisplayProfileScre
                 loading: () => CircularProgressIndicator(),
               );
             }
-            /*
-            else if(sendValuesAllGood){
-              if (context.mounted) {
-                _logger.info(
-                    'Profile params not changed ! Navigating to MapRootScreen');
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  Navigator.pushReplacementNamed(context, '/map-root-screen');
-                });
-              }
-            }
-
-             */
           },
           label: Text(
             sendValuesAllGood ? (hasChangedAnything ? l10n?.profile_Button_Save ?? "Save" : l10n?.profile_Button_Continue ?? "Continue") : l10n?.profile_Button_DataMalformed ?? "Data Malformed",
