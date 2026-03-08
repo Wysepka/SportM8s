@@ -46,6 +46,10 @@
  35. Add in MapSideView in right top localization pin
  36. Add (one time after registering account ChangeDisplayProfile display)
  37. Fix UserParticipantWidget to have static height (CircularProgressIndicator changes size when loading)
+ 38. Add SportM8s simple logo in Email Verfify Screen
+ 39. Goggle sign in session, and re-auth when wanting another user
+ 40. Event Creation at start of map is not caching starting pos when not pinched/moved mouse
+ 41. Check on virtual machine different kind of aspect ratios and emulators
 
 
 1. Clone repository on Laptop and check whats missing and poppin

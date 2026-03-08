@@ -223,7 +223,7 @@ class _MapSideView extends State<MapSideView>{
                       tileProviders: mapStyle.providers,
                     ),
                     //MarkerLayer(markers: RandomUtility.getMarkers_Test(_getMarkerWidth, _getMarkerHeight, _getMapIcon , _getZoomMultiplier))
-                    MarkerLayer(markers: _getMarkers())
+                    SafeArea(child: MarkerLayer(markers: _getMarkers()))
                   ]
               ),
             ),

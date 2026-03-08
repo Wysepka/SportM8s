@@ -23,6 +23,12 @@
     "auth_passwordMinOneUppercaseChar": "Password must have one uppercase letter",
     "auth_passwordMinOneNumber": "Password must have at least one number",
 
+    "auth_EmailVerifyWaiting": "You need to verify your email",
+    "auth_AppIsLoading": "App is Loading",
+    "auth_NavigatingToApp": "Navigating to App",
+    "auth_EmailVeryficationRefresh": "Refresh",
+    "auth_EmailVeryficationContinue": "Proceed to app",
+
     "agreement_Title_PrivacyPolicy": "Privacy Policy",
     "agreement_Title_TermsOfService": "Terms of Service",
     "agreement_ConfirmCheckbox_ReadWholeDoc": "I have read whole document",

@@ -66,32 +66,34 @@ class _AggreementWidgetState extends State<AggreementWidget> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    return Column(
-      children: [
-        Expanded(
-          child: widget.useHtmlFormat 
-            ? buildScrollableView_HTMLComponent() 
-            : buildScrollableView_TextComponent(),
-        ),
-        Row(
-          children: [
-            Row(
-              children: [
-                Text(widget.consentTextKey),
-                Checkbox(value: _hasClickedCheckbox, onChanged: _hasScrolledToBottom ? OnChangedCheckbox : null),
-              ]
-            ),
-            Expanded(child:
-                Center(child:
-                  ElevatedButton(
-                    onPressed: _hasScrolledToBottom && _hasClickedCheckbox ? widget.onAggrementAppliedPressed : null,
-                    child: Text(l10n?.agreement_ConfirmButton_Accept ?? "Accept")
-                  )
+    return SafeArea(
+      child: Column(
+        children: [
+          Expanded(
+            child: widget.useHtmlFormat 
+              ? buildScrollableView_HTMLComponent() 
+              : buildScrollableView_TextComponent(),
+          ),
+          Row(
+            children: [
+              Row(
+                children: [
+                  Text(widget.consentTextKey),
+                  Checkbox(value: _hasClickedCheckbox, onChanged: _hasScrolledToBottom ? OnChangedCheckbox : null),
+                ]
+              ),
+              Expanded(child:
+                  Center(child:
+                    ElevatedButton(
+                      onPressed: _hasScrolledToBottom && _hasClickedCheckbox ? widget.onAggrementAppliedPressed : null,
+                      child: Text(l10n?.agreement_ConfirmButton_Accept ?? "Accept")
+                    )
+                )
               )
-            )
-          ]
-        )
-      ],
+            ]
+          )
+        ],
+      ),
     );
   }
 

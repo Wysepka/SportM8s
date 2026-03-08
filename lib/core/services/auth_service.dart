@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
+import 'package:sportm8s/core/enums/enums_container.dart';
 import 'package:sportm8s/core/logger/logger_service.dart';
 import 'package:sportm8s/gen/assets.gen.dart';
 import 'package:sportm8s/services/server_service.dart';
@@ -29,13 +30,13 @@ class AuthService {
   final LoggerService loggerService = LoggerService();
 
 
-  Future<AuthResult> connectToBackendServer(AuthResult previousResult , BuildContext context , ServerService serverService) async {
+  Future<AuthResult> connectToBackendServer(AuthResult previousResult , BuildContext context , ServerService serverService ,APIAuthConnectionType connectionType) async {
     try {
 
       if (previousResult.user != null) {
         loggerService.info('User successfully signed in to FirebaseAuth');
         // Try to connect to server after successful Google sign-in
-        final connected = await serverService.connectToServer();
+        final connected = await serverService.connectToServer(connectionType);
         if (!context.mounted) {
           return AuthResult(succesfull: false);
         }
@@ -124,6 +125,14 @@ class AuthService {
         password: password,
       );
 
+      final acs = ActionCodeSettings(
+        url: 'https://auth.sportm8s.app/auth/verified', // where user ends up after success
+        handleCodeInApp: false,                   // web first
+      );
+
+      final emailVerResult = await userCredential.user!.sendEmailVerification(acs);
+      loggerService.info("Email veryfication email sent succesfully");
+
       if(userCredential.user != null) {
         loggerService.info('New user created successfully with email');
         return AuthResult(user: userCredential.user , succesfull: true);
@@ -192,6 +201,22 @@ class AuthService {
     } catch (e) {
       loggerService.error('Error during sign-out Error:${e.toString()}');
       throw Exception('Failed to sign out: $e');
+    }
+  }
+
+  Future<bool> hasUserVerifiedEmail() async{
+    try{
+      final user = _auth.currentUser;
+      if (user == null) return false;
+
+      await user.reload();                // fetch latest user profile from Firebase
+      final refreshedUser = _auth.currentUser; // get updated instance
+
+      return refreshedUser?.emailVerified ?? false;
+    }
+    catch(e){
+      loggerService.error('Error during email-verification Error:${e.toString()}');
+      throw Exception('Failed to check email verification: $e');
     }
   }
 

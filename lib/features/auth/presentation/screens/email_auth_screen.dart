@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sportm8s/core/enums/enums_container.dart';
 import 'package:sportm8s/core/logger/logger_config.dart';
 import 'package:sportm8s/core/logger/logger_service.dart';
 import '../../../../core/services/auth_service.dart';
@@ -35,94 +36,116 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
       appBar: AppBar(
         title: Text(widget.isSignIn ? l10n?.signInWithEmail ?? 'Sign In with Email' : l10n?.signUpWithEmail ?? 'Sign Up with Email'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextFormField(
-                controller: _emailController,
-                decoration: _sportM8sAuthFieldDecoration(
-                  labelText: l10n?.email ?? "Email",
-                  hintText: "you@gmail.com",
-                  errorText: emailValidationData.rejectionReason,
-                  iconData: Icons.email_outlined
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextFormField(
+                  controller: _emailController,
+                  decoration: _sportM8sAuthFieldDecoration(
+                    labelText: l10n?.email ?? "Email",
+                    hintText: "you@gmail.com",
+                    errorText: emailValidationData.rejectionReason,
+                    iconData: Icons.email_outlined
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                  onFieldSubmitted: _onEmailSubmitted,
+                  textInputAction: TextInputAction.next,
+                  validator: _onEmailSubmitted,
                 ),
-                keyboardType: TextInputType.emailAddress,
-                onFieldSubmitted: _onEmailSubmitted,
-                textInputAction: TextInputAction.next,
-                validator: _onEmailSubmitted,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _passwordController,
-                decoration: _sportM8sAuthFieldDecoration(
-                    labelText: l10n?.password ?? "Password",
-                    hintText: l10n?.loginPasswordCharsReq ?? 'Min 8 chars, A-Z, 0-9',
-                    errorText: passwordValidationData.rejectionReason,
-                    iconData: Icons.lock_outline,
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _passwordController,
+                  decoration: _sportM8sAuthFieldDecoration(
+                      labelText: l10n?.password ?? "Password",
+                      hintText: l10n?.loginPasswordCharsReq ?? 'Min 8 chars, A-Z, 0-9',
+                      errorText: passwordValidationData.rejectionReason,
+                      iconData: Icons.lock_outline,
+                  ),
+                  obscureText: true,
+                  onFieldSubmitted: _onPasswordSumbitted,
+                  textInputAction: TextInputAction.done,
+                  validator: _onPasswordSumbitted,
                 ),
-                obscureText: true,
-                onFieldSubmitted: _onPasswordSumbitted,
-                textInputAction: TextInputAction.done,
-                validator: _onPasswordSumbitted,
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton.icon(
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    try {
-                      var resultFirebase = AuthResult(succesfull: false);
-                      if (widget.isSignIn) {
-                        resultFirebase = await ref.read(authServiceProvider).signInWithEmailPassword(
-                          _emailController.text,
-                          _passwordController.text,
-                        );
-                      } else {
-                        resultFirebase = await ref.read(authServiceProvider).signUpWithEmailPassword(
-                          _emailController.text,
-                          _passwordController.text,
-                        );
-                      }
-                      if(resultFirebase.succesfull && resultFirebase.user != null) {
-                        var resultBackendServer = await ref.read(authServiceProvider).connectToBackendServer(resultFirebase, context, serverService);
-                        if (mounted && resultBackendServer.succesfull) {
-                          Navigator.pushReplacementNamed(
-                              context, '/aggreements');
+                const SizedBox(height: 24),
+                ElevatedButton.icon(
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      try {
+                        var resultFirebase = AuthResult(succesfull: false);
+                        if (widget.isSignIn) {
+                          resultFirebase = await ref.read(authServiceProvider).signInWithEmailPassword(
+                            _emailController.text,
+                            _passwordController.text,
+                          );
+                        } else {
+                          resultFirebase = await ref.read(authServiceProvider).signUpWithEmailPassword(
+                            _emailController.text,
+                            _passwordController.text,
+                          );
                         }
-                      }
-                      else{
-                        loggerService.error("Could not log in with email: ${_emailController.text} , Error:${resultFirebase.error?? "error not available"}");
+
+                        AuthResult resultBackendServer = AuthResult(succesfull: false);
+
+                        if(context.mounted) {
+                          resultBackendServer = await ref.read(
+                              authServiceProvider).connectToBackendServer(
+                              resultFirebase, context, serverService , widget.isSignIn ? APIAuthConnectionType.Signin : APIAuthConnectionType.Login);
+                        }
+
+                        if(resultBackendServer.succesfull && resultFirebase.succesfull && resultFirebase.user != null) {
+                          if(!context.mounted){
+                            return;
+                          }
+                          if (resultFirebase.user!.emailVerified) {
+                            Navigator.pushReplacementNamed(
+                                context, '/aggreements');
+                          }
+                          else{
+                            Navigator.pushReplacementNamed(
+                                context, '/email-verify');
+                          }
+                        }
+                        else{
+                          loggerService.error("Could not log in with email: ${_emailController.text} , Error:${resultFirebase.error?? "error not available"}");
+                          if (mounted) {
+                            if(resultFirebase.error != null){
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(resultFirebase.error.toString()),
+                              ));
+                            }
+                            else if(resultBackendServer.error != null){
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(resultBackendServer.error.toString()),
+                              ));
+                            }
+                            else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(widget.isSignIn
+                                    ? l10n?.errorLoginIn ?? "Could not sign in"
+                                    : l10n?.errorSignUp ?? "Could not sign up")),
+                              );
+                            }
+                          }
+                        }
+                      } catch (e) {
                         if (mounted) {
-                          if(resultFirebase.error != null){
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(resultFirebase.error.toString()),
-                            ));
-                          }
-                          else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(widget.isSignIn
-                                  ? l10n?.errorLoginIn ?? "Could not sign in"
-                                  : l10n?.errorSignUp ?? "Could not sign up")),
-                            );
-                          }
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(e.toString())),
+                          );
                         }
-                      }
-                    } catch (e) {
-                      if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(e.toString())),
-                        );
                       }
                     }
-                  }
-                },
-                icon: Icon(Icons.check),
-                label: Text(widget.isSignIn ? l10n?.signIn ?? 'Sign In' : l10n?.signUp ?? 'Sign Up'),
-              ),
-            ],
+                  },
+                  icon: Icon(Icons.check),
+                  label: Text(widget.isSignIn ? l10n?.signIn ?? 'Sign In' : l10n?.signUp ?? 'Sign Up'),
+                ),
+              ],
+            ),
           ),
         ),
       ),

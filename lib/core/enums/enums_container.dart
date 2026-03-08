@@ -53,3 +53,9 @@ enum UserEventRequestType{
   Join,
   Leave,
 }
+
+enum APIAuthConnectionType{
+  Invalid,
+  Login,
+  Signin,
+}
