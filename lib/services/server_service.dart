@@ -67,7 +67,7 @@ class ServerService {
       }
       // Default to local network IP
       if(isRunningOnPc) {
-        return 'http://192.168.100.33:32771';
+        return 'http://192.168.33.15:32783';
       }
       else{
         return 'http://192.168.100.32:32783';
