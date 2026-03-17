@@ -1,1 +1,1 @@
-flutter build apk --debug --dart-define=APP_ENV=dev --dart-define=
+flutter build apk --debug --dart-define=APP_ENV=dev --dart-define=WORKSTATION=pc

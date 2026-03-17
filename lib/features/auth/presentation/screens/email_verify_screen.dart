@@ -63,6 +63,7 @@ class _EmailVerifyScreen extends ConsumerState<EmailVerifyScreen> with SingleTic
     final l10n = AppLocalizations.of(context);
 
     return Scaffold(
+      appBar: AppBar(title: Text(l10n?.auth_EmailVerifyWaiting ?? "Verify your email"),),
       body: Padding(
         padding: EdgeInsets.fromLTRB(50, 100, 50, 100),
         child: Center(

@@ -119,7 +119,7 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
                                 context, '/aggreements');
                           }
                           else{
-                            Navigator.pushReplacementNamed(
+                            Navigator.pushNamed(
                                 context, '/email-verify');
                           }
                         }

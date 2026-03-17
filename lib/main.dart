@@ -78,11 +78,14 @@ class _MyApp extends ConsumerState<MyApp> {
   }
 
   void _handleUri(Uri uri){
-    if(uri.path == '/auth/email-verified'){
-      navigatorKey.currentState?.pushNamed('email-verified');
-    }
-    else if(uri.path == '/auth/password-reset'){
-      navigatorKey.currentState?.pushNamed('password-reset');
+    if(uri.path == '/open-app'){
+      final mode = uri.queryParameters['mode'];
+
+      if (mode == 'resetPassword') {
+        navigatorKey.currentState?.pushReplacementNamed('/password-reset');
+      } else {
+        navigatorKey.currentState?.pushReplacementNamed('/email-verified');
+      }
     }
   }
 
@@ -99,6 +102,7 @@ class _MyApp extends ConsumerState<MyApp> {
 
     return MaterialApp(
       title: 'SportM8s',
+      navigatorKey: navigatorKey,
       theme: SportM8sTheme.dark(),
       home: Consumer(
         builder: (context, ref, child) {
