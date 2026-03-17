@@ -83,19 +83,27 @@ class _ResetPasswordScreen extends ConsumerState<ResetPasswordScreen>{
                 ),
               }
               else...{
-                Center(
-                  child: Text(resetEmailStatus == ResetPasswordEmailState.SendSuccesfull ?
-                      l10n?.auth_ResetPasswordEmailSuccesfull.replaceFirst("`email`", _emailController.text)
-                      ?? "Reset password successful"
-                      :
-                      l10n?.auth_ResetPasswordEmailWrong.replaceFirst("`email`", _emailController.text ) ?? "Could not deliver email")
-                ),
-                SizedBox(height: 5,),
-                ElevatedButton.icon(
-                    onPressed: () => Navigator.pop(context),
-                    label: Text(l10n?.auth_ResetPasswordScreenReturnButton ?? "Return"),
-                    icon: Icon(Icons.keyboard_return , color: Colors.black,),
-                ),
+                MapEventWidgetContainer(
+                  child: Column(
+                    children: [
+                      Center(
+                          child: Text(resetEmailStatus == ResetPasswordEmailState.SendSuccesfull ?
+                          l10n?.auth_ResetPasswordEmailSuccesfull.replaceFirst("`email`", _emailController.text)
+                              ?? "Reset password successful"
+                              :
+                          l10n?.auth_ResetPasswordEmailWrong.replaceFirst("`email`", _emailController.text ) ?? "Could not deliver email",
+                            style: Theme.of(context).textTheme.titleLarge,
+                          )
+                      ),
+                      SizedBox(height: 10,),
+                      ElevatedButton.icon(
+                        onPressed: () => Navigator.pop(context),
+                        label: Text(l10n?.auth_ResetPasswordScreenReturnButton ?? "Return"),
+                        icon: Icon(Icons.keyboard_return , color: Colors.black,),
+                      ),
+                    ],
+                  ),
+                )
               }
             ],
         ),
