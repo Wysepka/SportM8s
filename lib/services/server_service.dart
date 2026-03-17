@@ -27,7 +27,11 @@ class ServerService {
   static const String appEnv =
   String.fromEnvironment('APP_ENV', defaultValue: 'dev');
 
+  static const String workstationName =
+  String.fromEnvironment('WORKSTATION' , defaultValue: 'pc');
+
   static const bool isRunningLocally = appEnv == 'dev';  //final String baseUrl;
+  static const bool isRunningOnPc = workstationName == 'pc';
   final IOClient _client;
 
   static bool get isEmulator {
@@ -44,6 +48,7 @@ class ServerService {
   static String get baseUrl {
     if (isRunningLocally) {
       // For Android
+      /*
       if (Platform.isAndroid) {
         if (isEmulator) {
           return 'http://10.0.2.2:32771'; // Android emulator
@@ -51,6 +56,8 @@ class ServerService {
         //return 'http://192.168.33.11:44354'; // Physical Android device
         return 'http://192.168.33.15:32783'; // Physical Android device
       }
+      */
+
       // For iOS
       if (Platform.isIOS) {
         if (isEmulator) {
@@ -59,7 +66,13 @@ class ServerService {
         return 'http://192.168.100.33:32771'; // Physical iOS device
       }
       // Default to local network IP
-      return 'http://192.168.100.33:32771';
+      if(isRunningOnPc) {
+        return 'http://192.168.33.15:32783';
+      }
+      else{
+        return 'http://192.168.100.32:32783';
+        //return 'https://localhost:32777';
+      }
     }
     // Production URL
     return 'https://api.sportm8s.app';
