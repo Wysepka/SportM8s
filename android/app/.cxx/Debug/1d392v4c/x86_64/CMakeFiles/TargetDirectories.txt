@@ -1,0 +1,2 @@
+D:/Dev/Projekty/SportM8s/SportM8s/android/app/.cxx/Debug/1d392v4c/x86_64/CMakeFiles/edit_cache.dir
+D:/Dev/Projekty/SportM8s/SportM8s/android/app/.cxx/Debug/1d392v4c/x86_64/CMakeFiles/rebuild_cache.dir
