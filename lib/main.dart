@@ -1,12 +1,16 @@
+import 'dart:async';
+
+import 'package:app_links/app_links.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sportm8s/features/auth/presentation/screens/aggreements_screen.dart';
+import 'package:sportm8s/features/auth/presentation/screens/email_verified_screen.dart';
 import 'package:sportm8s/features/auth/presentation/screens/email_verify_screen.dart';
+import 'package:sportm8s/features/auth/presentation/screens/password_reset_success_screen.dart';
 import 'package:sportm8s/graphics/sportm8s_themes.dart';
 import 'package:sportm8s/map/map_root_screen.dart';
 import 'package:sportm8s/profile/views/change_display_profile_screen.dart';
-import 'package:sportm8s/features/auth/presentation/screens/privacy_policy_screen.dart';
 import "package:flutter_localizations/flutter_localizations.dart";
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
 import 'firebase_options.dart';
@@ -15,6 +19,8 @@ import 'features/auth/presentation/screens/home_page.dart';
 import 'core/services/auth_service.dart';
 import 'features/auth/presentation/screens/email_auth_screen.dart';
 import 'core/logger/logger_config.dart';
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,12 +49,54 @@ void main() async {
   runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends ConsumerWidget {
+class MyApp extends ConsumerStatefulWidget{
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() => _MyApp();
+
+}
+
+class _MyApp extends ConsumerState<MyApp> {
+  final AppLinks _appLinks = AppLinks();
+  StreamSubscription<Uri>? _sub;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _initDeepLinks();
+  }
+
+  Future<void> _initDeepLinks() async {
+    final initialLink = await _appLinks.getInitialLink();
+    if(initialLink != null){
+      _handleUri(initialLink);
+    }
+
+    _sub = _appLinks.uriLinkStream.listen((uri) { _handleUri(uri);});
+  }
+
+  void _handleUri(Uri uri){
+    if(uri.path == '/auth/email-verified'){
+      navigatorKey.currentState?.pushNamed('email-verified');
+    }
+    else if(uri.path == '/auth/password-reset'){
+      navigatorKey.currentState?.pushNamed('password-reset');
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    _sub?.cancel();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+
     return MaterialApp(
       title: 'SportM8s',
       theme: SportM8sTheme.dark(),
@@ -85,6 +133,8 @@ class MyApp extends ConsumerWidget {
         '/change-profile-screen': (context) => const ChangeDisplayProfileScreen(),
         '/map-root-screen': (context) => const MapRootScreen(),
         '/email-verify': (context) => const EmailVerifyScreen(),
+        '/email-verified': (context) => const EmailVerifiedScreen(),
+        '/password-reset': (context) => const PasswordResetSuccessScreen(),
       },
       localizationsDelegates: const[
         AppLocalizations.delegate,
@@ -97,5 +147,9 @@ class MyApp extends ConsumerWidget {
         Locale("pl"),
       ],
     );
+
+
+    
+
   }
 }

@@ -1,0 +1,1 @@
+flutter build apk --debug --dart-define=APP_ENV=dev --dart-define=
