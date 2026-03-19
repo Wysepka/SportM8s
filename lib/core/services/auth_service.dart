@@ -14,11 +14,12 @@ import '../logger/logger_config.dart';
 class AuthResult {
   final User? user;
   final String? error;
+  final String? errorID;
   final bool succesfull;
   
-  AuthResult({this.user, this.error ,required this.succesfull});
+  AuthResult({this.user, this.error, this.errorID ,required this.succesfull});
   
-  AuthResult.error(String errorMessage) 
+  AuthResult.error(String errorMessage , String this.errorID)
       : error = errorMessage,
         user = null,
         succesfull = false;
@@ -157,7 +158,7 @@ class AuthService {
       
       if (googleUser == null) {
         loggerService.warning('Google sign-in was cancelled by user');
-        return AuthResult.error('Sign in was cancelled');
+        return AuthResult.error('Sign in was cancelled' , "Cancel");
       }
 
       loggerService.info('Google sign-in successful, getting auth details');
@@ -173,10 +174,10 @@ class AuthService {
       
     } on PlatformException catch (e) {
       loggerService.error('Platform Exception during Google sign-in Error:${e.toString()}');
-      return AuthResult.error(_getPlatformErrorMessage(e.code));
+      return AuthResult.error(_getPlatformErrorMessage(e.code) , e.code);
     } catch (e) {
       loggerService.error('Unexpected error during Google sign-in Error:${e.toString()}');
-      return AuthResult.error('An unexpected error occurred');
+      return AuthResult.error('An unexpected error occurred' , "Exception");
     }
   }
 
@@ -217,6 +218,18 @@ class AuthService {
     catch(e){
       loggerService.error('Error during email-verification Error:${e.toString()}');
       throw Exception('Failed to check email verification: $e');
+    }
+  }
+
+  Future<bool> sendPasswordResetEmail(String email) async{
+    try{
+      await _auth.sendPasswordResetEmail(email: email);
+      return true;
+    }
+    catch(e){
+      loggerService.error('Error during password-reset Error:${e.toString()}');
+      throw Exception('Failed to reset password: $e');
+      return false;
     }
   }
 

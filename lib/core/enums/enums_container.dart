@@ -59,3 +59,10 @@ enum APIAuthConnectionType{
   Login,
   Signin,
 }
+
+enum ResetPasswordEmailState{
+  Invalid,
+  InSendProcess,
+  SendSuccesfull,
+  SendError
+}

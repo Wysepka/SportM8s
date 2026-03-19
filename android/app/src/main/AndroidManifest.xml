@@ -26,22 +26,36 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+            <meta-data
+                android:name="flutter_deeplinking_enabled"
+                android:value="false" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-        </activity>
-        <!-- Add this activity for handling OAuth redirects -->
-        <activity android:name="com.microsoft.identity.client.BrowserTabActivity"
-            android:exported="true">
-            <intent-filter>
+            <!-- Android App Links for SportM8s verification/reset pages -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="https"
+                    android:host="verify.sportm8s.app"
+                    android:path="/open-app" />
+            </intent-filter>
+            <!-- Optional: also support non-SSL local/testing link if ever needed -->
+            <!--
+            <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
-                    android:host="MarcinWysocki.onmicrosoft.com.b2clogin.com"
-                    android:scheme="msauth" />
+                    android:scheme="http"
+                    android:host="verify.sportm8s.app"
+                    android:pathPrefix="/auth" />
             </intent-filter>
+            -->
         </activity>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->

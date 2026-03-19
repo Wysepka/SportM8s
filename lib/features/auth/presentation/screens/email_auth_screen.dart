@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sportm8s/core/enums/enums_container.dart';
 import 'package:sportm8s/core/logger/logger_config.dart';
 import 'package:sportm8s/core/logger/logger_service.dart';
+import 'package:sportm8s/features/auth/presentation/screens/reset_password_screen.dart';
+import 'package:sportm8s/shared/widgets/auth_field_validation_helper.dart';
+import 'package:sportm8s/shared/widgets/input_decoration_factory.dart';
 import '../../../../core/services/auth_service.dart';
 import '../../../../graphics/sportm8s_themes.dart';
 import '../../../../services/server_service.dart';
@@ -27,6 +30,10 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
   AuthFormFieldValidationData emailValidationData = AuthFormFieldValidationData();
   AuthFormFieldValidationData passwordValidationData = AuthFormFieldValidationData();
 
+  PasswordAPIValidationSession passwordAPIValidationSession = PasswordAPIValidationSession();
+
+  AuthFieldValidationHelper validationHelper = AuthFieldValidationHelper();
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -46,30 +53,30 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
               children: [
                 TextFormField(
                   controller: _emailController,
-                  decoration: _sportM8sAuthFieldDecoration(
+                  decoration: InputDecorationFactory.sportM8sAuthFieldDecoration(
                     labelText: l10n?.email ?? "Email",
                     hintText: "you@gmail.com",
                     errorText: emailValidationData.rejectionReason,
                     iconData: Icons.email_outlined
                   ),
                   keyboardType: TextInputType.emailAddress,
-                  onFieldSubmitted: _onEmailSubmitted,
+                  onFieldSubmitted: (String fieldValue) => validationHelper.onEmailSubmitted(fieldValue , context , emailValidationData),
                   textInputAction: TextInputAction.next,
-                  validator: _onEmailSubmitted,
+                  validator: (String? fieldValue) => validationHelper.onEmailSubmitted(fieldValue , context , emailValidationData),
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _passwordController,
-                  decoration: _sportM8sAuthFieldDecoration(
+                  decoration: InputDecorationFactory.sportM8sAuthFieldDecoration(
                       labelText: l10n?.password ?? "Password",
                       hintText: l10n?.loginPasswordCharsReq ?? 'Min 8 chars, A-Z, 0-9',
                       errorText: passwordValidationData.rejectionReason,
                       iconData: Icons.lock_outline,
                   ),
                   obscureText: true,
-                  onFieldSubmitted: _onPasswordSumbitted,
+                  onFieldSubmitted: (String fieldValue) => validationHelper.onPasswordSumbitted(fieldValue , context , emailValidationData),
                   textInputAction: TextInputAction.done,
-                  validator: _onPasswordSumbitted,
+                  validator: (String? fieldValue) => validationHelper.onPasswordSumbitted(fieldValue , context , emailValidationData),
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton.icon(
@@ -97,6 +104,12 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
                               resultFirebase, context, serverService , widget.isSignIn ? APIAuthConnectionType.Signin : APIAuthConnectionType.Login);
                         }
 
+                        if(!resultBackendServer.succesfull && resultBackendServer.errorID != null){
+                          if(resultBackendServer.errorID == "wrong-password"){
+
+                          }
+                        }
+
                         if(resultBackendServer.succesfull && resultFirebase.succesfull && resultFirebase.user != null) {
                           if(!context.mounted){
                             return;
@@ -106,7 +119,7 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
                                 context, '/aggreements');
                           }
                           else{
-                            Navigator.pushReplacementNamed(
+                            Navigator.pushNamed(
                                 context, '/email-verify');
                           }
                         }
@@ -144,133 +157,21 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
                   icon: Icon(Icons.check),
                   label: Text(widget.isSignIn ? l10n?.signIn ?? 'Sign In' : l10n?.signUp ?? 'Sign Up'),
                 ),
+                if(widget.isSignIn)...[ //is logging page add reset password button
+                  const SizedBox(height: 24),
+                  ElevatedButton.icon(
+                    onPressed: () => Navigator.push(context ,
+                        MaterialPageRoute(
+                            builder: (_) => ResetPasswordScreen())
+                    ),
+                    label: Text(l10n?.auth_ResetPasswordEmail ?? "Reset Password"),
+                  )
+                ],
               ],
             ),
           ),
         ),
       ),
-    );
-  }
-
-  String? _onEmailSubmitted(String? value){
-
-    final l10n = AppLocalizations.of(context);
-
-    if(value == null){
-      return l10n?.authError_writeYourEmail ?? "Write your email";
-    }
-
-    final email = value.trim();
-
-    final emailRegex = RegExp(
-      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-    );
-
-    if (email.isEmpty) {
-      String rejectionReason = l10n?.authError_emailIsRequired ?? "Email is required";
-      emailValidationData.isProperlyValidated = false;
-      emailValidationData.rejectionReason = rejectionReason;
-      debugPrint(rejectionReason);
-      return rejectionReason;
-    }
-
-    if (!emailRegex.hasMatch(email)) {
-      String rejectionReason = l10n?.authError_wrongEmailFormat ?? "Invalid email format";
-      emailValidationData.isProperlyValidated = false;
-      emailValidationData.rejectionReason = rejectionReason;
-      debugPrint(rejectionReason);
-      return rejectionReason;
-    }
-
-    emailValidationData.isProperlyValidated = true;
-
-    debugPrint('Email is valid');
-    return null;
-  }
-
-  String? _onPasswordSumbitted(String? password){
-    final l10n = AppLocalizations.of(context);
-
-    if(password == null){
-      return l10n?.auth_typeYourPassword ?? "Type your password";
-    }
-
-    if (password.isEmpty) {
-      String rejectionReason = l10n?.auth_passwordIsRequired ?? "Password is required";
-      passwordValidationData.isProperlyValidated = false;
-      passwordValidationData.rejectionReason = rejectionReason;
-      debugPrint(rejectionReason);
-      return rejectionReason;
-    }
-
-    if (password.length < 8) {
-      String rejectionReason = l10n?.auth_passwordMinChars ?? "Password must be minimum of 8 chars";
-      passwordValidationData.isProperlyValidated = false;
-      passwordValidationData.rejectionReason = rejectionReason;
-      debugPrint(rejectionReason);
-      return rejectionReason;
-    }
-
-    if (!RegExp(r'[A-Z]').hasMatch(password)) {
-      String rejectionReason = l10n?.auth_passwordMinOneUppercaseChar ?? "Password must have one uppercase letter";
-      passwordValidationData.isProperlyValidated = false;
-      passwordValidationData.rejectionReason = rejectionReason;
-      debugPrint(rejectionReason);
-      return rejectionReason;
-    }
-
-    if (!RegExp(r'[0-9]').hasMatch(password)) {
-      String rejectionReason = l10n?.auth_passwordMinOneNumber ?? "Password must have at least one number";
-      passwordValidationData.isProperlyValidated = false;
-      passwordValidationData.rejectionReason = rejectionReason;
-      debugPrint(rejectionReason);
-      return rejectionReason;
-    }
-
-    passwordValidationData.isProperlyValidated = true;
-
-    debugPrint('Password is valid');
-    return null;
-  }
-
-  InputDecoration _sportM8sAuthFieldDecoration({
-    required String labelText,
-    required String hintText,
-    required String errorText,
-    required IconData iconData,
-  }){
-    return InputDecoration(
-      labelText: labelText,
-      hintText: hintText,
-      errorText: errorText,
-      icon: Icon(iconData),
-      filled: true,
-      fillColor: SportM8sColors.surface,
-
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: SportM8sColors.error),
-      ),
-
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: SportM8sColors.error)
-      ),
-
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: SportM8sColors.accent),
-      ),
-
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: SportM8sColors.divider),
-      ),
-
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: SportM8sColors.divider),
-      )
     );
   }
 
@@ -285,4 +186,9 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
 class AuthFormFieldValidationData{
   bool isProperlyValidated = false;
   String rejectionReason = "";
+}
+
+class PasswordAPIValidationSession{
+  bool hasProvidedIncorrectPassword = false;
+  int incorrectPasswordProvidedCount = 0;
 }
