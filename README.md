@@ -1,5 +1,9 @@
 # sportm8s
 
+## THIS PROJECT IS WIP
+
+#Working build for android only at: https://drive.google.com/file/d/1oN7gRFRcqqJ62u2ETyUzxf3k8d2vr-Ew/view?usp=drive_link
+
 A new Flutter project.
 
 ## Getting Started
