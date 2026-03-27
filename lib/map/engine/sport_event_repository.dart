@@ -10,20 +10,26 @@ import 'package:sportm8s/map/models/map_sport_event_marker.dart';
 
 abstract class SportEventRepository
 {
+  final List<void Function(MapSportEventData)> _changeSportEventSubscribers = [];
   final LoggerService _logger = new LoggerService();
-  List<MapMarkerRect> _osmMarkersRects = [];
+  final List<MapMarkerRect> _osmMarkersRects = [];
   UpdateSportEventsResult updateSportEvents(List<MapSportEventData> events);
   UpdateSportEventsResult forceUpdateSportEvents(List<MapSportEventData> events);
+  List<MapSportEventData> getMapSportEventDatas();
   void updateOSMMarkerRects(MapMarkerRect mapMarkerRect);
   List<Marker> getOSMMarkers();
   List<MapMarkerRect> getMarkerRects();
   MapSportIconWidgetResult getMapSportIconWidgetBasedOnID(String id);
   List<MapSportIconWidgetResult> getMapSportIconsWidgetBasedOnID(List<String> ids);
   TryGetMapSportEventData getMapSportEventDataBasedOnID(String id);
+
+  void registerToSportEventsChanged(Function(MapSportEventData) function);
+  void unregisterToSportEventsChanged(Function(MapSportEventData) function);
 }
 
-class FakeSportEventRepository extends SportEventRepository
+class MainSportEventRepository extends SportEventRepository
 {
+  List<void Function(MapSportEventData)> _changeSportEventSubscribers = [];
   List<MapSportEventData> _mapSportEventDatas = [];
 
   @override
@@ -114,6 +120,29 @@ class FakeSportEventRepository extends SportEventRepository
       }
     }
     return TryGetMapSportEventData(false, null);
+  }
+
+  @override
+  List<MapSportEventData> getMapSportEventDatas() => _mapSportEventDatas;
+
+  @override
+  void registerToSportEventsChanged(Function(MapSportEventData p1) function) {
+    if(!_changeSportEventSubscribers.contains(function)){
+      _changeSportEventSubscribers.add(function);
+    }
+    else{
+      _logger.error("Function: ${function} already registered in _changeSportEventSubscribers");
+    }
+  }
+
+  @override
+  void unregisterToSportEventsChanged(Function(MapSportEventData p1) function) {
+    if(_changeSportEventSubscribers.contains(function)){
+      _changeSportEventSubscribers.remove(function);
+    }
+    else{
+      _logger.error("Could not unregister function: ${function} , from _changeSportEventSubscribers");
+    }
   }
 }
 

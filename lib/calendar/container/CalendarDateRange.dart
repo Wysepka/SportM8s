@@ -1,0 +1,9 @@
+import 'package:flutter/material.dart';
+
+class CalendarDateRange{
+  DateTime selectedDateTime;
+  DateTimeRange monSunRange;
+  List<int> dateDayRange;
+
+  CalendarDateRange(this.selectedDateTime , this.monSunRange , this.dateDayRange);
+}

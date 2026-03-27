@@ -210,118 +210,217 @@ class SportEventUtils {
   }
 
   //TODO Add localisation
-  static DropdownButton<String> getSportTypeDropdownButton(Function(String?)? onChanged , String Function() getValue , double iconSize , FocusNode focusNode , BuildContext context){
+  static DropdownButton<String> getSportTypeDropdownButton_CreateEvent(Function(String?)? onChanged , String Function() getValue , double iconSize , FocusNode focusNode , BuildContext context , {bool isExpanded = false}){
     final l10n = AppLocalizations.of(context);
     return DropdownButton<String>(
-      //focusNode: focusNode,
+      focusNode: focusNode,
       value: getValue(),
       alignment: Alignment.center,
-      items: [
-        DropdownMenuItem(
-          value: "Invalid",
-          child: Text(l10n?.sportEventType_Dropdown_SelectSport ?? "Select sport"),
-        ),
-        DropdownMenuItem(
-            value: "Soccer",
-            child: Row(
-              children: [
-                getTransparentIconBasedOnSportEventType(SportEventType.Soccer , iconSize, iconSize),
-                Text(l10n?.sportEventType_Name_Soccer ?? "Soccer")
-              ],
-            )
-        ),
-        DropdownMenuItem(
-            value: "Volleyball",
-            child: Row(
-              children: [
-                getTransparentIconBasedOnSportEventType(SportEventType.Volleyball , iconSize, iconSize),
-                Text(l10n?.sportEventType_Name_Volleyball ?? "Volleyball")
-              ],
-            )
-        ),
-        DropdownMenuItem(
-            value: "Basketball",
-            child: Row(
-              children: [
-                getTransparentIconBasedOnSportEventType(SportEventType.Basketball , iconSize, iconSize),
-                Text(l10n?.sportEventType_Name_Basketball ?? "Basketball")
-              ],
-            )
-        ),
-        DropdownMenuItem(
-            value: "Tennis",
-            child: Row(
-              children: [
-                getTransparentIconBasedOnSportEventType(SportEventType.Tennis , iconSize, iconSize),
-                Text(l10n?.sportEventType_Name_Tennis ?? "Tennis")
-              ],
-            )
-        ),
-        DropdownMenuItem(
-            value: "Running",
-            child: Row(
-              children: [
-                getTransparentIconBasedOnSportEventType(SportEventType.Running , iconSize, iconSize),
-                Text(l10n?.sportEventType_Name_Running ?? "Running")
-              ],
-            )
-        ),
-        DropdownMenuItem(
-            value: "Cycling",
-            child: Row(
-              children: [
-                getTransparentIconBasedOnSportEventType(SportEventType.Cycling, iconSize, iconSize),
-                Text(l10n?.sportEventType_Name_Cycling ?? "Cycling")
-              ],
-            )
-        ),
-        DropdownMenuItem(
-            value: "ClimbingBouldering",
-            child: Row(
-              children: [
-                getTransparentIconBasedOnSportEventType(SportEventType.ClimbingBouldering, iconSize, iconSize),
-                Text(l10n?.sportEventType_Name_Climbing_Bouldering ?? "Climbing Bouldering")
-              ],
-            )
-        ),
-        DropdownMenuItem(
-            value: "ClimbingLeading",
-            child: Row(
-              children: [
-                getTransparentIconBasedOnSportEventType(SportEventType.ClimbingLeading, iconSize, iconSize),
-                Text(l10n?.sportEventType_Name_Climbing_Leading ?? "Climbing Leading")
-              ],
-            )
-        ),
-        DropdownMenuItem(
-            value: "ClimbingTopRope",
-            child: Row(
-              children: [
-                getTransparentIconBasedOnSportEventType(SportEventType.ClimbingTopRope, iconSize, iconSize),
-                Text(l10n?.sportEventType_Name_Climbing_TopRope ?? "Climbing Top Rope")
-              ],
-            )
-        ),
-        DropdownMenuItem(
-            value: "CrossCountrySkiing",
-            child: Row(
-              children: [
-                getTransparentIconBasedOnSportEventType(SportEventType.CrossCountrySkiing, iconSize, iconSize),
-                Text(l10n?.sportEventType_Name_CrossCountrySkiing ?? "Cross-Country Skiing")
-              ],
-            )
-        ),
-        DropdownMenuItem(
-            value: "Other",
-            child: Row(
-              children: [
-                getTransparentIconBasedOnSportEventType(SportEventType.Other, iconSize, iconSize),
-                Text(l10n?.sportEventType_Name_Other ?? "Cross-Country Skiing")
-              ],
-            )
-        ),
-      ], onChanged: (x) => onChanged!(x),
+      items: getSportEventDropdownButtons_CreateEvent(context , iconSize),
+      onChanged: (x) => onChanged!(x),
     );
+  }
+
+  static DropdownButton<String> getSportTypeDropdownButton_Sorter(Function(String?)? onChanged , String Function() getValue , double iconSize , FocusNode focusNode , BuildContext context){
+    final l10n = AppLocalizations.of(context);
+    return DropdownButton<String>(
+      focusNode: focusNode,
+      isExpanded: true,
+      value: getValue(),
+      alignment: Alignment.center,
+      items: getSportEventDropdownButtons_Sorter(context , iconSize),
+      onChanged: (x) => onChanged!(x),
+    );
+  }
+
+  static List<DropdownMenuItem<String>> getSportEventDropdownButtons_Sorter(BuildContext context, double iconSize){
+    final l10n = AppLocalizations.of(context);
+
+    TextStyle? textStyleDefault = Theme.of(context).textTheme.labelSmall;
+    TextStyle? textStyleOption = Theme.of(context).textTheme.labelSmall;
+
+    List<DropdownMenuItem<String>> buttons =
+    [
+      DropdownMenuItem(
+        value: "All",
+        child: Text(l10n?.sportEventType_Dropdown_AllSports ?? "Sport Type" ,style: textStyleDefault),
+      ),
+    ];
+
+    buttons.addAll(getSportEventDropdownButtons_Base(context, iconSize , textStyleOption , true , TextOverflow.fade));
+
+    return buttons;
+  }
+
+  static List<DropdownMenuItem<String>> getSportEventDropdownButtons_CreateEvent(BuildContext context, double iconSize){
+    final l10n = AppLocalizations.of(context);
+
+    TextStyle? textStyleDefault = Theme.of(context).textTheme.labelSmall;
+    TextStyle? textStyleOption = Theme.of(context).textTheme.labelMedium;
+
+    List<DropdownMenuItem<String>> buttons =
+    [
+      DropdownMenuItem(
+        value: "Invalid",
+        child: Text(l10n?.sportEventType_Dropdown_SelectSport ?? "Select sport"),
+      ),
+    ];
+
+    buttons.addAll(getSportEventDropdownButtons_Base(context, iconSize , textStyleOption , false , TextOverflow.visible));
+
+    return buttons;
+  }
+
+  static List<DropdownMenuItem<String>> getSportEventDropdownButtons_Base(BuildContext context, double iconSize , TextStyle? textStyle , bool shortLocName , TextOverflow textOverflow){
+    final l10n = AppLocalizations.of(context);
+
+    List<DropdownMenuItem<String>> buttons =
+    [
+      DropdownMenuItem(
+          value: "Soccer",
+          child: Row(
+            children: [
+              getTransparentIconBasedOnSportEventType(SportEventType.Soccer , iconSize, iconSize),
+              Text(
+                  shortLocName ? l10n?.sportEventType_Name_Short_Soccer ?? "Soccer" : l10n?.sportEventType_Name_Soccer ?? "Soccer" ,
+                  style: textStyle,
+                  overflow: textOverflow,
+              )
+            ],
+          )
+      ),
+      DropdownMenuItem(
+          value: "Volleyball",
+          child: Row(
+            children: [
+              getTransparentIconBasedOnSportEventType(SportEventType.Volleyball , iconSize, iconSize),
+              Text(
+                  shortLocName ? l10n?.sportEventType_Name_Short_Volleyball ?? "Volleyball" : l10n?.sportEventType_Name_Volleyball ?? "Volleyball" ,
+                  style: textStyle,
+                  overflow: textOverflow,
+              )
+            ],
+          )
+      ),
+      DropdownMenuItem(
+          value: "Basketball",
+          child: Row(
+            children: [
+              getTransparentIconBasedOnSportEventType(SportEventType.Basketball , iconSize, iconSize),
+              Text(
+                  shortLocName ? l10n?.sportEventType_Name_Short_Basketball ?? "Basketball" : l10n?.sportEventType_Name_Basketball ?? "Basketball" ,
+                  style: textStyle,
+                  overflow: textOverflow,
+              )
+            ],
+          )
+      ),
+      DropdownMenuItem(
+          value: "Tennis",
+          child: Row(
+            children: [
+              getTransparentIconBasedOnSportEventType(SportEventType.Tennis , iconSize, iconSize),
+              Text(
+                  shortLocName ? l10n?.sportEventType_Name_Short_Tennis ?? "Tennis" : l10n?.sportEventType_Name_Tennis ?? "Tennis" ,
+                  style: textStyle,
+                  overflow: textOverflow,
+              )
+            ],
+          )
+      ),
+      DropdownMenuItem(
+          value: "Running",
+          child: Row(
+            children: [
+              getTransparentIconBasedOnSportEventType(SportEventType.Running , iconSize, iconSize),
+              Text(
+                  shortLocName ? l10n?.sportEventType_Name_Short_Running ?? "Bieganie" : l10n?.sportEventType_Name_Running ?? "Running" ,
+                  style: textStyle,
+                  overflow: textOverflow,
+              )
+            ],
+          )
+      ),
+      DropdownMenuItem(
+          value: "Cycling",
+          child: Row(
+            children: [
+              getTransparentIconBasedOnSportEventType(SportEventType.Cycling, iconSize, iconSize),
+              Text(
+                  shortLocName ? l10n?.sportEventType_Name_Short_Cycling ?? "Rower" : l10n?.sportEventType_Name_Cycling ?? "Cycling" ,
+                  style: textStyle,
+                  overflow: textOverflow,
+              )
+            ],
+          )
+      ),
+      DropdownMenuItem(
+          value: "ClimbingBouldering",
+          child: Row(
+            children: [
+              getTransparentIconBasedOnSportEventType(SportEventType.ClimbingBouldering, iconSize, iconSize),
+              Text(
+                  shortLocName ? l10n?.sportEventType_Name_Short_Climbing_Bouldering ?? "Bouldering" : l10n?.sportEventType_Name_Climbing_Bouldering ?? "Climbing Bouldering" ,
+                  style: textStyle,
+                  overflow: textOverflow,
+              )
+            ],
+          )
+      ),
+      DropdownMenuItem(
+          value: "ClimbingLeading",
+          child: Row(
+            children: [
+              getTransparentIconBasedOnSportEventType(SportEventType.ClimbingLeading, iconSize, iconSize),
+              Text(
+                  shortLocName ? l10n?.sportEventType_Name_Short_Climbing_Leading ?? "Leading" : l10n?.sportEventType_Name_Climbing_Leading ?? "Climbing Leading" ,
+                  style: textStyle,
+                  overflow: textOverflow,
+              )
+            ],
+          )
+      ),
+      DropdownMenuItem(
+          value: "ClimbingTopRope",
+          child: Row(
+            children: [
+              getTransparentIconBasedOnSportEventType(SportEventType.ClimbingTopRope, iconSize, iconSize),
+              Text(
+                  shortLocName ? l10n?.sportEventType_Name_Short_Climbing_TopRope ?? "Top Rope" : l10n?.sportEventType_Name_Climbing_TopRope ?? "Climbing Top Rope" ,
+                  style: textStyle,
+                  overflow: textOverflow,
+              )
+            ],
+          )
+      ),
+      DropdownMenuItem(
+          value: "CrossCountrySkiing",
+          child: Row(
+            children: [
+              getTransparentIconBasedOnSportEventType(SportEventType.CrossCountrySkiing, iconSize, iconSize),
+              Text(
+                  shortLocName ? l10n?.sportEventType_Name_Short_CrossCountrySkiing ?? "Skiing" : l10n?.sportEventType_Name_CrossCountrySkiing ?? "Cross-Country Skiing" ,
+                  style: textStyle,
+                  overflow: textOverflow,
+              )
+            ],
+          )
+      ),
+      DropdownMenuItem(
+          value: "Other",
+          child: Row(
+            children: [
+              getTransparentIconBasedOnSportEventType(SportEventType.Other, iconSize, iconSize),
+              Text(
+                  shortLocName ? l10n?.sportEventType_Name_Short_Other ?? "Other" : l10n?.sportEventType_Name_Other ?? "Cross-Country Skiing" ,
+                  style: textStyle,
+                  overflow: textOverflow,)
+            ],
+          )
+      ),
+    ];
+
+    return buttons;
   }
 
   static String getSportEventTypeToLocValue(SportEventType sportEventType , AppLocalizations? l10n){

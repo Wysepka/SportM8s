@@ -19,6 +19,7 @@ import 'features/auth/presentation/screens/home_page.dart';
 import 'core/services/auth_service.dart';
 import 'features/auth/presentation/screens/email_auth_screen.dart';
 import 'core/logger/logger_config.dart';
+import 'map/engine/sport_event_repository.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -151,9 +152,5 @@ class _MyApp extends ConsumerState<MyApp> {
         Locale("pl"),
       ],
     );
-
-
-    
-
   }
 }

@@ -40,6 +40,10 @@ import 'engine/sport_event_engine.dart';
 
 
 class MapSideView extends StatefulWidget{
+  final MainSportEventRepository mainSportEventRepository;
+
+  const MapSideView(this.mainSportEventRepository, {super.key});
+
   @override
   State<StatefulWidget> createState() => _MapSideView();
 }
@@ -78,7 +82,7 @@ class _MapSideView extends State<MapSideView>{
     sportEventCalculator = SportEventCalculator();
     sportEventController.addListener(refreshMarkers);
 
-    sportEventEngine = SportEventEngine(sportEventController, ServerSportService(serverService), FakeSportEventRepository() ,sportEventCalculator);
+    sportEventEngine = SportEventEngine(sportEventController, ServerSportService(serverService), widget.mainSportEventRepository ,sportEventCalculator);
     OSMMarkerData markerData = OSMMarkerData(_getMapIconEvent, _getMarkerWidth, _getMarkerHeight, _getZoomMultiplier);
     sportEventEngine.eventController.addListener(onSportEventsChanged);
     sportEventEngine.initialize(markerData);

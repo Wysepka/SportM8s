@@ -66,3 +66,21 @@ enum ResetPasswordEmailState{
   SendSuccesfull,
   SendError
 }
+
+enum CalendarWeekDay{
+  Invalid ,
+  Monday,
+  Tuesday,
+  Wednesday,
+  Thursday,
+  Friday,
+  Saturday,
+  Sunday,
+}
+
+enum MapBodyType{
+  Invalid,
+  Map,
+  Calendar,
+  Profile,
+}

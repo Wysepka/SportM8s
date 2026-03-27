@@ -54,7 +54,9 @@
  43. Missing icons on some buttons
  44. Loaded Map data is empty bug
  45. In map event details wrong avatar is loaded (probably wrong id and sorted alphabetically)
-
+ 46. Add loading indicator when logging with google
+ 47. Replace appbar with bottom nav bar panel
+ 48. Check what is wrong with Invalid SportEvent dropdown
 
 1. Clone repository on Laptop and check whats missing and poppin
 
