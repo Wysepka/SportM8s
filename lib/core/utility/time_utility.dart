@@ -31,8 +31,38 @@ class TimeUtility{
     DateTime selectedDateTime = selectedDate;
     DateTimeRange monSunRange = TimeUtility.getWeekRange(selectedDate);
     List<int> dateDayRange = TimeUtility.getDateTimeDays(monSunRange.start , monSunRange.end);
+    List<DateTime> weekDateTimeRange = getDaysInRange(monSunRange);
 
-    return CalendarDateRange(selectedDateTime , monSunRange , dateDayRange);
+    return CalendarDateRange(selectedDateTime , monSunRange , dateDayRange , weekDateTimeRange);
+  }
+
+  static bool isSameDate(DateTime a, DateTime b) {
+    return a.year == b.year &&
+        a.month == b.month &&
+        a.day == b.day;
+  }
+
+  static List<DateTime> getDaysInRange(DateTimeRange range) {
+    final List<DateTime> days = [];
+
+    DateTime current = DateTime(
+      range.start.year,
+      range.start.month,
+      range.start.day,
+    );
+
+    final DateTime end = DateTime(
+      range.end.year,
+      range.end.month,
+      range.end.day,
+    );
+
+    while (!current.isAfter(end)) {
+      days.add(current);
+      current = current.add(const Duration(days: 1));
+    }
+
+    return days;
   }
 
   static List<int> getDateTimeDays(DateTime startDate, DateTime endDate){
@@ -85,6 +115,27 @@ class TimeUtility{
       default:
         return CalendarWeekDay.Invalid;
         throw ArgumentError('Invalid weekDay index: $weekDay. Expected value in range 0..6.');
+    }
+  }
+
+  static CalendarWeekDay dateTimeToWeekDay(DateTime someDate) {
+    switch (someDate.weekday) {
+      case DateTime.monday:
+        return CalendarWeekDay.Monday;
+      case DateTime.tuesday:
+        return CalendarWeekDay.Tuesday;
+      case DateTime.wednesday:
+        return CalendarWeekDay.Wednesday;
+      case DateTime.thursday:
+        return CalendarWeekDay.Thursday;
+      case DateTime.friday:
+        return CalendarWeekDay.Friday;
+      case DateTime.saturday:
+        return CalendarWeekDay.Saturday;
+      case DateTime.sunday:
+        return CalendarWeekDay.Sunday;
+      default:
+        return CalendarWeekDay.Invalid;
     }
   }
 }

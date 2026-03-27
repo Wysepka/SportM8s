@@ -4,6 +4,7 @@ class CalendarDateRange{
   DateTime selectedDateTime;
   DateTimeRange monSunRange;
   List<int> dateDayRange;
+  List<DateTime> weekDateTime;
 
-  CalendarDateRange(this.selectedDateTime , this.monSunRange , this.dateDayRange);
+  CalendarDateRange(this.selectedDateTime , this.monSunRange , this.dateDayRange , this.weekDateTime);
 }

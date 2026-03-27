@@ -147,4 +147,28 @@ class LocationUtility {
     final bbox = _euBBoxes['PL']!;
     return List<LatLng>.generate(n, (_) => bbox.randomPoint(rng));
   }
+
+  static String getDistanceKmText(LatLng a, LatLng b) {
+    const double earthRadiusKm = 6371.0;
+
+    double degreesToRadians(double degrees) => degrees * pi / 180.0;
+
+    final double lat1 = degreesToRadians(a.latitude);
+    final double lon1 = degreesToRadians(a.longitude);
+    final double lat2 = degreesToRadians(b.latitude);
+    final double lon2 = degreesToRadians(b.longitude);
+
+    final double dLat = lat2 - lat1;
+    final double dLon = lon2 - lon1;
+
+    final double haversine =
+        sin(dLat / 2) * sin(dLat / 2) +
+            cos(lat1) * cos(lat2) *
+                sin(dLon / 2) * sin(dLon / 2);
+
+    final double c = 2 * atan2(sqrt(haversine), sqrt(1 - haversine));
+    final double distanceKm = earthRadiusKm * c;
+
+    return "${distanceKm.toStringAsFixed(1)}km";
+  }
 }

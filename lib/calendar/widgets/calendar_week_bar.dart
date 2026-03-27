@@ -48,8 +48,11 @@ class _CalendarWeekBar extends State<CalendarWeekBar>{
 
     List<CalendarDayTile> weekDays = [];
     for(int i=0; i < calendarDateRange.dateDayRange.length; i++){
+      DateTime dayTileDateTime = calendarDateRange.weekDateTime[i];
       CalendarWeekDay weekDay = TimeUtility.intToWeekDay(i);
-      weekDays.add(CalendarDayTile(weekDay: weekDay, monthDayID: calendarDateRange.dateDayRange[i] , hasEventsThisDay: true ,dateTimeSelectedFunction:  onCalendarTileClicked,));
+      int monthDayID = calendarDateRange.dateDayRange[i];
+      bool isSelected = TimeUtility.isSameDate(selectedDateTime ,dayTileDateTime);
+      weekDays.add(CalendarDayTile(weekDay: weekDay, monthDayID: monthDayID , hasEventsThisDay: true ,dateTimeSelectedFunction:  onCalendarTileClicked, isSelected: isSelected ,dateTime: dayTileDateTime ,));
     }
 
     return weekDays;
@@ -75,8 +78,11 @@ class _CalendarWeekBar extends State<CalendarWeekBar>{
   }
 
   void onCalendarTileClicked(CalendarDayTile dayTile){
-    if(dayTile != null){
-      widget.onCalendarTileClicked(dayTile);
-    }
+    widget.onCalendarTileClicked(dayTile);
+
+    setState(() {
+      selectedDateTime = dayTile.dateTime;
+      calendarDayTile = dayTile;
+    });
   }
 }

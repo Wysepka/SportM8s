@@ -451,4 +451,36 @@ class SportEventUtils {
         return l10n?.sportEventType_Name_Other ?? "Other";
     }
   }
+
+  static String getSportEventTypeToShortLocValue(
+      SportEventType sportEventType,
+      AppLocalizations? l10n,
+      ) {
+    switch (sportEventType) {
+      case SportEventType.Invalid:
+        return l10n?.sportEventType_Name_Short_Other ?? "Other";
+      case SportEventType.Soccer:
+        return l10n?.sportEventType_Name_Short_Soccer ?? "Soccer";
+      case SportEventType.Volleyball:
+        return l10n?.sportEventType_Name_Short_Volleyball ?? "Volleyball";
+      case SportEventType.Basketball:
+        return l10n?.sportEventType_Name_Short_Basketball ?? "Basketball";
+      case SportEventType.Tennis:
+        return l10n?.sportEventType_Name_Short_Tennis ?? "Tennis";
+      case SportEventType.Running:
+        return l10n?.sportEventType_Name_Short_Running ?? "Running";
+      case SportEventType.Cycling:
+        return l10n?.sportEventType_Name_Short_Cycling ?? "Cycling";
+      case SportEventType.ClimbingBouldering:
+        return l10n?.sportEventType_Name_Short_Climbing_Bouldering ?? "Bouldering";
+      case SportEventType.ClimbingLeading:
+        return l10n?.sportEventType_Name_Short_Climbing_Leading ?? "Rope Leading";
+      case SportEventType.ClimbingTopRope:
+        return l10n?.sportEventType_Name_Short_Climbing_TopRope ?? "Top Rope";
+      case SportEventType.CrossCountrySkiing:
+        return l10n?.sportEventType_Name_Short_CrossCountrySkiing ?? "Skiing";
+      case SportEventType.Other:
+        return l10n?.sportEventType_Name_Short_Other ?? "Other";
+    }
+  }
 }
