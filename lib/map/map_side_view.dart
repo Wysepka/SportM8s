@@ -9,14 +9,10 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:logger/logger.dart';
-import 'package:sportm8s/app_consts.dart';
 import 'package:sportm8s/core/enums/enums_container.dart';
-import 'package:sportm8s/core/logger/logger_config.dart';
 import 'package:sportm8s/core/logger/logger_service.dart';
-import 'package:sportm8s/core/models/cosmos_response.dart';
 import 'package:sportm8s/core/utility/event_utility.dart';
-import 'package:sportm8s/core/utility/random_utility.dart';
+import 'package:sportm8s/core/utility/location_utility.dart';
 import 'package:sportm8s/dto/api_result.dart';
 import 'package:sportm8s/events/map_event_widget_container.dart';
 import 'package:sportm8s/events/map_join_event.dart';
@@ -34,7 +30,6 @@ import 'package:sportm8s/services/server_service.dart';
 import 'package:sportm8s/services/server_sport_service.dart';
 import 'package:vector_map_tiles/vector_map_tiles.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import '../core/models/server_response.dart';
 import '../events/map_create_event.dart';
 import 'engine/sport_event_engine.dart';
 
@@ -147,7 +142,7 @@ class _MapSideView extends State<MapSideView>{
 
   Future<void> initializeMapData() async {
     try {
-      final location = await loadCurrentUserLocation();
+      final location = await LocationUtility.loadCurrentUserLocation(loggerService , initialLocation);
       initialLocation = location;
       loggerService.info("Current user location initialized properly");
 
@@ -298,37 +293,6 @@ class _MapSideView extends State<MapSideView>{
     uri: 'https://maps.sportm8s.app/styles/sportm8s-dark/style.json',
     // apiKey: '', // not needed for your own server
   ).read();
-
-  Future<LatLng> loadCurrentUserLocation() async {
-    try {
-      var isGeolocatorEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!isGeolocatorEnabled) {
-        loggerService.error("Geolocator service is not enabled on smartphone");
-        return initialLocation;
-      }
-
-      LocationPermission locationPermission = await Geolocator
-          .checkPermission();
-      int iterator = 0;
-      while ((locationPermission == LocationPermission.denied ||
-          locationPermission == LocationPermission.deniedForever)) {
-        locationPermission = await Geolocator.requestPermission();
-        iterator++;
-        if (iterator > 5) {
-          loggerService.info(
-              "Geolocator does not obtained permissions for geocaching");
-          break;
-        }
-      }
-
-      Position position = await Geolocator.getCurrentPosition();
-      return LatLng(position.latitude, position.longitude);
-    }
-    catch(e , stacktrace){
-      loggerService.error("Error while trying to get current user location: Ex: ${e} | StackTrace: ${stacktrace}");
-      return LatLng(52, 21);
-    }
-  }
 
   Future<void> _onUserButtonRequestSend(UserEventRequestType requestType) async {
     await sportEventEngine.update(force: true);

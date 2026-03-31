@@ -1,11 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:sportm8s/calendar/container/CalendarStaticValues.dart';
-import 'package:sportm8s/calendar/widgets/CalendarOverlappingAvatars.dart';
+import 'package:sportm8s/calendar/widgets/calendar_overlapping_avatars.dart';
+import 'package:sportm8s/core/logger/logger_service.dart';
+import 'package:sportm8s/core/utility/location_utility.dart';
 import 'package:sportm8s/core/utility/sport_utility.dart';
+import 'package:sportm8s/core/utility/time_utility.dart';
 import 'package:sportm8s/graphics/sportm8s_themes.dart';
 import 'package:sportm8s/map/models/map_sport_event_marker.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:geolocator/geolocator.dart';
 
 class CalendarEventsTile extends StatefulWidget{
   final Function(CalendarEventsTile) calendarEventsTileClicked;
@@ -31,7 +36,34 @@ class _CalendarEventsTile extends State<CalendarEventsTile>{
           children: [
             getTileTopBarWidget(l10n),
             SizedBox(height: 4,),
-            getTileMiddlePanelWidget(),
+            FutureBuilder<Widget>(
+              future: getTileMiddlePanelWidget(),
+              builder: (context, snapshot){
+                if(snapshot.connectionState == ConnectionState.waiting){
+                  return SizedBox(
+                    width: 10,
+                    height: 10,
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                if(snapshot.hasError){
+                  return SizedBox(
+                      height: 10,
+                      child: Text("Err")
+                  );
+                }
+
+                if(!snapshot.hasData){
+                  return SizedBox(
+                      height: 10,
+                      child: Text("NoData")
+                  );
+                }
+
+                return snapshot.data!;
+              }
+            ),
             Spacer(),
             getTileBottomPanelWidget(),
           ],
@@ -102,7 +134,28 @@ class _CalendarEventsTile extends State<CalendarEventsTile>{
                   SizedBox(width: 2,),
                   Icon(Icons.location_on ,size: 10,),
                   SizedBox(width: 2,),
-                  Text("3.1 km" , style: Theme.of(context).textTheme.bodySmall,),
+                  FutureBuilder<String>(
+                    future: getDistanceInKilometersStringToEvent(),
+                    builder: (context , snapshot){
+                      if(snapshot.connectionState == ConnectionState.waiting){
+                        return SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+
+                      if(snapshot.hasError){
+                        return Text("Err");
+                      }
+
+                      if(!snapshot.hasData){
+                        return Text("NoData");
+                      }
+
+                      return Text(snapshot.data! , style: Theme.of(context).textTheme.bodySmall,);
+                    }
+                  ),
                   SizedBox(width: 2,),
                 ],
               ),
@@ -112,25 +165,30 @@ class _CalendarEventsTile extends State<CalendarEventsTile>{
     );
   }
 
-  Widget getTileMiddlePanelWidget(){
+  Future<Widget> getTileMiddlePanelWidget() async {
+
+    String timeLocationFormated = TimeUtility.getRelativeDayLabel(widget.mapSportEventData.eventData.eventStartDate);
+    timeLocationFormated += " ${TimeUtility.formatHourMinute(widget.mapSportEventData.eventData.eventStartDate)}";
+    String locationShortname = await LocationUtility.getShortPlaceNameFromLatLng(widget.mapSportEventData.eventData.position);
+    timeLocationFormated += " $locationShortname";
+
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.calendar_month , size: CalendarStaticValues.eventTileCalendarIconSize),
-              Text(
-                "Tommorow, 7:30 PM" ,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(fontSize: 8),
-                overflow: TextOverflow.fade,
-              ),
-              Icon(Icons.circle , size:  CalendarStaticValues.simpleCircleSizeSmall,),
-              Text(
-                "City Courte" ,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(fontSize: 8),
-                overflow: TextOverflow.fade,
+              Expanded(
+                child: Text(
+                  timeLocationFormated ,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(fontSize: 8),
+                  overflow: TextOverflow.fade,
+                  maxLines: 1,
+                  softWrap: false,
+                ),
               ),
             ],
           ),
@@ -145,6 +203,7 @@ class _CalendarEventsTile extends State<CalendarEventsTile>{
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: CalendarOverlappingAvatars(
+        participants: widget.mapSportEventData.eventData.participantsIDs.values.toList(),
         imageUrls: [
           'https://i.pravatar.cc/100?img=1',
           'https://i.pravatar.cc/100?img=2',
@@ -156,9 +215,8 @@ class _CalendarEventsTile extends State<CalendarEventsTile>{
     );
   }
 
-  double getDistanceInKilometersToEvent(){
-    //longtitude is x
-    //latitude is y
-    return 0;
+  Future<String> getDistanceInKilometersStringToEvent() async {
+    final currentPosition = await LocationUtility.loadCurrentUserLocation(LoggerService() , LatLng(52, 11));
+    return LocationUtility.getDistanceKmText(currentPosition, widget.mapSportEventData.eventData.position);
   }
 }

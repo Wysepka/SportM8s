@@ -27,6 +27,42 @@ class TimeUtility{
     }
   }
 
+  static String getRelativeDayLabel(DateTime date) {
+    final DateTime now = DateTime.now();
+
+    final DateTime today = DateTime(now.year, now.month, now.day);
+    final DateTime tomorrow = today.add(const Duration(days: 1));
+    final DateTime target = DateTime(date.year, date.month, date.day);
+
+    if (target == today) {
+      return 'Today';
+    }
+
+    if (target == tomorrow) {
+      return 'Tomorrow';
+    }
+
+    return '${target.day.toString().padLeft(2, '0')}.'
+        '${target.month.toString().padLeft(2, '0')}.'
+        '${target.year}';
+  }
+
+  static String formatHourMinute(DateTime dateTime) {
+    final int hour = dateTime.hour;
+    final int minute = dateTime.minute;
+
+    final int hour12 = hour == 0
+        ? 12
+        : hour > 12
+        ? hour - 12
+        : hour;
+
+    final String minuteString = minute.toString().padLeft(2, '0');
+    final String period = hour >= 12 ? 'PM' : 'AM';
+
+    return '$hour12:$minuteString $period';
+  }
+
   static CalendarDateRange getCalendarDateRange(DateTime selectedDate){
     DateTime selectedDateTime = selectedDate;
     DateTimeRange monSunRange = TimeUtility.getWeekRange(selectedDate);

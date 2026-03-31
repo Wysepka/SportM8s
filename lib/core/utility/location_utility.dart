@@ -3,7 +3,12 @@
 //   latlong2: ^0.9.1
 
 import 'dart:math';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:sportm8s/core/utility/location_name_utility.dart';
+
+import '../logger/logger_service.dart';
 
 /// Minimal country key type. Use ISO code or plain English names below.
 typedef CountryKey = String;
@@ -170,5 +175,61 @@ class LocationUtility {
     final double distanceKm = earthRadiusKm * c;
 
     return "${distanceKm.toStringAsFixed(1)}km";
+  }
+
+  static Future<LatLng> loadCurrentUserLocation(LoggerService logger , LatLng defaultPos) async {
+    try {
+      var isGeolocatorEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!isGeolocatorEnabled) {
+        logger.error("Geolocator service is not enabled on smartphone");
+        return defaultPos;
+      }
+
+      LocationPermission locationPermission = await Geolocator
+          .checkPermission();
+      int iterator = 0;
+      while ((locationPermission == LocationPermission.denied ||
+          locationPermission == LocationPermission.deniedForever)) {
+        locationPermission = await Geolocator.requestPermission();
+        iterator++;
+        if (iterator > 5) {
+          logger.info(
+              "Geolocator does not obtained permissions for geocaching");
+          break;
+        }
+      }
+
+      Position position = await Geolocator.getCurrentPosition();
+      return LatLng(position.latitude, position.longitude);
+    }
+    catch(e , stacktrace){
+      logger.error("Error while trying to get current user location: Ex: ${e} | StackTrace: ${stacktrace}");
+      return LatLng(52, 21);
+    }
+  }
+
+  /// Returns a short human-readable place name for given coordinates.
+  /// Examples:
+  /// - "Las Kabacki"
+  /// - "Kabaty"
+  /// - "Warsaw"
+  /// - "Nowoursynowska"
+  static Future<String> getShortPlaceNameFromLatLng(LatLng latLng) async {
+    try {
+      final placemarks = await placemarkFromCoordinates(
+        latLng.latitude,
+        latLng.longitude,
+      );
+
+
+      if (placemarks.isEmpty) {
+        return 'Unknown place';
+      }
+
+      return LocationNameUtility.getBestShortDisplayName(placemarks);
+
+    } catch (_) {
+      return 'Unknown place';
+    }
   }
 }
