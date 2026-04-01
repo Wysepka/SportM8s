@@ -2,6 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:sportm8s/core/enums/enums_container.dart';
 import 'package:sportm8s/core/styles/map_event_widget_text_style.dart';
@@ -123,6 +124,10 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
                                 controller: eventNameController,
                                 minLines: 1,
                                 maxLines: null,
+                                maxLength: 50,
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(50)
+                                ],
                                 decoration: InputDecoration(
                                   label: Text(eventNameController.text.isNotEmpty ? "" : "Event Name"),
                                   contentPadding: EdgeInsets.only(
@@ -151,6 +156,10 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
                                 controller: eventDescriptionController,
                                 minLines: 1,
                                 maxLines: null,
+                                maxLength: 150,
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(150)
+                                ],
                                 decoration: InputDecoration(
                                   label: Text(eventDescriptionController.text.isNotEmpty ? "" : "Event Description"),
                                   contentPadding: EdgeInsets.only(

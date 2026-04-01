@@ -194,7 +194,13 @@ class _CalendarEventsTile extends State<CalendarEventsTile>{
             ],
           ),
           SizedBox(height: 2,),
-          Text(widget.mapSportEventData.eventDescription)
+          Text(
+            widget.mapSportEventData.eventDescription,
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 10),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 4,
+            softWrap: true,
+          ),
         ],
       ),
     );

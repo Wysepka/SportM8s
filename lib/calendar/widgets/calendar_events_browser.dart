@@ -20,25 +20,6 @@ class _CalendarEventsBrowser extends State<CalendarEventsBrowser>{
   Widget build(BuildContext context) {
     return Column(
       children: [
-        /*
-        Padding(
-          padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("Upcoming Events" , style: Theme.of(context).textTheme.titleMedium),
-              Row(
-                children: [
-                  Text("Today" , style: Theme.of(context).textTheme.labelSmall,),
-                  Icon(Icons.circle , size: CalendarStaticValues.simpleCircleSizeBig,),
-                  Text("Tue,25" , style: Theme.of(context).textTheme.labelSmall)
-                ],
-              )
-            ],
-          ),
-        ),
-
-         */
         SizedBox(height: 6,),
         Expanded(
             child: CalendarEventsGrid(widget.mainSportEventRepository ,widget.calendarEventsTileClicked)

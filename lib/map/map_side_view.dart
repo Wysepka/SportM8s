@@ -299,9 +299,12 @@ class _MapSideView extends State<MapSideView>{
 
 
     setState(() {
-      var updateClickedMapEvent = sportEventEngine.eventRepository.getMapSportEventDataBasedOnID(_currentClickedMapEvent!.eventID);
-      if(updateClickedMapEvent.success) {
-        _currentClickedMapEvent = updateClickedMapEvent.data!.eventData;
+      if(context.mounted) {
+        var updateClickedMapEvent = sportEventEngine.eventRepository
+            .getMapSportEventDataBasedOnID(_currentClickedMapEvent!.eventID);
+        if (updateClickedMapEvent.success) {
+          _currentClickedMapEvent = updateClickedMapEvent.data!.eventData;
+        }
       }
     });
 
@@ -313,33 +316,43 @@ class _MapSideView extends State<MapSideView>{
 
   void _onUserDeletedEvent(){
     setState(() {
-      _isJoiningEvent = false;
-      _currentClickedMapEvent = null;
+      if(context.mounted) {
+        _isJoiningEvent = false;
+        _currentClickedMapEvent = null;
+      }
     });
     sportEventEngine.update();
   }
 
   void _onCreateEventTap(){
     setState(() {
-      _isCreatingEvent = true;
+      if(context.mounted) {
+        _isCreatingEvent = true;
+      }
     });
   }
 
   void _onDismissCreateEvent(){
     setState(() {
-      _isCreatingEvent = false;
+      if(context.mounted) {
+        _isCreatingEvent = false;
+      }
     });
   }
 
   void _onJoinEventTap(){
     setState(() {
-      _isJoiningEvent = true;
+      if(context.mounted) {
+        _isJoiningEvent = true;
+      }
     });
   }
 
   void _onDismissJoinEvent(){
     setState(() {
-      _isJoiningEvent = false;
+      if(context.mounted) {
+        _isJoiningEvent = false;
+      }
     });
   }
 
@@ -347,11 +360,15 @@ class _MapSideView extends State<MapSideView>{
   void _applyCreateEvent(MapEventData eventData) async {
     MapEventData dataWithPos = eventData.copyProvidePosition(eventData, _currentMapIconCreateEventPosition);
     setState(() {
-      eventRequestType = EventServiceRequestType.CreatingEvent;
+      if(context.mounted) {
+        eventRequestType = EventServiceRequestType.CreatingEvent;
+      }
     });
     ApiResult<bool> response = await sportEventEngine.sportService.addSportEvent(dataWithPos);
     setState(() {
-      eventRequestType = EventServiceRequestType.Idle;
+      if(context.mounted) {
+        eventRequestType = EventServiceRequestType.Idle;
+      }
     });
     if(response.statusCode < 200 || response.statusCode > 299){
       if(context.mounted) {
@@ -367,7 +384,9 @@ class _MapSideView extends State<MapSideView>{
     }
     else{
       setState(() {
-        _isCreatingEvent = false;
+        if(context.mounted) {
+          _isCreatingEvent = false;
+        }
       });
     }
 
@@ -376,11 +395,15 @@ class _MapSideView extends State<MapSideView>{
 
   void _applyJoinEvent(MapEventData mapEventData) async {
     setState(() {
-      eventRequestType = EventServiceRequestType.JoiningEvent;
+      if(context.mounted) {
+        eventRequestType = EventServiceRequestType.JoiningEvent;
+      }
     });
     ApiResult<bool> result = await sportEventEngine.sportService.joinSportEvent(mapEventData);
     setState(() {
-      eventRequestType = EventServiceRequestType.Idle;
+      if(context.mounted) {
+        eventRequestType = EventServiceRequestType.Idle;
+      }
     });
     if(!result.success){
       if(context.mounted) {
@@ -390,7 +413,9 @@ class _MapSideView extends State<MapSideView>{
     }
     else{
       setState(() {
-        _isJoiningEvent = false;
+        if(context.mounted) {
+          _isJoiningEvent = false;
+        }
       });
     }
   }
@@ -427,7 +452,9 @@ class _MapSideView extends State<MapSideView>{
   }
 
   void refreshMarkers(){
-    setState(() {});
+    if(context.mounted) {
+      setState(() {});
+    }
   }
 
   void onPanelGeometryChanged(MapMarkerRect mapMarkerRect){

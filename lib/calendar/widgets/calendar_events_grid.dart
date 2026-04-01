@@ -61,12 +61,81 @@ class _CalendarEventsGrid extends ConsumerState<CalendarEventsGrid>{
 
         String userID = snapshot.data!;
 
-        List<EventDateTimeContainer> upcomingParticipatingEvents = EventUtility.getEventDateTimeContainerWithUserID(sortedEventDatasByDate, userID);
+        List<EventDateTimeContainer> pastParticipatedEvents = EventUtility.getEventDateTimeContainerWithUserID(sortedEventDatasByDate, userID, EventDataTimeType.Past);
+        List<EventDateTimeContainer> upcomingParticipatingEvents = EventUtility.getEventDateTimeContainerWithUserID(sortedEventDatasByDate, userID , EventDataTimeType.Upcoming);
         List<EventDateTimeContainer> upcomingNonParticipatingEvents = sortedEventDatasByDate.where((x) => !upcomingParticipatingEvents.contains(x)).
                                                                       where((y) => y.eventDataTimeType == EventDataTimeType.Upcoming).toList();
 
         return CustomScrollView(
           slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text("Past Participated Events", style: Theme
+                      .of(context)
+                      .textTheme
+                      .titleMedium),
+                ),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                child: Divider(),
+              ),
+            ),
+            if(pastParticipatedEvents.isNotEmpty)... {
+              for(int i = 0; i < pastParticipatedEvents.length; i++)...{
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(TimeUtility.getRelativeDayLabel(
+                            pastParticipatedEvents[i].eventDateTime))
+                    ),
+                  ),
+                ),
+                SliverPadding(
+                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  sliver: SliverGrid(
+                    delegate: SliverChildBuilderDelegate(
+                          (context, index) =>
+                          CalendarEventsTile(
+                              widget.calendarEventsTileClicked,
+                              pastParticipatedEvents[i].mapEventData[index]),
+                      childCount: pastParticipatedEvents[i].mapEventData.length,
+                    ),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 8,
+                      crossAxisSpacing: 8,
+                    ),
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: Divider(),
+                  ),
+                ),
+              },
+            } else...{
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  child: Text("Past events participations not found"),
+                ),
+              )
+            },
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                child: Divider(),
+              ),
+            ),
             SliverToBoxAdapter(
               child: Padding(
                 padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -85,38 +154,51 @@ class _CalendarEventsGrid extends ConsumerState<CalendarEventsGrid>{
                 child: Divider(),
               ),
             ),
-            for(int i = 0; i < upcomingParticipatingEvents.length; i++)...{
-              SliverToBoxAdapter(
+            if(upcomingParticipatingEvents.isNotEmpty)...{
+              for(int i = 0; i < upcomingParticipatingEvents.length; i++)...{
+                SliverToBoxAdapter(
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                     child: Align(
                         alignment: Alignment.centerRight,
-                        child: Text(TimeUtility.getRelativeDayLabel(upcomingParticipatingEvents[i].eventDateTime))
+                        child: Text(TimeUtility.getRelativeDayLabel(
+                            upcomingParticipatingEvents[i].eventDateTime))
                     ),
                   ),
-              ),
-              SliverPadding(
-                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                sliver: SliverGrid(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) => CalendarEventsTile(
-                      widget.calendarEventsTileClicked,
-                      upcomingParticipatingEvents[i].mapEventData[index]),
-                    childCount: upcomingParticipatingEvents[i].mapEventData.length,
-                  ),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 8,
-                    crossAxisSpacing: 8,
+                ),
+                SliverPadding(
+                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  sliver: SliverGrid(
+                    delegate: SliverChildBuilderDelegate(
+                          (context, index) =>
+                          CalendarEventsTile(
+                              widget.calendarEventsTileClicked,
+                              upcomingParticipatingEvents[i]
+                                  .mapEventData[index]),
+                      childCount: upcomingParticipatingEvents[i].mapEventData
+                          .length,
+                    ),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 8,
+                      crossAxisSpacing: 8,
+                    ),
                   ),
                 ),
-              ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: Divider(),
+                  ),
+                ),
+              },
+            } else...{
               SliverToBoxAdapter(
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  child: Divider(),
+                  child: Text("Upcoming event participations not found"),
                 ),
-              ),
+              )
             },
             SliverToBoxAdapter(
               child: Padding(
@@ -142,44 +224,59 @@ class _CalendarEventsGrid extends ConsumerState<CalendarEventsGrid>{
                 child: Divider(),
               ),
             ),
-            for(int i = 0; i < upcomingNonParticipatingEvents.length; i++)...{
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: Text(TimeUtility.getRelativeDayLabel(upcomingNonParticipatingEvents[i].eventDateTime))
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SliverPadding(
-                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                sliver: SliverGrid(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) => CalendarEventsTile(
-                      widget.calendarEventsTileClicked,
-                      upcomingNonParticipatingEvents[i].mapEventData[index],
+            if(upcomingNonParticipatingEvents.isNotEmpty)...{
+              for(int i = 0; i < upcomingNonParticipatingEvents.length; i++)...{
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Align(
+                            alignment: Alignment.centerRight,
+                            child: Text(TimeUtility.getRelativeDayLabel(
+                                upcomingNonParticipatingEvents[i]
+                                    .eventDateTime))
+                        ),
+                      ],
                     ),
-                    childCount: upcomingNonParticipatingEvents[i].mapEventData.length,
-                  ),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 8,
-                    crossAxisSpacing: 8,
                   ),
                 ),
-              ),
+                SliverPadding(
+                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  sliver: SliverGrid(
+                    delegate: SliverChildBuilderDelegate(
+                          (context, index) =>
+                          CalendarEventsTile(
+                            widget.calendarEventsTileClicked,
+                            upcomingNonParticipatingEvents[i]
+                                .mapEventData[index],
+                          ),
+                      childCount: upcomingNonParticipatingEvents[i].mapEventData
+                          .length,
+                    ),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 8,
+                      crossAxisSpacing: 8,
+                    ),
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: Divider(),
+                  ),
+                ),
+              },
+            }
+            else...{
               SliverToBoxAdapter(
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  child: Divider(),
+                  child: Text("Upcoming events not found"),
                 ),
-              ),
+              )
             },
             SliverToBoxAdapter(
               child: Padding(

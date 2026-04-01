@@ -125,10 +125,14 @@ class EventUtility{
     return result;
   }
 
-  static List<EventDateTimeContainer> getEventDateTimeContainerWithUserID(List<EventDateTimeContainer> container, String userID){
+  static List<EventDateTimeContainer> getEventDateTimeContainerWithUserID(List<EventDateTimeContainer> container, String userID , EventDataTimeType dateTimeType){
     List<EventDateTimeContainer> eventDateContainerWithUserID = [];
     for(int i = 0; i< container.length; i++){
       if(container[i].mapEventData.isEmpty){
+        continue;
+      }
+
+      if(container[i].eventDataTimeType != dateTimeType){
         continue;
       }
 
