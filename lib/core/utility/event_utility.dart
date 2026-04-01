@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:sportm8s/gen/assets.gen.dart';
 import 'package:sportm8s/map/models/map_event_data.dart';
+import 'package:sportm8s/map/models/map_sport_event_marker.dart';
 
 import '../enums/enums_container.dart';
 
@@ -56,5 +57,89 @@ class EventUtility{
 
   static Map<String,dynamic> toJson(Map<String,Participant> participants){
     return participants.map((key, value) => MapEntry(key, value.toJson()));
+  }
+
+  static List<EventDateTimeContainer> sortMapEventDatasByDay(
+      List<MapSportEventData> mapEventDatas,
+      ) {
+    final now = DateTime.now();
+
+    final sortedList = List<MapSportEventData>.from(mapEventDatas);
+
+    sortedList.sort((a, b) {
+      final DateTime aDate = a.eventData.eventStartDate;
+      final DateTime bDate = b.eventData.eventStartDate;
+
+      final bool aIsPast = aDate.isBefore(now);
+      final bool bIsPast = bDate.isBefore(now);
+
+      // Upcoming first, past after
+      if (aIsPast != bIsPast) {
+        return aIsPast ? 1 : -1;
+      }
+
+      // Upcoming -> nearest first
+      if (!aIsPast) {
+        return aDate.compareTo(bDate);
+      }
+
+      // Past -> most recent past first
+      return bDate.compareTo(aDate);
+    });
+
+    final List<EventDateTimeContainer> result = [];
+
+    for (final mapSportEventData in sortedList) {
+      final DateTime eventDateTime = mapSportEventData.eventData.eventStartDate;
+
+      final DateTime eventDay = DateTime(
+        eventDateTime.year,
+        eventDateTime.month,
+        eventDateTime.day,
+      );
+
+      final EventDataTimeType eventDataTimeType =
+      eventDateTime.isBefore(now)
+          ? EventDataTimeType.Past
+          : EventDataTimeType.Upcoming;
+
+      final int existingIndex = result.indexWhere((container) =>
+      container.eventDataTimeType == eventDataTimeType &&
+          container.eventDateTime.year == eventDay.year &&
+          container.eventDateTime.month == eventDay.month &&
+          container.eventDateTime.day == eventDay.day);
+
+      if (existingIndex != -1) {
+        result[existingIndex].mapEventData.add(mapSportEventData.eventData);
+      } else {
+        result.add(
+          EventDateTimeContainer(
+            eventDataTimeType,
+            eventDay,
+            [mapSportEventData.eventData],
+          ),
+        );
+      }
+    }
+
+    return result;
+  }
+
+  static List<EventDateTimeContainer> getEventDateTimeContainerWithUserID(List<EventDateTimeContainer> container, String userID){
+    List<EventDateTimeContainer> eventDateContainerWithUserID = [];
+    for(int i = 0; i< container.length; i++){
+      if(container[i].mapEventData.isEmpty){
+        continue;
+      }
+
+      for(int j = 0; j < container[i].mapEventData.length; j++){
+        if(container[i].mapEventData[j].participantsIDs.containsKey(userID)){
+          eventDateContainerWithUserID.add(container[i]);
+          break;
+        }
+      }
+    }
+
+    return eventDateContainerWithUserID;
   }
 }

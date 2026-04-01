@@ -20,6 +20,7 @@ class _CalendarEventsBrowser extends State<CalendarEventsBrowser>{
   Widget build(BuildContext context) {
     return Column(
       children: [
+        /*
         Padding(
           padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
           child: Row(
@@ -36,6 +37,8 @@ class _CalendarEventsBrowser extends State<CalendarEventsBrowser>{
             ],
           ),
         ),
+
+         */
         SizedBox(height: 6,),
         Expanded(
             child: CalendarEventsGrid(widget.mainSportEventRepository ,widget.calendarEventsTileClicked)

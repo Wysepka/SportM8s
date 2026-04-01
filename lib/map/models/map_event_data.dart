@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:sportm8s/map/models/map_sport_event_marker.dart';
 
 import '../../core/enums/enums_container.dart';
 
@@ -80,4 +81,12 @@ class Participant{
     'isConfirmed': isConfirmed,
     'joinedAt': joinedAt.toUtc().toIso8601String(),
   };
+}
+
+class EventDateTimeContainer{
+  final EventDataTimeType eventDataTimeType;
+  final DateTime eventDateTime;
+  final List<MapEventData> mapEventData;
+
+  const EventDateTimeContainer(this.eventDataTimeType , this.eventDateTime , this.mapEventData);
 }

@@ -8,13 +8,14 @@ import 'package:sportm8s/core/utility/location_utility.dart';
 import 'package:sportm8s/core/utility/sport_utility.dart';
 import 'package:sportm8s/core/utility/time_utility.dart';
 import 'package:sportm8s/graphics/sportm8s_themes.dart';
+import 'package:sportm8s/map/models/map_event_data.dart';
 import 'package:sportm8s/map/models/map_sport_event_marker.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:geolocator/geolocator.dart';
 
 class CalendarEventsTile extends StatefulWidget{
   final Function(CalendarEventsTile) calendarEventsTileClicked;
-  final MapSportEventData mapSportEventData;
+  final MapEventData mapSportEventData;
 
   const CalendarEventsTile(this.calendarEventsTileClicked,this.mapSportEventData, {super.key});
 
@@ -85,12 +86,12 @@ class _CalendarEventsTile extends State<CalendarEventsTile>{
                 width: CalendarStaticValues.eventTileSportIconSize,
                 height: CalendarStaticValues.eventTileSportIconSize,
                 decoration: BoxDecoration(
-                  color: SportEventUtils.getSportEventBackgroundColor(type: widget.mapSportEventData.eventData.sportEventType),
+                  color: SportEventUtils.getSportEventBackgroundColor(type: widget.mapSportEventData.sportEventType),
                   borderRadius: BorderRadius.circular(7)
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(3.0),
-                  child: SportEventUtils.getTransparentIconBasedOnSportEventType(widget.mapSportEventData.eventData.sportEventType, CalendarStaticValues.eventTileSportIconSize * 0.8, CalendarStaticValues.eventTileSportIconSize * 0.8),
+                  child: SportEventUtils.getTransparentIconBasedOnSportEventType(widget.mapSportEventData.sportEventType, CalendarStaticValues.eventTileSportIconSize * 0.8, CalendarStaticValues.eventTileSportIconSize * 0.8),
                 )
             )
         ),
@@ -102,7 +103,7 @@ class _CalendarEventsTile extends State<CalendarEventsTile>{
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  SportEventUtils.getSportEventTypeToShortLocValue(widget.mapSportEventData.eventData.sportEventType, appLocalisations) ,
+                  SportEventUtils.getSportEventTypeToShortLocValue(widget.mapSportEventData.sportEventType, appLocalisations) ,
                   style: Theme.of(context).textTheme.bodyMedium,
                   overflow: TextOverflow.fade,
                   maxLines: 1,
@@ -110,7 +111,7 @@ class _CalendarEventsTile extends State<CalendarEventsTile>{
                 ),
                 //SizedBox(height: 2,),
                 Text(
-                    widget.mapSportEventData.eventData.eventName ,
+                    widget.mapSportEventData.eventName ,
                     overflow: TextOverflow.fade,
                     style: Theme.of(context).textTheme.bodySmall,
                     maxLines: 1,
@@ -167,9 +168,9 @@ class _CalendarEventsTile extends State<CalendarEventsTile>{
 
   Future<Widget> getTileMiddlePanelWidget() async {
 
-    String timeLocationFormated = TimeUtility.getRelativeDayLabel(widget.mapSportEventData.eventData.eventStartDate);
-    timeLocationFormated += " ${TimeUtility.formatHourMinute(widget.mapSportEventData.eventData.eventStartDate)}";
-    String locationShortname = await LocationUtility.getShortPlaceNameFromLatLng(widget.mapSportEventData.eventData.position);
+    String timeLocationFormated = TimeUtility.getRelativeDayLabel(widget.mapSportEventData.eventStartDate);
+    timeLocationFormated += " ${TimeUtility.formatHourMinute(widget.mapSportEventData.eventStartDate)}";
+    String locationShortname = await LocationUtility.getShortPlaceNameFromLatLng(widget.mapSportEventData.position);
     timeLocationFormated += " $locationShortname";
 
     return Padding(
@@ -193,7 +194,7 @@ class _CalendarEventsTile extends State<CalendarEventsTile>{
             ],
           ),
           SizedBox(height: 2,),
-          Text(widget.mapSportEventData.eventData.eventDescription)
+          Text(widget.mapSportEventData.eventDescription)
         ],
       ),
     );
@@ -203,20 +204,20 @@ class _CalendarEventsTile extends State<CalendarEventsTile>{
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: CalendarOverlappingAvatars(
-        participants: widget.mapSportEventData.eventData.participantsIDs.values.toList(),
+        participants: widget.mapSportEventData.participantsIDs.values.toList(),
         imageUrls: [
           'https://i.pravatar.cc/100?img=1',
           'https://i.pravatar.cc/100?img=2',
           'https://i.pravatar.cc/100?img=3',
         ],
-        currentCount: widget.mapSportEventData.eventData.capacity.currentParticipants,
-        maxCount: widget.mapSportEventData.eventData.capacity.maxParticipants,
+        currentCount: widget.mapSportEventData.capacity.currentParticipants,
+        maxCount: widget.mapSportEventData.capacity.maxParticipants,
       ),
     );
   }
 
   Future<String> getDistanceInKilometersStringToEvent() async {
     final currentPosition = await LocationUtility.loadCurrentUserLocation(LoggerService() , LatLng(52, 11));
-    return LocationUtility.getDistanceKmText(currentPosition, widget.mapSportEventData.eventData.position);
+    return LocationUtility.getDistanceKmText(currentPosition, widget.mapSportEventData.position);
   }
 }

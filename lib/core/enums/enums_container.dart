@@ -84,3 +84,8 @@ enum MapBodyType{
   Calendar,
   Profile,
 }
+
+enum EventDataTimeType{
+  Past,
+  Upcoming,
+}
