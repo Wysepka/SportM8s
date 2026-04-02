@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
@@ -16,6 +17,7 @@ import 'package:sportm8s/core/utility/location_utility.dart';
 import 'package:sportm8s/dto/api_result.dart';
 import 'package:sportm8s/events/map_event_widget_container.dart';
 import 'package:sportm8s/events/map_join_event.dart';
+import 'package:sportm8s/graphics/sportm8s_themes.dart';
 import 'package:sportm8s/map/engine/sport_event_calculator.dart';
 import 'package:sportm8s/map/engine/sport_event_controller.dart';
 import 'package:sportm8s/map/engine/sport_event_repository.dart';
@@ -32,6 +34,7 @@ import 'package:vector_map_tiles/vector_map_tiles.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../events/map_create_event.dart';
 import 'engine/sport_event_engine.dart';
+import 'helpers/map_animations.dart';
 
 
 class MapSideView extends StatefulWidget{
@@ -43,7 +46,7 @@ class MapSideView extends StatefulWidget{
   State<StatefulWidget> createState() => _MapSideView();
 }
 
-class _MapSideView extends State<MapSideView>{
+class _MapSideView extends State<MapSideView> with TickerProviderStateMixin{
   //_MapSideView({super.key});
   LoggerService loggerService = LoggerService();
   final MapController mapController = new MapController();
@@ -68,6 +71,8 @@ class _MapSideView extends State<MapSideView>{
 
   late Future<void> _initializationFuture;
 
+  late final MapAnimations _mapAnimations;
+
   @override void initState() {
     // TODO: implement initState
     super.initState();
@@ -83,6 +88,16 @@ class _MapSideView extends State<MapSideView>{
     sportEventEngine.initialize(markerData);
 
     _initializationFuture = initializeMapData();
+
+    _mapAnimations = MapAnimations(mapController: mapController, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+
+    _mapAnimations.dispose();
   }
 
   void onSportEventsChanged(){
@@ -142,7 +157,7 @@ class _MapSideView extends State<MapSideView>{
 
   Future<void> initializeMapData() async {
     try {
-      final location = await LocationUtility.loadCurrentUserLocation(loggerService , initialLocation);
+      final location = await LocationUtility.loadCurrentUserLocation(loggerService);
       initialLocation = location;
       loggerService.info("Current user location initialized properly");
 
@@ -288,9 +303,31 @@ class _MapSideView extends State<MapSideView>{
                     ),
                   )
               )
-            ]
+            ],
+
+            Positioned(
+              right: 15,
+              top: 15,
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: SportM8sColors.surfaceContainerHighest,
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                ),
+                child: IconButton(
+                  icon: Icon(Icons.location_on , color: SportM8sColors.accent,),
+                  iconSize: 24,
+                  onPressed: lerpMapToCurrentUserLocation),
+              )
+            ),
           ]
       );
+  }
+
+  void lerpMapToCurrentUserLocation() async{
+    LatLng currentPos = await LocationUtility.loadCurrentUserLocation(loggerService);
+    _mapAnimations.animateTo(destination: currentPos, zoom: 16);
   }
 
   Future<Style> loadMapStyle() => StyleReader(

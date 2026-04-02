@@ -42,7 +42,7 @@ class _CalendarEventsGrid extends ConsumerState<CalendarEventsGrid>{
     return FutureBuilder(
       future: Future.wait([
         serverUserService.getUserID(),
-        LocationUtility.loadCurrentUserLocation(LoggerService(), LatLng(51, 21))
+        LocationUtility.loadCurrentUserLocation(LoggerService())
       ]),
       builder: (context, snapshot) {
 

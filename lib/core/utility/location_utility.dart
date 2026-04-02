@@ -29,6 +29,8 @@ class CountryBBox {
 
 class LocationUtility {
 
+  static final LatLng defaultPosition = LatLng(52.2297, 21.0122);
+
   /// A curated set of European country bounding boxes (approximate, WGS84).
   /// Keys support both ISO-2 (e.g., "PL") and common names (e.g., "Poland").
   /// Add or tweak as you like.
@@ -185,12 +187,12 @@ class LocationUtility {
     return distanceKm;
   }
 
-  static Future<LatLng> loadCurrentUserLocation(LoggerService logger , LatLng defaultPos) async {
+  static Future<LatLng> loadCurrentUserLocation(LoggerService logger) async {
     try {
       var isGeolocatorEnabled = await Geolocator.isLocationServiceEnabled();
       if (!isGeolocatorEnabled) {
         logger.error("Geolocator service is not enabled on smartphone");
-        return defaultPos;
+        return defaultPosition;
       }
 
       LocationPermission locationPermission = await Geolocator

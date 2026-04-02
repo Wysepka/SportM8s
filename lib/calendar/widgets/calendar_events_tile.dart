@@ -223,7 +223,7 @@ class _CalendarEventsTile extends State<CalendarEventsTile>{
   }
 
   Future<String> getDistanceInKilometersStringToEvent() async {
-    final currentPosition = await LocationUtility.loadCurrentUserLocation(LoggerService() , LatLng(52, 11));
+    final currentPosition = await LocationUtility.loadCurrentUserLocation(LoggerService());
     return LocationUtility.getDistanceKmText(currentPosition, widget.mapSportEventData.position);
   }
 }

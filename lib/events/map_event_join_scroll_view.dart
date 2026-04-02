@@ -6,6 +6,7 @@ import 'package:sportm8s/core/styles/map_event_widget_text_style.dart';
 import 'package:sportm8s/core/utility/sport_utility.dart';
 import 'package:sportm8s/dto/api_result.dart';
 import 'package:sportm8s/dto/list_response.dart';
+import 'package:sportm8s/dto/user_display_name_id_dto.dart';
 import 'package:sportm8s/events/map_event_join_button.dart';
 import 'package:sportm8s/events/map_event_participant_widget.dart';
 import 'package:sportm8s/events/map_event_widget_container.dart';
@@ -88,9 +89,9 @@ class _MapEventJoinScrollView extends State<MapEventJoinScrollView>{
                   l10n?.event_Title_EventParticipants ?? "Event Participants",
                   style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
               ),
-              FutureBuilder<List<String>>(
+              FutureBuilder<List<UserDisplayNameIDDTO>>(
                 future: _getEventParticipantsDisplayNames(),
-                builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+                builder: (BuildContext context, AsyncSnapshot<List<UserDisplayNameIDDTO>> snapshot) {
                   if(snapshot.connectionState == ConnectionState.waiting){
                     return Center(
                       child: CircularProgressIndicator(),
@@ -106,12 +107,15 @@ class _MapEventJoinScrollView extends State<MapEventJoinScrollView>{
                       child: Text("No Participants, this is error since there should be at least one participant"),
                     );
                   }
+
                   return ListView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
                     itemCount: snapshot.data!.length,
                     itemBuilder: (context, index) {
-                      return MapEventParticipantWidget(snapshot.data![index], 20, widget.mapEventData.participantsIDs.keys.elementAt(index) , index);
+                      String participantDisplayName = snapshot.data![index].displayName;
+                      String participantID = snapshot.data![index].id;
+                      return MapEventParticipantWidget(participantDisplayName, 20, participantID , index);
                     }
                   );
                 },
@@ -141,10 +145,10 @@ class _MapEventJoinScrollView extends State<MapEventJoinScrollView>{
     widget.onUserDeletedEvent();
   }
 
-  Future<List<String>> _getEventParticipantsDisplayNames() async {
+  Future<List<UserDisplayNameIDDTO>> _getEventParticipantsDisplayNames() async {
     final result = await widget.sportService.getMapEventParticipantsDisplayNames(widget.mapEventData);
     if(result.success ) {
-      return (result as OkResult<ListResponse<String>>).data.items;
+      return (result as OkResult<ListResponse<UserDisplayNameIDDTO>>).data.items;
     }
     else{
       return [];

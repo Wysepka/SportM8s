@@ -29,10 +29,10 @@
 
  25.A Split MapSideView (location and style logic) to MapViewComponentLoader
 
- 27. Calendar
- 27.1 Calendar view with sorting options (date, distance, sport type), participating at top
- 28. Left Map Panel (Calendar, Profile, Events Participating)
- 28.1 Side Menu with buttons navigating to other views
+ 27. DONED Calendar
+ 27.1 DONED Calendar view with sorting options (date, distance, sport type), participating at top
+ 28. DONED Left Map Panel (Calendar, Profile, Events Participating)
+ 28.1 DONED Side Menu with buttons navigating to other views
  29. Editing by event creator (inviting, canceling events, editing data, push notifications)
  29.1 Creator Event View (seperate view fullscreen)
  29.2 All Current Data can be edited
@@ -41,20 +41,20 @@
  30. Notifications View
  30.1 Seperate view with linking to event view (if possible)
  31. Event Chats
- 32. Editing Profile as Left Map Panel Button
+ 32. DONED Editing Profile as Left Map Panel Button
  33. Change Splash Screen image to the Inkscape logo (only people with colors)
  34. DONED Email confirmation popup when logging to unverified account
- 35. Add in MapSideView in right top localization pin
+ 35. DONED Add in MapSideView in right top localization pin
  36. Add (one time after registering account ChangeDisplayProfile display)
  37. Fix UserParticipantWidget to have static height (CircularProgressIndicator changes size when loading)
- 38. Add SportM8s simple logo in Email Verfify Screen
+ 38. DONED Add SportM8s simple logo in Email Verfify Screen
  39. Goggle sign in session, and re-auth when wanting another user
  40. Event Creation at start of map is not caching starting pos when not pinched/moved mouse
  41. Check on virtual machine different kind of aspect ratios and emulators
  42. verify pushing/replacing screens
  43. Missing icons on some buttons
  44. Loaded Map data is empty bug
- 45. In map event details wrong avatar is loaded (probably wrong id and sorted alphabetically)
+ 45. IN-PROGRESS In map event details wrong avatar is loaded (probably wrong id and sorted alphabetically)
  46. Add loading indicator when logging with google
  47. Replace appbar with bottom nav bar panel
  48. Check what is wrong with Invalid SportEvent dropdown
@@ -62,6 +62,9 @@
  50. Give moving constraints to the polish region only in OSM map
  51. Add current_localization button and lerping when clicked in map stack overlay
  52. mapEvent can be opened by single tap
+ 53. currentPosition icon/indicator
+
+ NOW 35 , 45, 49, 50 , 53
 
 1. Clone repository on Laptop and check whats missing and poppin
 
