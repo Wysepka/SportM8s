@@ -86,7 +86,11 @@ class Participant{
 class EventDateTimeContainer{
   final EventDataTimeType eventDataTimeType;
   final DateTime eventDateTime;
-  final List<MapEventData> mapEventData;
+  final List<MapEventData> mapEventDatas;
 
-  const EventDateTimeContainer(this.eventDataTimeType , this.eventDateTime , this.mapEventData);
+  EventDateTimeContainer(this.eventDataTimeType , this.eventDateTime , this.mapEventDatas);
+
+  EventDateTimeContainer copyWith(EventDataTimeType? timeType , DateTime? eventTime , List<MapEventData>? otherDatas){
+    return EventDateTimeContainer(timeType ?? this.eventDataTimeType , eventTime ?? this.eventDateTime, otherDatas ?? mapEventDatas);
+  }
 }

@@ -6,7 +6,9 @@ import 'dart:math';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:sportm8s/core/enums/enums_container.dart';
 import 'package:sportm8s/core/utility/location_name_utility.dart';
+import 'package:vector_map_tiles/vector_map_tiles.dart';
 
 import '../logger/logger_service.dart';
 
@@ -154,6 +156,12 @@ class LocationUtility {
   }
 
   static String getDistanceKmText(LatLng a, LatLng b) {
+    final double distanceKm = getDistanceKm(a, b);
+
+    return "${distanceKm.toStringAsFixed(1)}km";
+  }
+
+  static double getDistanceKm(LatLng a, LatLng b) {
     const double earthRadiusKm = 6371.0;
 
     double degreesToRadians(double degrees) => degrees * pi / 180.0;
@@ -174,7 +182,7 @@ class LocationUtility {
     final double c = 2 * atan2(sqrt(haversine), sqrt(1 - haversine));
     final double distanceKm = earthRadiusKm * c;
 
-    return "${distanceKm.toStringAsFixed(1)}km";
+    return distanceKm;
   }
 
   static Future<LatLng> loadCurrentUserLocation(LoggerService logger , LatLng defaultPos) async {
@@ -230,6 +238,21 @@ class LocationUtility {
 
     } catch (_) {
       return 'Unknown place';
+    }
+  }
+
+  static EventDistanceQueryType getDistanceSortTypeByString(String distanceSortTypeString){
+    switch(distanceSortTypeString){
+      case "All":
+        return EventDistanceQueryType.All;
+      case "10km":
+        return EventDistanceQueryType.km10;
+      case "25km":
+        return EventDistanceQueryType.km25;
+      case "100km":
+        return EventDistanceQueryType.km100;
+      default:
+        return EventDistanceQueryType.All;
     }
   }
 }

@@ -1,11 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sportm8s/bloc/calendar_sorter/CalendarSortContainerBloc.dart';
+import 'package:sportm8s/bloc/calendar_sorter/CalendarSortContainerEvent.dart';
 import 'package:sportm8s/calendar/widgets/calendar_text_icon_container.dart';
+import 'package:sportm8s/core/enums/enums_container.dart';
+import 'package:sportm8s/core/utility/location_utility.dart';
 import 'package:sportm8s/graphics/sportm8s_themes.dart';
 
 import '../../core/utility/sport_utility.dart';
 
 class CalendarEventsSorter extends StatefulWidget{
+  const CalendarEventsSorter({super.key});
+
   @override
   State<StatefulWidget> createState() => _CalendarEventsSorter();
 
@@ -14,7 +21,9 @@ class CalendarEventsSorter extends StatefulWidget{
 class _CalendarEventsSorter extends State<CalendarEventsSorter>{
 
   String selectedSportTypeString = "All";
+  SportEventType selectedSportEventType = SportEventType.Invalid; //Invalid serves as ALL
   String selectedDistanceTypeString = "All";
+  EventDistanceQueryType selectedDistanceType = EventDistanceQueryType.All;
   FocusNode selectedSportTypeFocusNode = FocusNode(debugLabel: "SelectedSportType_Sorter");
 
   @override
@@ -29,7 +38,12 @@ class _CalendarEventsSorter extends State<CalendarEventsSorter>{
           ),
           SizedBox(width: 5,),
           Expanded(
-              child: SportEventUtils.getSportTypeDropdownButton_Sorter(onSportTypeChanged , getSelectedSportTypeString, 20 , selectedSportTypeFocusNode ,context)
+              child: SportEventUtils.getSportTypeDropdownButton_Sorter(
+                  (stringValue) => onSportTypeChanged(stringValue , context) ,
+                  getSelectedSportTypeString,
+                  20 ,
+                  selectedSportTypeFocusNode ,context
+              )
           ),
           SizedBox(width: 5,),
           Flexible(
@@ -37,7 +51,7 @@ class _CalendarEventsSorter extends State<CalendarEventsSorter>{
                 items: distanceDropdownButtons(),
                 value: getSelectedDistanceTypeString(),
                 isExpanded: true,
-                onChanged: onDistanceDropdownChanged
+                onChanged: (stringValue) => onDistanceDropdownChanged(stringValue , context)
             ),
           ),
         ],
@@ -49,19 +63,27 @@ class _CalendarEventsSorter extends State<CalendarEventsSorter>{
 
   String getSelectedDistanceTypeString() => selectedDistanceTypeString;
 
-  void onDistanceDropdownChanged(String? value){
+  void onDistanceDropdownChanged(String? value , BuildContext context){
     if(value != null) {
-      setState(() {
-        selectedDistanceTypeString = value;
-      });
+      if(context.mounted) {
+        setState(() {
+          selectedDistanceTypeString = value;
+          selectedDistanceType = LocationUtility.getDistanceSortTypeByString(selectedDistanceTypeString);
+          context.read<CalendarQueryContainerBloc>().add(CalendarEventDistanceChangedEvent(selectedDistanceType));
+        });
+      }
     }
   }
 
-  void onSportTypeChanged(String? value){
+  void onSportTypeChanged(String? value , BuildContext context){
     if(value != null){
-      setState(() {
-        selectedSportTypeString = value;
-      });
+      if(context.mounted) {
+        setState(() {
+          selectedSportTypeString = value;
+          selectedSportEventType = SportEventUtils.getTypeBasedOnRandomTitle(selectedSportTypeString);
+          context.read<CalendarQueryContainerBloc>().add(CalendarSportEventChangedEvent(selectedSportEventType));
+        });
+      }
     }
   }
 

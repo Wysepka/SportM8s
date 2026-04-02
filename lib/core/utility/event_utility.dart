@@ -1,5 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:sportm8s/core/logger/logger_service.dart';
+import 'package:sportm8s/core/utility/location_utility.dart';
 import 'package:sportm8s/gen/assets.gen.dart';
 import 'package:sportm8s/map/models/map_event_data.dart';
 import 'package:sportm8s/map/models/map_sport_event_marker.dart';
@@ -110,7 +113,7 @@ class EventUtility{
           container.eventDateTime.day == eventDay.day);
 
       if (existingIndex != -1) {
-        result[existingIndex].mapEventData.add(mapSportEventData.eventData);
+        result[existingIndex].mapEventDatas.add(mapSportEventData.eventData);
       } else {
         result.add(
           EventDateTimeContainer(
@@ -128,7 +131,7 @@ class EventUtility{
   static List<EventDateTimeContainer> getEventDateTimeContainerWithUserID(List<EventDateTimeContainer> container, String userID , EventDataTimeType dateTimeType){
     List<EventDateTimeContainer> eventDateContainerWithUserID = [];
     for(int i = 0; i< container.length; i++){
-      if(container[i].mapEventData.isEmpty){
+      if(container[i].mapEventDatas.isEmpty){
         continue;
       }
 
@@ -136,8 +139,8 @@ class EventUtility{
         continue;
       }
 
-      for(int j = 0; j < container[i].mapEventData.length; j++){
-        if(container[i].mapEventData[j].participantsIDs.containsKey(userID)){
+      for(int j = 0; j < container[i].mapEventDatas.length; j++){
+        if(container[i].mapEventDatas[j].participantsIDs.containsKey(userID)){
           eventDateContainerWithUserID.add(container[i]);
           break;
         }
@@ -145,5 +148,74 @@ class EventUtility{
     }
 
     return eventDateContainerWithUserID;
+  }
+
+  static List<EventDateTimeContainer> getEventDateTimeContainerQueryByType(List<EventDateTimeContainer> container , SportEventType sportEventType, EventDistanceQueryType eventDistanceType , LatLng currentPosition){
+    List<EventDateTimeContainer> containerQueried = [];
+    for(int i = 0; i< container.length; i++){
+      if(container[i].mapEventDatas.isEmpty){
+        continue;
+      }
+
+      List<MapEventData> mapEventDatas = [];
+
+      for(int j = 0; j < container[i].mapEventDatas.length; j++){
+        MapEventData mapEventData = container[i].mapEventDatas[j];
+        bool sportEventTypeApproved = SportEventTypeQueryCandidate(sportEventType).isCandidateOk(mapEventData, currentPosition);
+        bool eventDistanceApproved = EventDistanceTypeQueryCandidate(eventDistanceType).isCandidateOk(mapEventData, currentPosition);
+
+        if(sportEventTypeApproved && eventDistanceApproved){
+          mapEventDatas.add(mapEventData);
+        }
+      }
+
+      if(mapEventDatas.isNotEmpty) {
+        containerQueried.add(EventDateTimeContainer(container[i].eventDataTimeType, container[i].eventDateTime, mapEventDatas));
+      }
+    }
+
+    return containerQueried;
+  }
+}
+
+abstract class MapEventDataQueryCandidate{
+
+  bool isCandidateOk(MapEventData mapEventData , LatLng currentPosition);
+}
+
+class SportEventTypeQueryCandidate extends MapEventDataQueryCandidate{
+  final SportEventType sportEventType;
+
+  SportEventTypeQueryCandidate(this.sportEventType);
+
+  @override
+  bool isCandidateOk(MapEventData mapEventData , LatLng currentPosition) {
+    return sportEventType == SportEventType.Invalid ||
+           sportEventType == mapEventData.sportEventType;
+  }
+}
+
+class EventDistanceTypeQueryCandidate extends MapEventDataQueryCandidate{
+  final EventDistanceQueryType eventDistanceSortType;
+
+  EventDistanceTypeQueryCandidate(this.eventDistanceSortType);
+
+  @override
+  bool isCandidateOk(MapEventData mapEventData , LatLng currentPosition) {
+    double distanceToEvent = LocationUtility.getDistanceKm(currentPosition, mapEventData.position);
+    double queryDistance = 10000000;
+    switch(eventDistanceSortType){
+
+      case EventDistanceQueryType.All:
+        queryDistance = 10000000;
+      case EventDistanceQueryType.km10:
+        queryDistance = 10;
+      case EventDistanceQueryType.km25:
+        queryDistance = 25;
+      case EventDistanceQueryType.km100:
+        queryDistance = 100;
+    }
+
+    return distanceToEvent < queryDistance;
   }
 }

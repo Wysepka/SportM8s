@@ -20,6 +20,8 @@ class SportEventUtils {
       return SportEventType.Volleyball;
     } else if (lowerTitle.contains('running') || lowerTitle.contains('marathon')) {
       return SportEventType.Running;
+    } else if (lowerTitle.contains('cycling') || lowerTitle.contains('cycle')) {
+      return SportEventType.Cycling;
     } else if (lowerTitle.contains('climbing') && lowerTitle.contains("bouldering")) {
       return SportEventType.ClimbingBouldering;
     } else if (lowerTitle.contains('climbing') && lowerTitle.contains("leading")) {
@@ -27,7 +29,7 @@ class SportEventUtils {
     } else if (lowerTitle.contains('climbing') && lowerTitle.contains("toprope")) {
       return SportEventType.ClimbingTopRope;
     } else if (lowerTitle.contains('skiing') && lowerTitle.contains("crosscountry")) {
-      return SportEventType.ClimbingTopRope;
+      return SportEventType.CrossCountrySkiing;
     } else if (lowerTitle.contains('other')) {
       return SportEventType.Other;
     } else {

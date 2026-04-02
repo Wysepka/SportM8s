@@ -89,3 +89,10 @@ enum EventDataTimeType{
   Past,
   Upcoming,
 }
+
+enum EventDistanceQueryType{
+  All,
+  km10,
+  km25,
+  km100,
+}
