@@ -39,16 +39,19 @@ class _MapRootDrawer extends State<MapRootDrawer>{
   }
 
   void onMapButtonClicked(){
+    Scaffold.of(context).closeDrawer();
     mapBodyType = MapBodyType.Map;
     widget.onMapBodyTypeChanged(mapBodyType);
   }
 
   void onCalendarButtonClicked(){
+    Scaffold.of(context).closeDrawer();
     mapBodyType = MapBodyType.Calendar;
     widget.onMapBodyTypeChanged(mapBodyType);
   }
 
   void onProfileButtonClicked(){
+    Scaffold.of(context).closeDrawer();
     mapBodyType = MapBodyType.Profile;
     widget.onMapBodyTypeChanged(mapBodyType);
   }
