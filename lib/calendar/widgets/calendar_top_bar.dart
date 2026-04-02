@@ -19,12 +19,14 @@ class CalendarTopBar extends StatelessWidget{
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
+            /*
             Card(
               child: IconButton(
                   onPressed: _searchButtonClicked,
                   icon: Icon(Icons.search)
               ),
             ),
+             */
           ],
         )
       ],

@@ -156,18 +156,22 @@ class _MapSideView extends State<MapSideView>{
       styleInitialized = true;
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        setState(() {
+        if(mounted) {
+          setState(() {
 
-        });
+          });
+        }
       });
 
     } catch (e) {
       loggerService.error("Initialization error: $e");
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        setState(() {
+        if(mounted) {
+          setState(() {
 
-        });
+          });
+        }
       });
 
       rethrow;
