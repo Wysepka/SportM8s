@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:sportm8s/calendar/container/CalendarDateRange.dart';
+import 'package:sportm8s/calendar/container/calendar_date_range.dart';
 import 'package:sportm8s/core/enums/enums_container.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -173,5 +173,30 @@ class TimeUtility{
       default:
         return CalendarWeekDay.Invalid;
     }
+  }
+
+  static bool isDateInRangeByDay({
+    required DateTimeRange range,
+    required DateTime date,
+  }) {
+    final DateTime start = DateTime(
+      range.start.year,
+      range.start.month,
+      range.start.day,
+    );
+
+    final DateTime end = DateTime(
+      range.end.year,
+      range.end.month,
+      range.end.day,
+    );
+
+    final DateTime target = DateTime(
+      date.year,
+      date.month,
+      date.day,
+    );
+
+    return !target.isBefore(start) && !target.isAfter(end);
   }
 }

@@ -96,3 +96,9 @@ enum EventDistanceQueryType{
   km25,
   km100,
 }
+
+enum CalendarWeekButtonType{
+  Invalid,
+  All,
+  DateTime,
+}

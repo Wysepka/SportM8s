@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sportm8s/bloc/calendar_sorter/CalendarSortContainerBloc.dart';
-import 'package:sportm8s/calendar/container/CalendarDateRange.dart';
+import 'package:sportm8s/bloc/calendar_sorter/calendar_query_container_bloc.dart';
+import 'package:sportm8s/calendar/container/calendar_date_range.dart';
 import 'package:sportm8s/calendar/widgets/calendar_day_tile.dart';
 import 'package:sportm8s/calendar/widgets/calendar_events_browser.dart';
 import 'package:sportm8s/calendar/widgets/calendar_events_sorter.dart';

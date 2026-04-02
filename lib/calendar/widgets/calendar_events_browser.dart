@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:sportm8s/calendar/container/CalendarStaticValues.dart';
+import 'package:sportm8s/calendar/container/calendar_static_values.dart';
 import 'package:sportm8s/calendar/widgets/calendar_events_grid.dart';
 import 'package:sportm8s/calendar/widgets/calendar_events_tile.dart';
 import 'package:sportm8s/core/enums/enums_container.dart';

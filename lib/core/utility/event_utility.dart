@@ -1,8 +1,10 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:sportm8s/bloc/calendar_sorter/calendar_query_container_state.dart';
 import 'package:sportm8s/core/logger/logger_service.dart';
 import 'package:sportm8s/core/utility/location_utility.dart';
+import 'package:sportm8s/core/utility/time_utility.dart';
 import 'package:sportm8s/gen/assets.gen.dart';
 import 'package:sportm8s/map/models/map_event_data.dart';
 import 'package:sportm8s/map/models/map_sport_event_marker.dart';
@@ -150,7 +152,7 @@ class EventUtility{
     return eventDateContainerWithUserID;
   }
 
-  static List<EventDateTimeContainer> getEventDateTimeContainerQueryByType(List<EventDateTimeContainer> container , SportEventType sportEventType, EventDistanceQueryType eventDistanceType , LatLng currentPosition){
+  static List<EventDateTimeContainer> getEventDateTimeContainerQueried(List<EventDateTimeContainer> container , CalendarQueryContainerState queryContainer, LatLng currentPosition){
     List<EventDateTimeContainer> containerQueried = [];
     for(int i = 0; i< container.length; i++){
       if(container[i].mapEventDatas.isEmpty){
@@ -161,10 +163,11 @@ class EventUtility{
 
       for(int j = 0; j < container[i].mapEventDatas.length; j++){
         MapEventData mapEventData = container[i].mapEventDatas[j];
-        bool sportEventTypeApproved = SportEventTypeQueryCandidate(sportEventType).isCandidateOk(mapEventData, currentPosition);
-        bool eventDistanceApproved = EventDistanceTypeQueryCandidate(eventDistanceType).isCandidateOk(mapEventData, currentPosition);
+        bool sportEventTypeApproved = SportEventTypeQueryCandidate(queryContainer.queriedSportEventType).isCandidateOk(mapEventData, currentPosition , queryContainer);
+        bool eventDistanceApproved = EventDistanceTypeQueryCandidate(queryContainer.queriedEventDistanceType).isCandidateOk(mapEventData, currentPosition , queryContainer);
+        bool eventDateApproved = EventDateRangeQueryCandidate().isCandidateOk(mapEventData, currentPosition, queryContainer);
 
-        if(sportEventTypeApproved && eventDistanceApproved){
+        if(sportEventTypeApproved && eventDistanceApproved && eventDateApproved){
           mapEventDatas.add(mapEventData);
         }
       }
@@ -180,7 +183,7 @@ class EventUtility{
 
 abstract class MapEventDataQueryCandidate{
 
-  bool isCandidateOk(MapEventData mapEventData , LatLng currentPosition);
+  bool isCandidateOk(MapEventData mapEventData , LatLng currentPosition , CalendarQueryContainerState queryState);
 }
 
 class SportEventTypeQueryCandidate extends MapEventDataQueryCandidate{
@@ -189,7 +192,7 @@ class SportEventTypeQueryCandidate extends MapEventDataQueryCandidate{
   SportEventTypeQueryCandidate(this.sportEventType);
 
   @override
-  bool isCandidateOk(MapEventData mapEventData , LatLng currentPosition) {
+  bool isCandidateOk(MapEventData mapEventData , LatLng currentPosition, CalendarQueryContainerState queryState) {
     return sportEventType == SportEventType.Invalid ||
            sportEventType == mapEventData.sportEventType;
   }
@@ -201,7 +204,7 @@ class EventDistanceTypeQueryCandidate extends MapEventDataQueryCandidate{
   EventDistanceTypeQueryCandidate(this.eventDistanceSortType);
 
   @override
-  bool isCandidateOk(MapEventData mapEventData , LatLng currentPosition) {
+  bool isCandidateOk(MapEventData mapEventData , LatLng currentPosition, CalendarQueryContainerState queryState) {
     double distanceToEvent = LocationUtility.getDistanceKm(currentPosition, mapEventData.position);
     double queryDistance = 10000000;
     switch(eventDistanceSortType){
@@ -218,4 +221,17 @@ class EventDistanceTypeQueryCandidate extends MapEventDataQueryCandidate{
 
     return distanceToEvent < queryDistance;
   }
+}
+
+class EventDateRangeQueryCandidate extends MapEventDataQueryCandidate{
+  @override
+  bool isCandidateOk(MapEventData mapEventData, LatLng currentPosition, CalendarQueryContainerState queryState) {
+    if(queryState.barDateContainer.weekButtonType == CalendarWeekButtonType.All){
+      return true;
+    }
+    else{
+      return TimeUtility.isDateInRangeByDay(range: queryState.barDateContainer.calendarDateRange.monSunRange, date: mapEventData.eventStartDate);
+    }
+  }
+  
 }

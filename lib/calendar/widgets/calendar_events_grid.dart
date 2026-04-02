@@ -6,8 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_launcher_icons/constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:sportm8s/bloc/calendar_sorter/CalendarSortContainerBloc.dart';
-import 'package:sportm8s/bloc/calendar_sorter/CalendarSortContainerState.dart';
+import 'package:sportm8s/bloc/calendar_sorter/calendar_query_container_bloc.dart';
+import 'package:sportm8s/bloc/calendar_sorter/calendar_query_container_state.dart';
 import 'package:sportm8s/calendar/widgets/calendar_events_tile.dart';
 import 'package:sportm8s/core/enums/enums_container.dart';
 import 'package:sportm8s/core/logger/logger_service.dart';
@@ -79,9 +79,9 @@ class _CalendarEventsGrid extends ConsumerState<CalendarEventsGrid>{
 
         return BlocBuilder<CalendarQueryContainerBloc , CalendarQueryContainerState>(
           builder: (context, state) {
-            List<EventDateTimeContainer> pastParticipatedEventsQueried = EventUtility.getEventDateTimeContainerQueryByType(pastParticipatedEvents, state.queriedSportEventType, state.queriedEventDistanceType, currentPosition);
-            List<EventDateTimeContainer> upcomingParticipatingEventsQueried = EventUtility.getEventDateTimeContainerQueryByType(upcomingParticipatingEvents, state.queriedSportEventType, state.queriedEventDistanceType, currentPosition);
-            List<EventDateTimeContainer> upcomingNonParticipantsEventsQueried = EventUtility.getEventDateTimeContainerQueryByType(upcomingNonParticipatingEvents, state.queriedSportEventType, state.queriedEventDistanceType, currentPosition);
+            List<EventDateTimeContainer> pastParticipatedEventsQueried = EventUtility.getEventDateTimeContainerQueried(pastParticipatedEvents, state, currentPosition );
+            List<EventDateTimeContainer> upcomingParticipatingEventsQueried = EventUtility.getEventDateTimeContainerQueried(upcomingParticipatingEvents, state, currentPosition);
+            List<EventDateTimeContainer> upcomingNonParticipantsEventsQueried = EventUtility.getEventDateTimeContainerQueried(upcomingNonParticipatingEvents, state, currentPosition);
 
             return CustomScrollView(
               slivers: [

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:sportm8s/calendar/container/CalendarStaticValues.dart';
+import 'package:sportm8s/calendar/container/calendar_static_values.dart';
 import 'package:sportm8s/calendar/widgets/calendar_overlapping_avatars.dart';
 import 'package:sportm8s/core/logger/logger_service.dart';
 import 'package:sportm8s/core/utility/location_utility.dart';

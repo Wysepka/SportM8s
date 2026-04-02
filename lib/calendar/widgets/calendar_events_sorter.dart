@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sportm8s/bloc/calendar_sorter/CalendarSortContainerBloc.dart';
-import 'package:sportm8s/bloc/calendar_sorter/CalendarSortContainerEvent.dart';
+import 'package:sportm8s/bloc/calendar_sorter/calendar_query_container_bloc.dart';
+import 'package:sportm8s/bloc/calendar_sorter/calendar_query_container_event.dart';
 import 'package:sportm8s/calendar/widgets/calendar_text_icon_container.dart';
 import 'package:sportm8s/core/enums/enums_container.dart';
 import 'package:sportm8s/core/utility/location_utility.dart';
