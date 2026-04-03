@@ -204,6 +204,9 @@ class _MapSideView extends State<MapSideView> with TickerProviderStateMixin{
                     //TODO add LatLng info getting from phone localization
                     initialCenter: initialPosition,
                     initialZoom: 13.0,
+                    minZoom: 7,
+                    maxZoom: 16,
+                    cameraConstraint: CameraConstraint.containCenter(bounds: LocationUtility.polandLatLngBounds),
                     onMapEvent: (event) {
                       if (event is MapEventDoubleTapZoomEnd ||
                           event is MapEventDoubleTapZoomStart

@@ -3,6 +3,7 @@
 //   latlong2: ^0.9.1
 
 import 'dart:math';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
@@ -30,6 +31,7 @@ class CountryBBox {
 class LocationUtility {
 
   static final LatLng defaultPosition = LatLng(52.2297, 21.0122);
+  static final LatLngBounds polandLatLngBounds = LatLngBounds(const LatLng(49.0, 14.1),const LatLng(54.9, 24.2));
 
   /// A curated set of European country bounding boxes (approximate, WGS84).
   /// Keys support both ISO-2 (e.g., "PL") and common names (e.g., "Poland").

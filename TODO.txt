@@ -54,7 +54,7 @@
  42. verify pushing/replacing screens
  43. Missing icons on some buttons
  44. Loaded Map data is empty bug
- 45. IN-PROGRESS In map event details wrong avatar is loaded (probably wrong id and sorted alphabetically)
+ 45. DONED IN-PROGRESS In map event details wrong avatar is loaded (probably wrong id and sorted alphabetically)
  46. Add loading indicator when logging with google
  47. Replace appbar with bottom nav bar panel
  48. Check what is wrong with Invalid SportEvent dropdown
@@ -63,8 +63,9 @@
  51. Add current_localization button and lerping when clicked in map stack overlay
  52. mapEvent can be opened by single tap
  53. currentPosition icon/indicator
+ 54. Once happened that Join Event button did not work
 
- NOW 35 , 45, 49, 50 , 53
+ NOW  49, 50 , 53
 
 1. Clone repository on Laptop and check whats missing and poppin
 
