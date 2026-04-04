@@ -34,7 +34,8 @@ class _MapJoinEvent extends State<MapJoinEvent>{
   Widget build(BuildContext context) {
 
     final l10n = AppLocalizations.of(context);
-
+    return _getJoinEventMainPanelWidget(l10n);
+    /*
     if(widget.joinEventScreenType == MapJoinEventScreenType.Calendar){
       return _getJoinEventMainPanelWidget(l10n);
     }
@@ -48,6 +49,8 @@ class _MapJoinEvent extends State<MapJoinEvent>{
         }
       );
     }
+
+     */
   }
 
   Widget _getJoinEventMainPanelWidget(AppLocalizations? l10n){
