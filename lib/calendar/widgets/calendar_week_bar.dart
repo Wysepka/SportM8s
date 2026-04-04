@@ -13,19 +13,13 @@ import 'calendar_day_tile.dart';
 
 class CalendarWeekBar extends StatefulWidget{
 
-  final Function(CalendarDateRange) dateTimeSelectedFunction;
-  final Function(CalendarDayTile) onCalendarTileClicked;
-
-  const CalendarWeekBar(this.dateTimeSelectedFunction,this.onCalendarTileClicked, {super.key});
+  const CalendarWeekBar({super.key});
 
   @override
   State<StatefulWidget> createState() => _CalendarWeekBar();
 }
 
 class _CalendarWeekBar extends State<CalendarWeekBar>{
-  //DateTime selectedDateTime = DateTime.now();
-  //CalendarDateRange calendarDateRange = TimeUtility.getCalendarDateRange(DateTime.now());
-  //CalendarDayTile? calendarDayTile;
   CalendarBarDateContainer barDateContainer = CalendarBarDateContainer();
 
   @override
@@ -94,7 +88,6 @@ class _CalendarWeekBar extends State<CalendarWeekBar>{
       setState(() {
         barDateContainer.selectedDateTime = date;
         barDateContainer.calendarDateRange = TimeUtility.getCalendarDateRange(date);
-        widget.dateTimeSelectedFunction(barDateContainer.calendarDateRange);
         barDateContainer.weekButtonType = CalendarWeekButtonType.DateTime;
         context.read<CalendarQueryContainerBloc>().add(CalendarEventDateRangeChanged(barDateContainer));
       });
@@ -102,8 +95,6 @@ class _CalendarWeekBar extends State<CalendarWeekBar>{
   }
 
   void onCalendarTileClicked(CalendarDayTile dayTile){
-    widget.onCalendarTileClicked(dayTile);
-
     if(context.mounted) {
       setState(() {
         barDateContainer.selectedDateTime = dayTile.dateTime;

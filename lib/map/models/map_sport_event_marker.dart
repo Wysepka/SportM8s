@@ -61,6 +61,11 @@ class MapSportEventData
     return mapSportEventDataParsed;
   }
 
+  factory MapSportEventData.rebuild(MapSportEventData other, LatLng position , Widget iconWidget){
+    Marker marker = Marker(point: position, child: iconWidget , width: 160 , height: 360, alignment: Alignment.bottomCenter);
+    return MapSportEventData(marker, other.eventData);
+  }
+
   static TimeOfDay parseTimeOfDay(String timeString) {
     final parts = timeString.split(':');
     final hour = int.parse(parts[0]);

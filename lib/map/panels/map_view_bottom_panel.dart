@@ -9,9 +9,8 @@ class MapViewBottomPanel extends StatefulWidget{
 
   final MapViewBottomPanelController controller;
   final void Function() onCreateEventEvent;
-  final void Function() onJoinEventEvent;
 
-  MapViewBottomPanel(this.controller, this.onCreateEventEvent , this.onJoinEventEvent);
+  MapViewBottomPanel(this.controller, this.onCreateEventEvent );
 
   @override
   State<StatefulWidget> createState() => _MapViewBottomPanel();
@@ -79,21 +78,11 @@ class _MapViewBottomPanel extends State<MapViewBottomPanel>{
         right: 0,
         bottom: 0,
         child: SizedBox(
-          width: double.infinity,
-          height: 80,
-          child: _getMapEventPopupButton(l10n?.event_Title_CreateEvent ?? "Create Event", widget.onCreateEventEvent)
-        ),
-      );
-    }
-    else if(widget.controller.bottomPanelType == MapViewBottomPanelType.JoiningEvent){
-      return Positioned(
-        left: 0,
-        right: 0,
-        bottom: 0,
-        child: SizedBox(
-          width: double.infinity,
-          height: 80,
-          child: _getMapEventPopupButton(l10n?.map_JoinEvent ?? "Join Event", widget.onJoinEventEvent)
+            width: double.infinity,
+            height: 80,
+            child: _getMapEventPopupButton(
+                l10n?.event_Title_CreateEvent ?? "Create Event",
+                widget.onCreateEventEvent)
         ),
       );
     }

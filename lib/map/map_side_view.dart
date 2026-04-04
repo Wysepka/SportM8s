@@ -5,10 +5,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:sportm8s/core/enums/enums_container.dart';
 import 'package:sportm8s/core/logger/logger_service.dart';
@@ -18,9 +15,6 @@ import 'package:sportm8s/dto/api_result.dart';
 import 'package:sportm8s/events/map_event_widget_container.dart';
 import 'package:sportm8s/events/map_join_event.dart';
 import 'package:sportm8s/graphics/sportm8s_themes.dart';
-import 'package:sportm8s/map/engine/sport_event_calculator.dart';
-import 'package:sportm8s/map/engine/sport_event_controller.dart';
-import 'package:sportm8s/map/engine/sport_event_repository.dart';
 import 'package:sportm8s/map/icon/map_icon.dart';
 import 'package:sportm8s/map/icon/map_icon_controller.dart';
 import 'package:sportm8s/map/icon/map_icon_create_event.dart';
@@ -28,8 +22,6 @@ import 'package:sportm8s/map/models/map_event_data.dart';
 import 'package:sportm8s/map/models/map_marker_rect.dart';
 import 'package:sportm8s/map/panels/map_view_bottom_panel.dart';
 import 'package:sportm8s/map/panels/map_view_bottom_panel_controller.dart';
-import 'package:sportm8s/services/server_service.dart';
-import 'package:sportm8s/services/server_sport_service.dart';
 import 'package:vector_map_tiles/vector_map_tiles.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../events/map_create_event.dart';
@@ -38,9 +30,9 @@ import 'helpers/map_animations.dart';
 
 
 class MapSideView extends StatefulWidget{
-  final MainSportEventRepository mainSportEventRepository;
+  final SportEventEngine sportEventEngine;
 
-  const MapSideView(this.mainSportEventRepository, {super.key});
+  const MapSideView(this.sportEventEngine, {super.key});
 
   @override
   State<StatefulWidget> createState() => _MapSideView();
@@ -50,8 +42,6 @@ class _MapSideView extends State<MapSideView> with TickerProviderStateMixin{
   //_MapSideView({super.key});
   LoggerService loggerService = LoggerService();
   final MapController mapController = new MapController();
-  late SportEventEngine sportEventEngine;
-  late SportEventCalculator sportEventCalculator;
   bool _isCreatingEvent = false;
   bool _isJoiningEvent = false;
   double zoomValue = 0;
@@ -76,16 +66,12 @@ class _MapSideView extends State<MapSideView> with TickerProviderStateMixin{
   @override void initState() {
     // TODO: implement initState
     super.initState();
-    final serverServiceContainer = ProviderScope.containerOf(context , listen: false);
-    final serverService = serverServiceContainer.read(serverServiceProvider);
-    final sportEventController = SportEventController();
-    sportEventCalculator = SportEventCalculator();
-    sportEventController.addListener(refreshMarkers);
 
-    sportEventEngine = SportEventEngine(sportEventController, ServerSportService(serverService), widget.mainSportEventRepository ,sportEventCalculator);
     OSMMarkerData markerData = OSMMarkerData(_getMapIconEvent, _getMarkerWidth, _getMarkerHeight, _getZoomMultiplier);
-    sportEventEngine.eventController.addListener(onSportEventsChanged);
-    sportEventEngine.initialize(markerData);
+    widget.sportEventEngine.eventController.addListener(onSportEventsChanged);
+    widget.sportEventEngine.initialize(markerData);
+    widget.sportEventEngine.eventRepository.rebuildMarkers(markerData.mapIconEvent);
+    widget.sportEventEngine.eventController.addListener(refreshMarkers);
 
     _initializationFuture = initializeMapData();
 
@@ -98,6 +84,10 @@ class _MapSideView extends State<MapSideView> with TickerProviderStateMixin{
     super.dispose();
 
     _mapAnimations.dispose();
+
+    widget.sportEventEngine.dispose();
+    widget.sportEventEngine.eventController.removeListener(onSportEventsChanged);
+    widget.sportEventEngine.eventController.removeListener(refreshMarkers);
   }
 
   void onSportEventsChanged(){
@@ -214,7 +204,7 @@ class _MapSideView extends State<MapSideView> with TickerProviderStateMixin{
                           event is MapEventMoveEnd) {
                         setState(() {
                           zoomValue = event.camera.zoom;
-                          sportEventEngine.updateRectsNoAddition(mapController
+                          widget.sportEventEngine.updateRectsNoAddition(mapController
                               .camera.visibleBounds);
                           _currentCenteredPosition = event.camera.center;
                           _currentMapPixelsSize = event.camera.size;
@@ -251,14 +241,7 @@ class _MapSideView extends State<MapSideView> with TickerProviderStateMixin{
 
             if(_isJoiningEvent)...[
               if(_currentClickedMapEvent != null)...[
-                MapJoinEvent(
-                    _currentClickedMapEvent!,
-                    _applyJoinEvent,
-                    _onDismissJoinEvent,
-                    sportEventEngine.sportService,
-                    _onUserDeletedEvent,
-                    _onUserButtonRequestSend,
-                    sportEventEngine.eventRepository),
+                //_getMapCreateEventScreen(_currentClickedMapEvent!),
               ]
               else
                 ...[
@@ -278,13 +261,12 @@ class _MapSideView extends State<MapSideView> with TickerProviderStateMixin{
 
             if(_isCreatingEvent)...[
               MapCreateEventPanel(_onDismissCreateEvent, _applyCreateEvent,
-                  sportEventEngine.sportService),
+                  widget.sportEventEngine.sportService),
             ],
 
             if(!_isCreatingEvent && !_isJoiningEvent)...[
               bottomPanel = MapViewBottomPanel(
-                  MapViewBottomPanelController(), _onCreateEventTap,
-                  _onJoinEventTap),
+                  MapViewBottomPanelController(), _onCreateEventTap),
             ],
 
             if(eventRequestType != EventServiceRequestType.Idle)...[
@@ -328,6 +310,19 @@ class _MapSideView extends State<MapSideView> with TickerProviderStateMixin{
       );
   }
 
+  Widget _getMapCreateEventScreen(MapEventData mapEventData){
+    return MapJoinEvent(
+      mapEventData,
+      _applyJoinEvent,
+      _onDismissJoinEvent,
+      widget.sportEventEngine.sportService,
+      _onUserDeletedEvent,
+      _onUserButtonRequestSend,
+      widget.sportEventEngine.eventRepository,
+      MapJoinEventScreenType.Map,
+    );
+  }
+
   void lerpMapToCurrentUserLocation() async{
     LatLng currentPos = await LocationUtility.loadCurrentUserLocation(loggerService);
     _mapAnimations.animateTo(destination: currentPos, zoom: 16);
@@ -339,23 +334,17 @@ class _MapSideView extends State<MapSideView> with TickerProviderStateMixin{
   ).read();
 
   Future<void> _onUserButtonRequestSend(UserEventRequestType requestType) async {
-    await sportEventEngine.update(force: true);
-
+    await widget.sportEventEngine.update(force: true);
 
     setState(() {
       if(context.mounted) {
-        var updateClickedMapEvent = sportEventEngine.eventRepository
+        var updateClickedMapEvent = widget.sportEventEngine.eventRepository
             .getMapSportEventDataBasedOnID(_currentClickedMapEvent!.eventID);
         if (updateClickedMapEvent.success) {
           _currentClickedMapEvent = updateClickedMapEvent.data!.eventData;
         }
       }
     });
-
-
-    //setState(() {
-    //
-    //});
   }
 
   void _onUserDeletedEvent(){
@@ -365,7 +354,7 @@ class _MapSideView extends State<MapSideView> with TickerProviderStateMixin{
         _currentClickedMapEvent = null;
       }
     });
-    sportEventEngine.update();
+    widget.sportEventEngine.update();
   }
 
   void _onCreateEventTap(){
@@ -408,7 +397,7 @@ class _MapSideView extends State<MapSideView> with TickerProviderStateMixin{
         eventRequestType = EventServiceRequestType.CreatingEvent;
       }
     });
-    ApiResult<bool> response = await sportEventEngine.sportService.addSportEvent(dataWithPos);
+    ApiResult<bool> response = await widget.sportEventEngine.sportService.addSportEvent(dataWithPos);
     setState(() {
       if(context.mounted) {
         eventRequestType = EventServiceRequestType.Idle;
@@ -434,7 +423,7 @@ class _MapSideView extends State<MapSideView> with TickerProviderStateMixin{
       });
     }
 
-    sportEventEngine.update();
+    widget.sportEventEngine.update();
   }
 
   void _applyJoinEvent(MapEventData mapEventData) async {
@@ -443,7 +432,7 @@ class _MapSideView extends State<MapSideView> with TickerProviderStateMixin{
         eventRequestType = EventServiceRequestType.JoiningEvent;
       }
     });
-    ApiResult<bool> result = await sportEventEngine.sportService.joinSportEvent(mapEventData);
+    ApiResult<bool> result = await widget.sportEventEngine.sportService.joinSportEvent(mapEventData);
     setState(() {
       if(context.mounted) {
         eventRequestType = EventServiceRequestType.Idle;
@@ -474,7 +463,7 @@ class _MapSideView extends State<MapSideView> with TickerProviderStateMixin{
   }
 
   List<Marker> _getMarkers(){
-    List<Marker> markers = sportEventEngine.eventRepository.getOSMMarkers();
+    List<Marker> markers = widget.sportEventEngine.eventRepository.getOSMMarkers();
 
     if(_isCreatingEvent){
 
@@ -502,7 +491,7 @@ class _MapSideView extends State<MapSideView> with TickerProviderStateMixin{
   }
 
   void onPanelGeometryChanged(MapMarkerRect mapMarkerRect){
-    sportEventEngine.updateRects(mapMarkerRect , mapController.camera.visibleBounds);
+    widget.sportEventEngine.updateRects(mapMarkerRect , mapController.camera.visibleBounds);
   }
 
   Widget _getMapIconEvent(MapEventData mapEventData){
@@ -522,8 +511,23 @@ class _MapSideView extends State<MapSideView> with TickerProviderStateMixin{
 
   void _onMapIconClicked(MapEventData mapEventData)
   {
-    _currentClickedMapEvent = mapEventData;
-    _trySetBottomPanelEventType(MapViewBottomPanelType.JoiningEvent);
+    if(mounted) {
+      Navigator.of(context).push(
+          MaterialPageRoute(
+              builder: (context) =>
+                  Scaffold(
+                    appBar: AppBar(
+                        title: Text("Join Event")
+                    ),
+                    body: SafeArea(
+                        child: _getMapCreateEventScreen(mapEventData)
+                    ),
+                  )
+          )
+      );
+    }
+    //_currentClickedMapEvent = mapEventData;
+    //_trySetBottomPanelEventType(MapViewBottomPanelType.JoiningEvent);
   }
 
   void _trySetBottomPanelEventType(MapViewBottomPanelType type){

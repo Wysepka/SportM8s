@@ -64,6 +64,7 @@
  52. mapEvent can be opened by single tap
  53. currentPosition icon/indicator
  54. Once happened that Join Event button did not work
+ 55. Add icons for event fields in MapJoinEvent
 
  NOW  49, 50 , 53
 

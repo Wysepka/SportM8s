@@ -2,21 +2,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sportm8s/bloc/calendar_sorter/calendar_query_container_bloc.dart';
-import 'package:sportm8s/calendar/container/calendar_date_range.dart';
-import 'package:sportm8s/calendar/widgets/calendar_day_tile.dart';
 import 'package:sportm8s/calendar/widgets/calendar_events_browser.dart';
 import 'package:sportm8s/calendar/widgets/calendar_events_sorter.dart';
 import 'package:sportm8s/calendar/widgets/calendar_events_tile.dart';
 import 'package:sportm8s/calendar/widgets/calendar_top_bar.dart';
 import 'package:sportm8s/calendar/widgets/calendar_week_bar.dart';
 import 'package:sportm8s/core/enums/enums_container.dart';
+import 'package:sportm8s/dto/api_result.dart';
+import 'package:sportm8s/events/map_join_event.dart';
+import 'package:sportm8s/map/engine/sport_event_engine.dart';
 import 'package:sportm8s/map/engine/sport_event_repository.dart';
+import 'package:sportm8s/map/models/map_event_data.dart';
 
 class CalendarScreen extends StatefulWidget{
 
-  final MainSportEventRepository mainSportEventRepository;
+  final SportEventEngine sportEventEngine;
 
-  const CalendarScreen(this.mainSportEventRepository, {super.key});
+  const CalendarScreen(this.sportEventEngine, {super.key});
 
   @override
   State<StatefulWidget> createState() => _CalendarScreen();
@@ -39,12 +41,12 @@ class _CalendarScreen extends State<CalendarScreen>{
             children: [
               CalendarTopBar(),
               SizedBox(height: 10,),
-              CalendarWeekBar(onCalendarDateChanged , onCalendarDayTileClicked),
+              CalendarWeekBar(),
               SizedBox(height: 10,),
               CalendarEventsSorter(),
               SizedBox(height: 10,),
               Expanded(
-                  child: CalendarEventsBrowser(widget.mainSportEventRepository , onCalendarEventTileClicked , sportEventTypeSelected , eventDistanceSortType)
+                  child: CalendarEventsBrowser(widget.sportEventEngine.eventRepository as MainSportEventRepository, onCalendarEventTileClicked , sportEventTypeSelected , eventDistanceSortType)
               ),
             ],
           ),
@@ -53,32 +55,35 @@ class _CalendarScreen extends State<CalendarScreen>{
     );
   }
 
-  dynamic onCalendarDateChanged(CalendarDateRange calendarDateRange){
-
-  }
-
-  void onCalendarDayTileClicked(CalendarDayTile calendarDayTile){
-
-  }
-
   void onCalendarEventTileClicked(CalendarEventsTile eventsTile){
-
+    Navigator.of(context).push(
+      MaterialPageRoute(builder:
+        (context) => Scaffold(
+          appBar: AppBar(
+              title: Text("Join Event")
+          ),
+          body: SafeArea(
+            child: MapJoinEvent(
+              eventsTile.mapSportEventData,
+              _onApplyJoinEvent,
+              () => {},
+              widget.sportEventEngine.sportService,
+              _onDeleteEvent,
+              (request) async => {},
+              widget.sportEventEngine.eventRepository as MainSportEventRepository,
+              MapJoinEventScreenType.Calendar,
+            ),
+          ),
+        )
+    ));
   }
 
-  void onSorterDistanceChanged(EventDistanceQueryType eventDistanceSortType){
-    if(context.mounted){
-      setState(() {
-        this.eventDistanceSortType = eventDistanceSortType;
-      });
-    }
+  void _onApplyJoinEvent(MapEventData mapEventData) async {
+    ApiResult<bool> result = await widget.sportEventEngine.sportService.joinSportEvent(mapEventData);
   }
 
-  void onSorterSportEventTypeChanged(SportEventType sportEventType){
-    if(context.mounted){
-      setState(() {
-        sportEventTypeSelected = sportEventType;
-      });
-    }
+  void _onDeleteEvent() {
+    widget.sportEventEngine.update();
   }
 
 }

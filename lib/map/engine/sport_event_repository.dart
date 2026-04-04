@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:sportm8s/core/logger/logger_service.dart';
 import 'package:sportm8s/map/icon/map_icon.dart';
+import 'package:sportm8s/map/models/map_event_data.dart';
 import 'package:sportm8s/map/models/map_marker_rect.dart';
 import 'package:sportm8s/map/models/map_sport_event_marker.dart';
 
@@ -25,6 +26,8 @@ abstract class SportEventRepository
 
   void registerToSportEventsChanged(Function(MapSportEventData) function);
   void unregisterToSportEventsChanged(Function(MapSportEventData) function);
+
+  void rebuildMarkers(Widget Function(MapEventData mapEventData) markerWidget);
 }
 
 class MainSportEventRepository extends SportEventRepository
@@ -142,6 +145,14 @@ class MainSportEventRepository extends SportEventRepository
     }
     else{
       _logger.error("Could not unregister function: ${function} , from _changeSportEventSubscribers");
+    }
+  }
+
+  @override
+  void rebuildMarkers(Widget Function(MapEventData mapEventData) markerWidget) {
+    for(int i=0; i<_mapSportEventDatas.length; i++){
+      final cachedEvent = _mapSportEventDatas[i];
+      _mapSportEventDatas[i] = MapSportEventData.rebuild(cachedEvent, cachedEvent.eventData.position, markerWidget(cachedEvent.eventData) );
     }
   }
 }

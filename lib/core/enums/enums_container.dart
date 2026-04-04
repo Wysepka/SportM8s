@@ -102,3 +102,9 @@ enum CalendarWeekButtonType{
   All,
   DateTime,
 }
+
+enum MapJoinEventScreenType{
+  Invalid,
+  Map,
+  Calendar,
+}
