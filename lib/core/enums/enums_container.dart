@@ -57,7 +57,7 @@ enum UserEventRequestType{
 enum APIAuthConnectionType{
   Invalid,
   Login,
-  Signin,
+  Signup,
 }
 
 enum ResetPasswordEmailState{

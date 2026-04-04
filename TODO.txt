@@ -65,6 +65,8 @@
  53. currentPosition icon/indicator
  54. Once happened that Join Event button did not work
  55. Add icons for event fields in MapJoinEvent
+ 56. Add User Session caching (email or google)
+ 57. add hero animation to MapJoinEvent
 
  NOW  49, 50 , 53
 

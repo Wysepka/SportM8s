@@ -69,7 +69,7 @@ class _CalendarScreen extends State<CalendarScreen>{
               () => {},
               widget.sportEventEngine.sportService,
               _onDeleteEvent,
-              (request) async => {},
+              _onUserButtonRequestSend,
               widget.sportEventEngine.eventRepository as MainSportEventRepository,
               MapJoinEventScreenType.Calendar,
             ),
@@ -82,7 +82,12 @@ class _CalendarScreen extends State<CalendarScreen>{
     ApiResult<bool> result = await widget.sportEventEngine.sportService.joinSportEvent(mapEventData);
   }
 
+  Future<void> _onUserButtonRequestSend(UserEventRequestType requestType) async {
+    await widget.sportEventEngine.update(force: true);
+  }
+
   void _onDeleteEvent() {
+    Navigator.of(context).pop();
     widget.sportEventEngine.update();
   }
 

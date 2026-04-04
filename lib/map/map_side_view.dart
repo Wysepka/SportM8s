@@ -336,6 +336,7 @@ class _MapSideView extends State<MapSideView> with TickerProviderStateMixin{
   Future<void> _onUserButtonRequestSend(UserEventRequestType requestType) async {
     await widget.sportEventEngine.update(force: true);
 
+    /*
     setState(() {
       if(context.mounted) {
         var updateClickedMapEvent = widget.sportEventEngine.eventRepository
@@ -345,15 +346,21 @@ class _MapSideView extends State<MapSideView> with TickerProviderStateMixin{
         }
       }
     });
+
+     */
   }
 
   void _onUserDeletedEvent(){
+    /*
     setState(() {
       if(context.mounted) {
         _isJoiningEvent = false;
         _currentClickedMapEvent = null;
       }
     });
+
+     */
+    Navigator.of(context).pop();
     widget.sportEventEngine.update();
   }
 

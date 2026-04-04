@@ -4,6 +4,7 @@ import 'package:app_links/app_links.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sportm8s/core/enums/enums_container.dart';
 import 'package:sportm8s/features/auth/presentation/screens/aggreements_screen.dart';
 import 'package:sportm8s/features/auth/presentation/screens/email_verified_screen.dart';
 import 'package:sportm8s/features/auth/presentation/screens/email_verify_screen.dart';
@@ -132,8 +133,8 @@ class _MyApp extends ConsumerState<MyApp> {
       routes: {
         '/login': (context) => const LoginScreen(),
         '/home': (context) => const HomePage(),
-        '/email-signin': (context) => const EmailAuthScreen(isSignIn: true),
-        '/email-signup': (context) => const EmailAuthScreen(isSignIn: false),
+        '/email-signin': (context) => const EmailAuthScreen(authConnectionType: APIAuthConnectionType.Login),
+        '/email-signup': (context) => const EmailAuthScreen(authConnectionType: APIAuthConnectionType.Signup,),
         '/aggreements': (context) => const AggreementsScreen(),
         '/change-profile-screen': (context) => const ChangeDisplayProfileScreen(),
         '/map-root-screen': (context) => const MapRootScreen(),
