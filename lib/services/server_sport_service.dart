@@ -14,6 +14,7 @@ import 'package:sportm8s/core/utility/event_utility.dart';
 import 'package:sportm8s/dto/api_error.dart';
 import 'package:sportm8s/dto/api_result.dart';
 import 'package:sportm8s/dto/list_response.dart';
+import 'package:sportm8s/dto/user_display_name_id_dto.dart';
 import 'package:sportm8s/map/map_side_view.dart';
 import 'package:sportm8s/map/models/map_sport_event_marker.dart';
 import 'package:sportm8s/services/server_service.dart';
@@ -31,7 +32,7 @@ class ServerSportService
   final LoggerService logger = LoggerService();
   final ServerService serverService;
   bool isUpdating = false;
-  late final OSMMarkerData markerData;
+  late OSMMarkerDataCallbacks markerData;
   ServerSportService(this.serverService);
 
   Future<List<MapSportEventData>> fetchUpdate() async {
@@ -259,7 +260,7 @@ class ServerSportService
   }
 
   //Optimize to send only event ID
-  Future<ApiResult<ListResponse<String>>> getMapEventParticipantsDisplayNames(MapEventData mapEventData) async {
+  Future<ApiResult<ListResponse<UserDisplayNameIDDTO>>> getMapEventParticipantsDisplayNames(MapEventData mapEventData) async {
     final result = await serverService.post("User/getUsersDisplayName",
       body: {
         'eventName': mapEventData.eventName,
@@ -283,7 +284,7 @@ class ServerSportService
       },);
 
     if(result["statusCode"] == 200){
-      final dataList = ListResponse.fromJson(result['data'], (e) => e as String);
+      final dataList = ListResponse.fromJson(result['data'], (e) => UserDisplayNameIDDTO.fromJson(e as Map<String,dynamic>));
       return OkResult(
           data: dataList,
           statusCode: result['statusCode'],

@@ -108,6 +108,34 @@
     "sportEventType_Name_CrossCountrySkiing": "Cross Country Skiing",
     "sportEventType_Name_Other": "Other",
 
-    "sportEventType_Dropdown_SelectSport": "Select Sport"
+    "sportEventType_Name_Short_Soccer": "Soccer",
+    "sportEventType_Name_Short_Volleyball": "Volleyball",
+    "sportEventType_Name_Short_Basketball": "Basketball",
+    "sportEventType_Name_Short_Tennis": "Tennis",
+    "sportEventType_Name_Short_Running": "Running",
+    "sportEventType_Name_Short_Cycling": "Cycling",
+    "sportEventType_Name_Short_Climbing_Bouldering": "Bouldering",
+    "sportEventType_Name_Short_Climbing_Leading": "Rope Leading",
+    "sportEventType_Name_Short_Climbing_TopRope": "Top Rope",
+    "sportEventType_Name_Short_CrossCountrySkiing": "Skiing",
+    "sportEventType_Name_Short_Other": "Other",
 
+    "sportEventType_Dropdown_SelectSport": "Select Sport",
+    "sportEventType_Dropdown_AllSports": "All",
+
+    "calendar_WeekDayMondayFull": "Monday",
+    "calendar_WeekDayTuesdayFull": "Tuesday",
+    "calendar_WeekDayWednesdayFull": "Wednesday",
+    "calendar_WeekDayThursdayFull": "Thursday",
+    "calendar_WeekDayFridayFull": "Friday",
+    "calendar_WeekDaySaturdayFull": "Saturday",
+    "calendar_WeekDaySundayFull": "Sunday",
+
+    "calendar_WeekDayMondayShortcut": "Mon",
+    "calendar_WeekDayTuesdayShortcut": "Tue",
+    "calendar_WeekDayWednesdayShortcut": "Wed",
+    "calendar_WeekDayThursdayShortcut": "Thu",
+    "calendar_WeekDayFridayShortcut": "Fri",
+    "calendar_WeekDaySaturdayShortcut": "Sat",
+    "calendar_WeekDaySundayShortcut": "Sun"
 }

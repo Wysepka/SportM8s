@@ -6,8 +6,10 @@ class MapEventWidgetContainer extends StatelessWidget
   final Widget child;
   final double? marginHorizontal;
   final double? marginVertical;
+  final double? paddingHorizontal;
+  final double? paddingVertical;
 
-  const MapEventWidgetContainer({required this.child , this.marginHorizontal , this.marginVertical});
+  const MapEventWidgetContainer({required this.child , this.marginHorizontal , this.marginVertical , this.paddingHorizontal , this.paddingVertical});
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +20,9 @@ class MapEventWidgetContainer extends StatelessWidget
           horizontal: marginHorizontal ?? 20,
           vertical: marginVertical ?? 10
         ),
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 14
+        padding: EdgeInsets.symmetric(
+          horizontal: paddingHorizontal ?? 16,
+          vertical: paddingVertical ?? 14
         ),
         decoration: BoxDecoration(
           color: colorScheme.surfaceContainerHigh,

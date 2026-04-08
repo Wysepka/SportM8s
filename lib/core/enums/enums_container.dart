@@ -57,7 +57,7 @@ enum UserEventRequestType{
 enum APIAuthConnectionType{
   Invalid,
   Login,
-  Signin,
+  Signup,
 }
 
 enum ResetPasswordEmailState{
@@ -65,4 +65,58 @@ enum ResetPasswordEmailState{
   InSendProcess,
   SendSuccesfull,
   SendError
+}
+
+enum CalendarWeekDay{
+  Invalid ,
+  Monday,
+  Tuesday,
+  Wednesday,
+  Thursday,
+  Friday,
+  Saturday,
+  Sunday,
+}
+
+enum MapBodyType{
+  Invalid,
+  Map,
+  Calendar,
+  Profile,
+}
+
+enum EventDataTimeType{
+  Past,
+  Upcoming,
+}
+
+enum EventDistanceQueryType{
+  All,
+  km10,
+  km25,
+  km100,
+}
+
+enum CalendarWeekButtonType{
+  Invalid,
+  All,
+  DateTime,
+}
+
+enum MapJoinEventScreenType{
+  Invalid,
+  Map,
+  Calendar,
+}
+
+enum StateInstanceWidgetType{
+  None,
+  Single,
+  Multiple
+}
+
+enum MapScreenType{
+  Invalid,
+  MapSideView,
+  MapSelectEventPosition,
 }

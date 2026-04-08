@@ -67,7 +67,7 @@ class ServerService {
       }
       // Default to local network IP
       if(isRunningOnPc) {
-        return 'http://192.168.33.15:32783';
+        return 'http://192.168.33.13:32783';
       }
       else{
         return 'http://192.168.100.32:32783';
@@ -465,13 +465,7 @@ class ServerService {
       final nextToken = data["x-ms-continuation"];
 
       return data;
-      /*
-      return {
-        'items' : data['okResult']['Data'],
-        'continuationToken': nextToken ?? data['okResult']['ContinuationToken']
-      };
 
-       */
     } catch (e) {
       _logger.error('Error in GET request to $endpoint: $e');
       if (e is HttpException) {

@@ -12,9 +12,9 @@ import '../../../../services/server_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EmailAuthScreen extends ConsumerStatefulWidget {
-  final bool isSignIn;
+  final APIAuthConnectionType authConnectionType;
 
-  const EmailAuthScreen({super.key, required this.isSignIn});
+  const EmailAuthScreen({super.key, required this.authConnectionType});
 
   @override
   ConsumerState<EmailAuthScreen> createState() => _EmailAuthScreenState();
@@ -41,7 +41,7 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.isSignIn ? l10n?.signInWithEmail ?? 'Sign In with Email' : l10n?.signUpWithEmail ?? 'Sign Up with Email'),
+        title: Text(widget.authConnectionType == APIAuthConnectionType.Login ? l10n?.signInWithEmail ?? 'Sign In with Email' : l10n?.signUpWithEmail ?? 'Sign Up with Email'),
       ),
       body: SafeArea(
         child: Padding(
@@ -84,7 +84,7 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
                     if (_formKey.currentState!.validate()) {
                       try {
                         var resultFirebase = AuthResult(succesfull: false);
-                        if (widget.isSignIn) {
+                        if (widget.authConnectionType == APIAuthConnectionType.Login) {
                           resultFirebase = await ref.read(authServiceProvider).signInWithEmailPassword(
                             _emailController.text,
                             _passwordController.text,
@@ -101,7 +101,7 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
                         if(context.mounted) {
                           resultBackendServer = await ref.read(
                               authServiceProvider).connectToBackendServer(
-                              resultFirebase, context, serverService , widget.isSignIn ? APIAuthConnectionType.Signin : APIAuthConnectionType.Login);
+                              resultFirebase, context, serverService , widget.authConnectionType == APIAuthConnectionType.Login ? APIAuthConnectionType.Login : APIAuthConnectionType.Signup);
                         }
 
                         if(!resultBackendServer.succesfull && resultBackendServer.errorID != null){
@@ -138,7 +138,7 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
                             }
                             else {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(widget.isSignIn
+                                SnackBar(content: Text(widget.authConnectionType == APIAuthConnectionType.Login
                                     ? l10n?.errorLoginIn ?? "Could not sign in"
                                     : l10n?.errorSignUp ?? "Could not sign up")),
                               );
@@ -155,9 +155,9 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
                     }
                   },
                   icon: Icon(Icons.check),
-                  label: Text(widget.isSignIn ? l10n?.signIn ?? 'Sign In' : l10n?.signUp ?? 'Sign Up'),
+                  label: Text(widget.authConnectionType == APIAuthConnectionType.Login ? l10n?.signIn ?? 'Sign In' : l10n?.signUp ?? 'Sign Up'),
                 ),
-                if(widget.isSignIn)...[ //is logging page add reset password button
+                if(widget.authConnectionType == APIAuthConnectionType.Login)...[ //is logging page add reset password button
                   const SizedBox(height: 24),
                   ElevatedButton.icon(
                     onPressed: () => Navigator.push(context ,

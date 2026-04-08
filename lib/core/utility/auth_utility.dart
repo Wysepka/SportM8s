@@ -6,7 +6,7 @@ class AuthUtility{
     switch(authConnectionType){
       case APIAuthConnectionType.Login:
         return "login";
-      case APIAuthConnectionType.Signin:
+      case APIAuthConnectionType.Signup:
         return "signin";
       case APIAuthConnectionType.Invalid:
         return "invalid";
@@ -18,7 +18,7 @@ class AuthUtility{
       case "login":
         return APIAuthConnectionType.Login;
       case "signin":
-        return APIAuthConnectionType.Signin;
+        return APIAuthConnectionType.Signup;
       default:
         return APIAuthConnectionType.Invalid;
     }

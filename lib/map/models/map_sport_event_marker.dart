@@ -14,7 +14,7 @@ class MapSportEventData
 
   const MapSportEventData(this.marker, this.eventData);
 
-  factory MapSportEventData.fromJson(Map<String,dynamic> value , OSMMarkerData markerData){
+  factory MapSportEventData.fromJson(Map<String,dynamic> value , OSMMarkerDataCallbacks markerData){
     MapSportEventData mapSportEventDataParsed;
     
     LatLng position;
@@ -59,6 +59,11 @@ class MapSportEventData
     mapSportEventDataParsed = MapSportEventData(marker, eventData);
 
     return mapSportEventDataParsed;
+  }
+
+  factory MapSportEventData.rebuild(MapSportEventData other, LatLng position , Widget iconWidget){
+    Marker marker = Marker(point: position, child: iconWidget , width: 160 , height: 360, alignment: Alignment.bottomCenter);
+    return MapSportEventData(marker, other.eventData);
   }
 
   static TimeOfDay parseTimeOfDay(String timeString) {

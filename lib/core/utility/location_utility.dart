@@ -3,7 +3,15 @@
 //   latlong2: ^0.9.1
 
 import 'dart:math';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:sportm8s/core/enums/enums_container.dart';
+import 'package:sportm8s/core/utility/location_name_utility.dart';
+import 'package:vector_map_tiles/vector_map_tiles.dart';
+
+import '../logger/logger_service.dart';
 
 /// Minimal country key type. Use ISO code or plain English names below.
 typedef CountryKey = String;
@@ -21,6 +29,9 @@ class CountryBBox {
 }
 
 class LocationUtility {
+
+  static final LatLng defaultPosition = LatLng(52.2297, 21.0122);
+  static final LatLngBounds polandLatLngBounds = LatLngBounds(const LatLng(49.0, 14.1),const LatLng(54.9, 24.2));
 
   /// A curated set of European country bounding boxes (approximate, WGS84).
   /// Keys support both ISO-2 (e.g., "PL") and common names (e.g., "Poland").
@@ -146,5 +157,106 @@ class LocationUtility {
     final rng = (seed == null) ? Random() : Random(seed);
     final bbox = _euBBoxes['PL']!;
     return List<LatLng>.generate(n, (_) => bbox.randomPoint(rng));
+  }
+
+  static String getDistanceKmText(LatLng a, LatLng b) {
+    final double distanceKm = getDistanceKm(a, b);
+
+    return "${distanceKm.toStringAsFixed(1)}km";
+  }
+
+  static double getDistanceKm(LatLng a, LatLng b) {
+    const double earthRadiusKm = 6371.0;
+
+    double degreesToRadians(double degrees) => degrees * pi / 180.0;
+
+    final double lat1 = degreesToRadians(a.latitude);
+    final double lon1 = degreesToRadians(a.longitude);
+    final double lat2 = degreesToRadians(b.latitude);
+    final double lon2 = degreesToRadians(b.longitude);
+
+    final double dLat = lat2 - lat1;
+    final double dLon = lon2 - lon1;
+
+    final double haversine =
+        sin(dLat / 2) * sin(dLat / 2) +
+            cos(lat1) * cos(lat2) *
+                sin(dLon / 2) * sin(dLon / 2);
+
+    final double c = 2 * atan2(sqrt(haversine), sqrt(1 - haversine));
+    final double distanceKm = earthRadiusKm * c;
+
+    return distanceKm;
+  }
+
+  static Future<LatLng> loadCurrentUserLocation(LoggerService logger) async {
+    try {
+      var isGeolocatorEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!isGeolocatorEnabled) {
+        logger.error("Geolocator service is not enabled on smartphone");
+        return defaultPosition;
+      }
+
+      LocationPermission locationPermission = await Geolocator
+          .checkPermission();
+      int iterator = 0;
+      while ((locationPermission == LocationPermission.denied ||
+          locationPermission == LocationPermission.deniedForever)) {
+        locationPermission = await Geolocator.requestPermission();
+        iterator++;
+        if (iterator > 5) {
+          logger.info(
+              "Geolocator does not obtained permissions for geocaching");
+          break;
+        }
+      }
+
+      Position position = await Geolocator.getCurrentPosition();
+      return LatLng(position.latitude, position.longitude);
+    }
+    catch(e , stacktrace){
+      logger.error("Error while trying to get current user location: Ex: ${e} | StackTrace: ${stacktrace}");
+      return LatLng(52, 21);
+    }
+  }
+
+  /// Returns a short human-readable place name for given coordinates.
+  /// Examples:
+  /// - "Las Kabacki"
+  /// - "Kabaty"
+  /// - "Warsaw"
+  /// - "Nowoursynowska"
+  static Future<String> getShortPlaceNameFromLatLng(LatLng latLng) async {
+    try {
+      final placemarks = await placemarkFromCoordinates(
+        latLng.latitude,
+        latLng.longitude,
+      );
+
+
+      if (placemarks.isEmpty) {
+        return 'Unknown place';
+      }
+
+      return LocationNameUtility.getBestShortDisplayName(placemarks);
+
+    } catch (_) {
+      return 'Unknown place';
+    }
+  }
+
+  static EventDistanceQueryType getDistanceSortTypeByString(String distanceSortTypeString){
+    switch(distanceSortTypeString){
+      case "All":
+        return EventDistanceQueryType.All;
+      case "10km":
+        return EventDistanceQueryType.km10;
+      case "25km":
+        return EventDistanceQueryType.km25;
+      case "100km":
+        return EventDistanceQueryType.km100;
+      default:
+        return EventDistanceQueryType.All;
+    }
   }
 }

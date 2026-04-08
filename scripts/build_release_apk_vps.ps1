@@ -1,0 +1,1 @@
+flutter build apk --release --dart-define=APP_ENV=prod --dart-define=WORKSTATION=pc

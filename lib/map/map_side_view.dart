@@ -1,89 +1,108 @@
-
-import 'dart:ffi';
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:logger/logger.dart';
-import 'package:sportm8s/app_consts.dart';
 import 'package:sportm8s/core/enums/enums_container.dart';
-import 'package:sportm8s/core/logger/logger_config.dart';
 import 'package:sportm8s/core/logger/logger_service.dart';
-import 'package:sportm8s/core/models/cosmos_response.dart';
 import 'package:sportm8s/core/utility/event_utility.dart';
-import 'package:sportm8s/core/utility/random_utility.dart';
+import 'package:sportm8s/core/utility/location_utility.dart';
 import 'package:sportm8s/dto/api_result.dart';
-import 'package:sportm8s/events/map_event_widget_container.dart';
 import 'package:sportm8s/events/map_join_event.dart';
-import 'package:sportm8s/map/engine/sport_event_calculator.dart';
-import 'package:sportm8s/map/engine/sport_event_controller.dart';
-import 'package:sportm8s/map/engine/sport_event_repository.dart';
+import 'package:sportm8s/map/containers/map_callbacks_container.dart';
 import 'package:sportm8s/map/icon/map_icon.dart';
 import 'package:sportm8s/map/icon/map_icon_controller.dart';
-import 'package:sportm8s/map/icon/map_icon_create_event.dart';
+import 'package:sportm8s/map/initializers/map_view_initializer.dart';
+import 'package:sportm8s/map/map_side_view_controller.dart';
 import 'package:sportm8s/map/models/map_event_data.dart';
 import 'package:sportm8s/map/models/map_marker_rect.dart';
+import 'package:sportm8s/map/panels/map_location_pin_widget.dart';
 import 'package:sportm8s/map/panels/map_view_bottom_panel.dart';
 import 'package:sportm8s/map/panels/map_view_bottom_panel_controller.dart';
-import 'package:sportm8s/services/server_service.dart';
-import 'package:sportm8s/services/server_sport_service.dart';
+import 'package:sportm8s/state_machine/map/state_instance_map_create_event_select_point.dart';
+import 'package:sportm8s/state_machine/map/state_instance_map_idle.dart';
+import 'package:sportm8s/state_machine/map/state_instance_map_join_event.dart';
+import 'package:sportm8s/state_machine/map/state_machine_map_resolver.dart';
 import 'package:vector_map_tiles/vector_map_tiles.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import '../core/models/server_response.dart';
-import '../events/map_create_event.dart';
 import 'engine/sport_event_engine.dart';
+import 'helpers/map_animations.dart';
 
 
 class MapSideView extends StatefulWidget{
+  final SportEventEngine sportEventEngine;
+  final MapSideViewController sideViewController;
+
+  const MapSideView(this.sportEventEngine, this.sideViewController, {super.key});
+
   @override
   State<StatefulWidget> createState() => _MapSideView();
 }
 
-class _MapSideView extends State<MapSideView>{
-  //_MapSideView({super.key});
-  LoggerService loggerService = LoggerService();
-  final MapController mapController = new MapController();
-  late SportEventEngine sportEventEngine;
-  late SportEventCalculator sportEventCalculator;
-  bool _isCreatingEvent = false;
-  bool _isJoiningEvent = false;
-  double zoomValue = 0;
-  LatLng _currentCenteredPosition = LatLng(0, 0);
-  LatLng _currentMapIconCreateEventPosition = LatLng(0, 0);
-  Point<double> _currentMapPixelsSize = Point(0, 0);
-  EventServiceRequestType eventRequestType = EventServiceRequestType.Idle;
+class _MapSideView extends State<MapSideView> with TickerProviderStateMixin{
+  LoggerService _loggerService = LoggerService();
+  final MapController _mapController = new MapController();
+  double _zoomValue = 0;
+  EventServiceRequestType _eventRequestType = EventServiceRequestType.Idle;
   MapEventData? _currentClickedMapEvent;
   MapViewBottomPanel? bottomPanel;
 
-  late MapIconCreateEvent mapIconCreateEvent;
+  late Future<MapViewDataContainer> _initializationFuture;
 
-  bool locationInitialized = false;
-  bool styleInitialized = false;
-  late Style darkStyle;
-  LatLng initialLocation = LatLng(52, 21);
-
-  late Future<void> _initializationFuture;
+  late final MapAnimations _mapAnimations;
+  late final StateMachineMapResolver _stateMachineResolver;
 
   @override void initState() {
-    // TODO: implement initState
     super.initState();
-    final serverServiceContainer = ProviderScope.containerOf(context , listen: false);
-    final serverService = serverServiceContainer.read(serverServiceProvider);
-    final sportEventController = SportEventController();
-    sportEventCalculator = SportEventCalculator();
-    sportEventController.addListener(refreshMarkers);
 
-    sportEventEngine = SportEventEngine(sportEventController, ServerSportService(serverService), FakeSportEventRepository() ,sportEventCalculator);
-    OSMMarkerData markerData = OSMMarkerData(_getMapIconEvent, _getMarkerWidth, _getMarkerHeight, _getZoomMultiplier);
-    sportEventEngine.eventController.addListener(onSportEventsChanged);
-    sportEventEngine.initialize(markerData);
+    OSMMarkerDataCallbacks markerData = OSMMarkerDataCallbacks(_getMapIconEvent, _getMarkerWidth, _getMarkerHeight, _getZoomMultiplier);
+    widget.sportEventEngine.eventController.addListener(onSportEventsChanged);
+    widget.sportEventEngine.initialize(markerData);
+    widget.sportEventEngine.eventRepository.rebuildMarkers(markerData.mapIconEvent);
+    widget.sportEventEngine.eventController.addListener(refreshMarkers);
 
-    _initializationFuture = initializeMapData();
+    final mapViewInitialize = MapViewInitializer(_loggerService);
+
+    _initializationFuture = mapViewInitialize.initializeMapData();
+
+    _mapAnimations = MapAnimations(mapController: _mapController, vsync: this ,mapViewDataContainer:  widget.sideViewController.mapViewDataContainer);
+
+    final mapCallbacksContainer = MapCallbacksContainer(
+      onCreateEventCallback: _applyCreateEvent,
+      onJoinEventCallback: _applyJoinEvent,
+      getMapJoinWidget: _getMapJoinEventScreen,
+      getCurrentMapEventData: getCurrentClickedMapEvent
+    );
+
+    _stateMachineResolver = StateMachineMapResolver(widget.sportEventEngine , mapCallbacksContainer , widget.sideViewController , widget.sideViewController.mapViewDataContainer);
+    _stateMachineResolver.init(context);
+
+    widget.sideViewController.mapViewDataContainer.addListener(_updateMapPosition);
+  }
+
+  @override
+  void didUpdateWidget(covariant MapSideView oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
+
+    if(oldWidget.sideViewController.mapViewDataContainer != widget.sideViewController.mapViewDataContainer){
+      oldWidget.sideViewController.mapViewDataContainer.removeListener(_updateMapPosition);
+      widget.sideViewController.mapViewDataContainer.addListener(_updateMapPosition);
+    }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+
+    _mapAnimations.dispose();
+
+    widget.sportEventEngine.dispose();
+    widget.sportEventEngine.eventController.removeListener(onSportEventsChanged);
+    widget.sportEventEngine.eventController.removeListener(refreshMarkers);
+
+    widget.sideViewController.mapViewDataContainer.removeListener(_updateMapPosition);
   }
 
   void onSportEventsChanged(){
@@ -93,12 +112,11 @@ class _MapSideView extends State<MapSideView>{
   @override
   Widget build(BuildContext context) {
 
-    final l10n = AppLocalizations.of(context);
-
+    final mapInitializationDataResult = widget.sideViewController.mapViewDataContainer;
     // TODO: implement build
     return SafeArea(
-      child: (locationInitialized && styleInitialized) ?
-        getMapWidget(initialLocation , darkStyle) :
+      child: (mapInitializationDataResult.locationIntialized && mapInitializationDataResult.styleInitialized) ?
+        getMapWidget(mapInitializationDataResult.position , mapInitializationDataResult.style!) :
         futureInitializeMapData()
     );
   }
@@ -106,7 +124,7 @@ class _MapSideView extends State<MapSideView>{
   Widget futureInitializeMapData(){
     final l10n = AppLocalizations.of(context);
 
-    return FutureBuilder<void>(
+    return FutureBuilder<MapViewDataContainer>(
       future: _initializationFuture,
       builder: (context, snapshot) {
 
@@ -135,138 +153,80 @@ class _MapSideView extends State<MapSideView>{
           );
         }
 
+        final data = snapshot.data!;
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if(mounted) {
+            setState(() {
+              widget.sideViewController.mapViewDataContainer.locationIntialized = data.locationIntialized;
+              widget.sideViewController.mapViewDataContainer.styleInitialized = data.styleInitialized;
+              widget.sideViewController.mapViewDataContainer.position = data.position;
+              widget.sideViewController.mapViewDataContainer.style = data.style;
+            });
+          }
+        });
+
         return const SizedBox(); // or your actual Map widget
       },
     );
 
   }
 
-  Future<void> initializeMapData() async {
-    try {
-      final location = await loadCurrentUserLocation();
-      initialLocation = location;
-      loggerService.info("Current user location initialized properly");
-
-      locationInitialized = true;
-
-      final style = await loadMapStyle();
-      // store style somewhere if needed
-      darkStyle = style;
-      loggerService.info("Map style loaded properly");
-
-      styleInitialized = true;
-
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        setState(() {
-
-        });
-      });
-
-    } catch (e) {
-      loggerService.error("Initialization error: $e");
-
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        setState(() {
-
-        });
-      });
-
-      rethrow;
-    }
+  void _updateMapPosition(){
+    MapViewDataContainer mapViewDataContainer = widget.sideViewController.mapViewDataContainer;
+    _mapController.move(mapViewDataContainer.position, mapViewDataContainer.currentZoom);
+    _mapController.rotate(widget.sideViewController.mapViewDataContainer.rotation);
   }
 
   Widget getMapWidget(LatLng initialPosition , Style mapStyle) {
     final l10n = AppLocalizations.of(context);
       return Stack(
           children: [
-            Positioned.fill(
-              child: FlutterMap(
-                  mapController: mapController,
-                  options: MapOptions(
-                    //TODO add LatLng info getting from phone localization
-                    initialCenter: initialPosition,
-                    initialZoom: 13.0,
-                    onMapEvent: (event) {
-                      if (event is MapEventDoubleTapZoomEnd ||
-                          event is MapEventDoubleTapZoomStart
-                          || event is MapEventMoveStart ||
-                          event is MapEventMoveEnd) {
-                        setState(() {
-                          zoomValue = event.camera.zoom;
-                          sportEventEngine.updateRectsNoAddition(mapController
-                              .camera.visibleBounds);
-                          _currentCenteredPosition = event.camera.center;
-                          _currentMapPixelsSize = event.camera.size;
-                          double offsetByPxInHeight = _currentMapPixelsSize
-                              .y * -0.25;
-                          _currentMapIconCreateEventPosition =
-                              offsetPositionByPixels(
-                                  _currentCenteredPosition, 0,
-                                  offsetByPxInHeight);
-                          _currentClickedMapEvent = null;
-                          _isJoiningEvent = false;
-                          _trySetBottomPanelEventType(MapViewBottomPanelType
-                              .CreatingEvent);
-                        });
-                      }
-                      if (event is MapEventTap) {
+            FlutterMap(
+                mapController: _mapController,
+                options: MapOptions(
+                  //TODO add LatLng info getting from phone localization
+                  initialCenter: initialPosition,
+                  initialZoom: 13.0,
+                  minZoom: 7,
+                  maxZoom: 16,
+                  cameraConstraint: CameraConstraint.containCenter(bounds: LocationUtility.polandLatLngBounds),
+                  onMapEvent: (event) {
+                    if (event is MapEventDoubleTapZoomEnd ||
+                        event is MapEventDoubleTapZoomStart
+                        || event is MapEventMoveStart ||
+                        event is MapEventMoveEnd) {
+                      setState(() {
+                        _zoomValue = event.camera.zoom;
+                        widget.sideViewController.mapViewDataContainer.currentZoom = event.camera.zoom;
+                        widget.sideViewController.mapViewDataContainer.rotation = _mapController.camera.rotation;
+                        widget.sideViewController.mapViewDataContainer.setMapPosition(_mapController.camera.center);
+                        widget.sportEventEngine.updateRectsNoAddition(_mapController
+                            .camera.visibleBounds);
                         _currentClickedMapEvent = null;
-                        _isJoiningEvent = false;
-                        _trySetBottomPanelEventType(
-                            MapViewBottomPanelType.CreatingEvent);
-                      }
-                    },
+                        _trySetBottomPanelEventType(MapViewBottomPanelType
+                            .CreatingEvent);
+                      });
+                    }
+                    if (event is MapEventTap) {
+                      _currentClickedMapEvent = null;
+                      _trySetBottomPanelEventType(
+                          MapViewBottomPanelType.CreatingEvent);
+                    }
+                  },
+                ),
+                children: [
+                  VectorTileLayer(
+                    theme: mapStyle.theme,
+                    tileProviders: mapStyle.providers,
                   ),
-                  children: [
-                    VectorTileLayer(
-                      theme: mapStyle.theme,
-                      tileProviders: mapStyle.providers,
-                    ),
-                    //MarkerLayer(markers: RandomUtility.getMarkers_Test(_getMarkerWidth, _getMarkerHeight, _getMapIcon , _getZoomMultiplier))
-                    SafeArea(child: MarkerLayer(markers: _getMarkers()))
-                  ]
-              ),
+                  SafeArea(child: MarkerLayer(markers: _getMarkers()))
+                ]
             ),
 
-            if(_isJoiningEvent)...[
-              if(_currentClickedMapEvent != null)...[
-                MapJoinEvent(
-                    _currentClickedMapEvent!,
-                    _applyJoinEvent,
-                    _onDismissJoinEvent,
-                    sportEventEngine.sportService,
-                    _onUserDeletedEvent,
-                    _onUserButtonRequestSend,
-                    sportEventEngine.eventRepository),
-              ]
-              else
-                ...[
-                  Center(
-                    child: MapEventWidgetContainer(
-                      child: Text(
-                        "Could not Join Event, _currentClickedMapEvent is null !",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 30
-                        ),
-                      ),
-                    ),
-                  )
-                ]
-            ],
+            bottomPanel = MapViewBottomPanel(MapViewBottomPanelController(), _onCreateEventTap),
 
-            if(_isCreatingEvent)...[
-              MapCreateEventPanel(_onDismissCreateEvent, _applyCreateEvent,
-                  sportEventEngine.sportService),
-            ],
-
-            if(!_isCreatingEvent && !_isJoiningEvent)...[
-              bottomPanel = MapViewBottomPanel(
-                  MapViewBottomPanelController(), _onCreateEventTap,
-                  _onJoinEventTap),
-            ],
-
-            if(eventRequestType != EventServiceRequestType.Idle)...[
+            if(_eventRequestType != EventServiceRequestType.Idle)...[
               Positioned.fill(
                   child: IgnorePointer(
                     ignoring: true,
@@ -278,115 +238,67 @@ class _MapSideView extends State<MapSideView>{
                             CircularProgressIndicator(),
                             Text(
                                 EventUtility.getLocalisedEventRequestTypeName(
-                                    eventRequestType))
+                                    _eventRequestType))
                           ],
                         ),
                       ),
                     ),
                   )
               )
-            ]
+            ],
+
+            MapLocationPinWidget(_loggerService, _mapAnimations , widget.sideViewController.mapViewDataContainer),
           ]
       );
   }
 
-  Future<Style> loadMapStyle() => StyleReader(
-    uri: 'https://maps.sportm8s.app/styles/sportm8s-dark/style.json',
-    // apiKey: '', // not needed for your own server
-  ).read();
 
-  Future<LatLng> loadCurrentUserLocation() async {
-    try {
-      var isGeolocatorEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!isGeolocatorEnabled) {
-        loggerService.error("Geolocator service is not enabled on smartphone");
-        return initialLocation;
-      }
-
-      LocationPermission locationPermission = await Geolocator
-          .checkPermission();
-      int iterator = 0;
-      while ((locationPermission == LocationPermission.denied ||
-          locationPermission == LocationPermission.deniedForever)) {
-        locationPermission = await Geolocator.requestPermission();
-        iterator++;
-        if (iterator > 5) {
-          loggerService.info(
-              "Geolocator does not obtained permissions for geocaching");
-          break;
-        }
-      }
-
-      Position position = await Geolocator.getCurrentPosition();
-      return LatLng(position.latitude, position.longitude);
-    }
-    catch(e , stacktrace){
-      loggerService.error("Error while trying to get current user location: Ex: ${e} | StackTrace: ${stacktrace}");
-      return LatLng(52, 21);
-    }
+  Widget _getMapJoinEventScreen(MapEventData mapEventData){
+    return MapJoinEvent(
+      mapEventData,
+      _applyJoinEvent,
+      widget.sportEventEngine.sportService,
+      _onUserDeletedEvent,
+      _onUserButtonRequestSend,
+      widget.sportEventEngine.eventRepository,
+    );
   }
 
   Future<void> _onUserButtonRequestSend(UserEventRequestType requestType) async {
-    await sportEventEngine.update(force: true);
-
-
-    setState(() {
-      var updateClickedMapEvent = sportEventEngine.eventRepository.getMapSportEventDataBasedOnID(_currentClickedMapEvent!.eventID);
-      if(updateClickedMapEvent.success) {
-        _currentClickedMapEvent = updateClickedMapEvent.data!.eventData;
-      }
-    });
-
-
-    //setState(() {
-    //
-    //});
+    await widget.sportEventEngine.update(force: true);
   }
 
   void _onUserDeletedEvent(){
-    setState(() {
-      _isJoiningEvent = false;
-      _currentClickedMapEvent = null;
-    });
-    sportEventEngine.update();
+    _stateMachineResolver.goToState(StateInstanceMapIdle, context);
+    Navigator.of(context).pop();
+    widget.sportEventEngine.update();
   }
 
   void _onCreateEventTap(){
-    setState(() {
-      _isCreatingEvent = true;
-    });
-  }
 
-  void _onDismissCreateEvent(){
     setState(() {
-      _isCreatingEvent = false;
-    });
-  }
-
-  void _onJoinEventTap(){
-    setState(() {
-      _isJoiningEvent = true;
-    });
-  }
-
-  void _onDismissJoinEvent(){
-    setState(() {
-      _isJoiningEvent = false;
+      if(context.mounted) {
+        _stateMachineResolver.goToState(StateInstanceMapCreateEventSelectPoint , context);
+      }
     });
   }
 
   //TODO add check if event is being send and block application while sending
   void _applyCreateEvent(MapEventData eventData) async {
-    MapEventData dataWithPos = eventData.copyProvidePosition(eventData, _currentMapIconCreateEventPosition);
+    MapEventData dataWithPos = eventData.copyProvidePosition(eventData, widget.sideViewController.mapViewDataContainer.position);
     setState(() {
-      eventRequestType = EventServiceRequestType.CreatingEvent;
+      if(context.mounted) {
+        _eventRequestType = EventServiceRequestType.CreatingEvent;
+      }
     });
-    ApiResult<bool> response = await sportEventEngine.sportService.addSportEvent(dataWithPos);
+    ApiResult<bool> response = await widget.sportEventEngine.sportService.addSportEvent(dataWithPos);
     setState(() {
-      eventRequestType = EventServiceRequestType.Idle;
+      if(context.mounted) {
+        _eventRequestType = EventServiceRequestType.Idle;
+      }
     });
     if(response.statusCode < 200 || response.statusCode > 299){
-      if(context.mounted) {
+      if(mounted) {
         if(kDebugMode) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text("Could not send MapEventData E: ${(response as ErrorResult<bool>).error.errorMessage}")));
@@ -399,51 +311,48 @@ class _MapSideView extends State<MapSideView>{
     }
     else{
       setState(() {
-        _isCreatingEvent = false;
+        if(context.mounted) {
+          _stateMachineResolver.goToState(StateInstanceMapIdle , context);
+        }
       });
     }
 
-    sportEventEngine.update();
+    if(context.mounted) {
+      _stateMachineResolver.goToState(StateInstanceMapIdle , context);
+    }
+
+    widget.sportEventEngine.update();
   }
 
   void _applyJoinEvent(MapEventData mapEventData) async {
     setState(() {
-      eventRequestType = EventServiceRequestType.JoiningEvent;
+      if(context.mounted) {
+        _eventRequestType = EventServiceRequestType.JoiningEvent;
+      }
     });
-    ApiResult<bool> result = await sportEventEngine.sportService.joinSportEvent(mapEventData);
+    ApiResult<bool> result = await widget.sportEventEngine.sportService.joinSportEvent(mapEventData);
     setState(() {
-      eventRequestType = EventServiceRequestType.Idle;
+      if(context.mounted) {
+        _eventRequestType = EventServiceRequestType.Idle;
+      }
     });
     if(!result.success){
-      if(context.mounted) {
+      if(mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text("Could not send MapEventData E: ${(result as ErrorResult<bool>).error.errorMessage}")));
       }
     }
     else{
       setState(() {
-        _isJoiningEvent = false;
+        if(context.mounted) {
+          _stateMachineResolver.goToState(StateInstanceMapIdle , context);
+        }
       });
     }
   }
 
-  LatLng offsetPositionByPixels(LatLng original, double dxPx, double dyPx) {
-    final camera = mapController.camera;
-
-    final originalPx = camera.project(original);
-    final newPx = Point(originalPx.x + dxPx, originalPx.y + dyPx);
-
-    return camera.unproject(newPx);
-  }
-
   List<Marker> _getMarkers(){
-    List<Marker> markers = sportEventEngine.eventRepository.getOSMMarkers();
-
-    if(_isCreatingEvent){
-
-      Marker createEventMarker = Marker(point: _currentMapIconCreateEventPosition, child: MapIconCreateEvent());
-      markers.add(createEventMarker);
-    }
+    List<Marker> markers = widget.sportEventEngine.eventRepository.getOSMMarkers();
 
     WidgetsBinding.instance.addPostFrameCallback((_) => recalculateMarkersRects(markers));
 
@@ -459,15 +368,17 @@ class _MapSideView extends State<MapSideView>{
   }
 
   void refreshMarkers(){
-    setState(() {});
+    if(context.mounted) {
+      setState(() {});
+    }
   }
 
   void onPanelGeometryChanged(MapMarkerRect mapMarkerRect){
-    sportEventEngine.updateRects(mapMarkerRect , mapController.camera.visibleBounds);
+    widget.sportEventEngine.updateRects(mapMarkerRect , _mapController.camera.visibleBounds);
   }
 
   Widget _getMapIconEvent(MapEventData mapEventData){
-    MapIcon mapIcon = MapIcon(_getZoomMultiplier , onPanelGeometryChanged , _onMapIconClicked , MapIconController() , mapEventData);
+    MapIcon mapIcon = MapIcon(_getZoomMultiplier , onPanelGeometryChanged , _onMapIconClicked , MapIconController() , mapEventData , widget.sideViewController);
     return mapIcon;
   }
 
@@ -479,12 +390,13 @@ class _MapSideView extends State<MapSideView>{
     return 180 * _getZoomMultiplier();
   }
 
-  double _getZoomMultiplier() => (zoomValue / 14.0).clamp(0.85, 1.25);
+  double _getZoomMultiplier() => (_zoomValue / 14.0).clamp(0.85, 1.25);
 
   void _onMapIconClicked(MapEventData mapEventData)
   {
     _currentClickedMapEvent = mapEventData;
-    _trySetBottomPanelEventType(MapViewBottomPanelType.JoiningEvent);
+    
+    _stateMachineResolver.goToState(StateInstanceMapJoinEvent , context);
   }
 
   void _trySetBottomPanelEventType(MapViewBottomPanelType type){
@@ -495,16 +407,16 @@ class _MapSideView extends State<MapSideView>{
 
   bool isMapEventClicked() => _currentClickedMapEvent != null;
 
-  MapEventData get currentClickedMapEvent => _currentClickedMapEvent!;
+  MapEventData getCurrentClickedMapEvent() => _currentClickedMapEvent!;
 }
 
-class OSMMarkerData{
+class OSMMarkerDataCallbacks{
 
   Widget Function(MapEventData mapEventData) mapIconEvent;
   double Function() markerWidth;
   double Function() markerHeight;
   double Function() zoomValue;
 
-  OSMMarkerData(this.mapIconEvent , this.markerWidth , this.markerHeight , this.zoomValue);
+  OSMMarkerDataCallbacks(this.mapIconEvent , this.markerWidth , this.markerHeight , this.zoomValue);
 
 }

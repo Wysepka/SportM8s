@@ -155,7 +155,8 @@ class ServerUserService {
   Future<String> getOtherUserProfileURL(String userID) async{
     try{
       final result = await _serverService.getDynamicMap("User/userAvatarUrl/$userID");
-      if(result.isNotEmpty){
+      if(result.isNotEmpty && (result.entries.first.value as String).isNotEmpty){
+        _logger.info("Retrieved UserProfileURL: ${result.entries.first.value}");
         return result.entries.first.value;
       }
       else{

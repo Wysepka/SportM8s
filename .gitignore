@@ -68,3 +68,21 @@ cursor.json
 #Secrets
 /lib/config/secrets.dart
 .env
+
+# Firebase Android config
+google-services.json
+**/google-services.json
+
+# Optional related local/firebase config files
+firebase.json
+**/firebase.json
+
+#sha keystore
+*.keystore
+*.jks
+debug.keystore
+**/*.keystore
+**/*.jks
+**/debug.keystore
+release.keystore
+**/release.keystore
