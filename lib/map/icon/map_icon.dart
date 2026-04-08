@@ -6,6 +6,7 @@ import 'package:sportm8s/core/extensions/string_extensions.dart';
 import 'package:sportm8s/core/logger/logger_config.dart';
 import 'package:sportm8s/core/utility/event_utility.dart';
 import 'package:sportm8s/core/utility/sport_utility.dart';
+import 'package:sportm8s/map/map_side_view_controller.dart';
 import 'package:sportm8s/map/models/map_event_data.dart';
 import 'package:sportm8s/map/icon/marker_info_row.dart';
 import 'package:sportm8s/map/models/map_marker_rect.dart';
@@ -19,11 +20,12 @@ class MapIcon extends StatefulWidget{
   final double Function() zoomMultiplierFunc;
   final MapIconController controller;
   final MapEventData mapEventData;
+  final MapSideViewController mapSideViewController;
 
   final void Function(MapMarkerRect mapMarkerRect)? onPanelGeometryChanged;
   final void Function(MapEventData mapEventData) onMapIconClicked;
 
-  MapIcon(this.zoomMultiplierFunc,this.onPanelGeometryChanged, this.onMapIconClicked , this.controller, this.mapEventData);
+  MapIcon(this.zoomMultiplierFunc,this.onPanelGeometryChanged, this.onMapIconClicked , this.controller, this.mapEventData , this.mapSideViewController);
 
   @override
   State<StatefulWidget> createState() => _MapIcon();
@@ -40,6 +42,7 @@ class _MapIcon extends State<MapIcon>{
     // TODO: implement didChangeDependencies
     super.initState();
     mapIconController.addListener(_onControllerChanged);
+    widget.mapSideViewController.addListener(_onControllerChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) => measurePanel());
   }
 
@@ -51,6 +54,11 @@ class _MapIcon extends State<MapIcon>{
     if(oldWidget.controller != widget.controller){
       oldWidget.controller.removeListener(_onControllerChanged);
       widget.controller.addListener(_onControllerChanged);
+    }
+
+    if(oldWidget.mapSideViewController != widget.mapSideViewController){
+      oldWidget.mapSideViewController.removeListener(_onControllerChanged);
+      widget.mapSideViewController.addListener(_onControllerChanged);
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) => measurePanel());
@@ -66,6 +74,7 @@ class _MapIcon extends State<MapIcon>{
     // TODO: implement dispose
     super.dispose();
     widget.controller.removeListener(_onControllerChanged);
+    widget.mapSideViewController.removeListener(_onControllerChanged);
   }
 
   void _onControllerChanged()
@@ -193,9 +202,9 @@ class _MapIcon extends State<MapIcon>{
 
           // PANEL
           IgnorePointer(
-            ignoring: mapIconController.isColliding,
+            ignoring: mapIconController.isColliding || widget.mapSideViewController.mapScreenType == MapScreenType.MapSelectEventPosition,
             child: Opacity(
-              opacity: mapIconController.isColliding ? 0 : 1,
+              opacity: (mapIconController.isColliding || widget.mapSideViewController.mapScreenType == MapScreenType.MapSelectEventPosition) ? 0 : 1,
               child: Container(
                 key: _textContainerKey,
                 padding: EdgeInsets.all(6 * zoom),

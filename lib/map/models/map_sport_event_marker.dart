@@ -14,7 +14,7 @@ class MapSportEventData
 
   const MapSportEventData(this.marker, this.eventData);
 
-  factory MapSportEventData.fromJson(Map<String,dynamic> value , OSMMarkerData markerData){
+  factory MapSportEventData.fromJson(Map<String,dynamic> value , OSMMarkerDataCallbacks markerData){
     MapSportEventData mapSportEventDataParsed;
     
     LatLng position;

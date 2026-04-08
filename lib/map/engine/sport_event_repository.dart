@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:sportm8s/core/enums/enums_container.dart';
 import 'package:sportm8s/core/logger/logger_service.dart';
 import 'package:sportm8s/map/icon/map_icon.dart';
 import 'package:sportm8s/map/models/map_event_data.dart';
@@ -23,6 +24,8 @@ abstract class SportEventRepository
   MapSportIconWidgetResult getMapSportIconWidgetBasedOnID(String id);
   List<MapSportIconWidgetResult> getMapSportIconsWidgetBasedOnID(List<String> ids);
   TryGetMapSportEventData getMapSportEventDataBasedOnID(String id);
+
+  void markMapScreenType(MapScreenType mapScreenType);
 
   void registerToSportEventsChanged(Function(MapSportEventData) function);
   void unregisterToSportEventsChanged(Function(MapSportEventData) function);
@@ -154,6 +157,11 @@ class MainSportEventRepository extends SportEventRepository
       final cachedEvent = _mapSportEventDatas[i];
       _mapSportEventDatas[i] = MapSportEventData.rebuild(cachedEvent, cachedEvent.eventData.position, markerWidget(cachedEvent.eventData) );
     }
+  }
+
+  @override
+  void markMapScreenType(MapScreenType mapScreenType) {
+    
   }
 }
 

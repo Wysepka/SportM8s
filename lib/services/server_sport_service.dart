@@ -32,7 +32,7 @@ class ServerSportService
   final LoggerService logger = LoggerService();
   final ServerService serverService;
   bool isUpdating = false;
-  late OSMMarkerData markerData;
+  late OSMMarkerDataCallbacks markerData;
   ServerSportService(this.serverService);
 
   Future<List<MapSportEventData>> fetchUpdate() async {

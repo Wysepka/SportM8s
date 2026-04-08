@@ -3,10 +3,12 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:sportm8s/map/initializers/map_view_initializer.dart';
 
 class MapAnimations {
   final MapController mapController;
   final TickerProvider vsync;
+  final MapViewDataContainer mapViewDataContainer;
 
   late final AnimationController _animationController;
 
@@ -18,6 +20,7 @@ class MapAnimations {
   MapAnimations({
     required this.mapController,
     required this.vsync,
+    required this.mapViewDataContainer,
     Duration duration = const Duration(milliseconds: 800),
   }) {
     _animationController = AnimationController(
@@ -82,8 +85,11 @@ class MapAnimations {
     )!;
 
     final zoom = lerpDouble(_startZoom!, _targetZoom!, t)!;
+    final latLng = LatLng(lat, lng);
+    mapController.move(latLng, zoom);
 
-    mapController.move(LatLng(lat, lng), zoom);
+    mapViewDataContainer.setMapPosition(latLng);
+    mapViewDataContainer.setMapZoom(zoom);
   }
 
   void dispose() {

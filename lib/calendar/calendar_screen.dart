@@ -66,12 +66,10 @@ class _CalendarScreen extends State<CalendarScreen>{
             child: MapJoinEvent(
               eventsTile.mapSportEventData,
               _onApplyJoinEvent,
-              () => {},
               widget.sportEventEngine.sportService,
               _onDeleteEvent,
               _onUserButtonRequestSend,
               widget.sportEventEngine.eventRepository as MainSportEventRepository,
-              MapJoinEventScreenType.Calendar,
             ),
           ),
         )

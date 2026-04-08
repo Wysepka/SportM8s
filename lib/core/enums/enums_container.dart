@@ -108,3 +108,15 @@ enum MapJoinEventScreenType{
   Map,
   Calendar,
 }
+
+enum StateInstanceWidgetType{
+  None,
+  Single,
+  Multiple
+}
+
+enum MapScreenType{
+  Invalid,
+  MapSideView,
+  MapSelectEventPosition,
+}

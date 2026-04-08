@@ -17,11 +17,9 @@ class SportEventEngine{
 
   late Timer? updateTimer;
 
-  bool _initialized = false;
-
   SportEventEngine(this.eventController , this.sportService , this.eventRepository, this.eventCalculator);
 
-  void initialize(OSMMarkerData markerData){
+  void initialize(OSMMarkerDataCallbacks markerData){
     sportService.markerData = markerData;
     updateTimer = Timer.periodic(Duration(seconds: 10), (timer) {
       update();

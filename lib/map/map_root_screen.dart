@@ -10,6 +10,7 @@ import 'package:sportm8s/map/engine/sport_event_engine.dart';
 import 'package:sportm8s/map/engine/sport_event_repository.dart';
 import 'package:sportm8s/map/map_root_drawer.dart';
 import 'package:sportm8s/map/map_side_view.dart';
+import 'package:sportm8s/map/map_side_view_controller.dart';
 import 'package:sportm8s/map/panels/map_view_bottom_panel_controller.dart';
 import 'package:sportm8s/profile/views/change_display_profile_screen.dart';
 import 'package:sportm8s/services/server_service.dart';
@@ -60,7 +61,7 @@ class _MapRootScreen extends State<MapRootScreen>{
       case MapBodyType.Invalid:
         throw Exception("Could not provide body widget for MapBodyType.Invalid");
       case MapBodyType.Map:
-        return MapSideView(sportEventEngine);
+        return MapSideView(sportEventEngine , MapSideViewController());
       case MapBodyType.Calendar:
         return CalendarScreen(sportEventEngine);
       case MapBodyType.Profile:
@@ -68,15 +69,4 @@ class _MapRootScreen extends State<MapRootScreen>{
     }
   }
 
-  /*
-  void _openCreateEventView(BuildContext buildContext){
-    Navigator.of(buildContext).pop();
-    showModalBottomSheet(
-        context: buildContext,
-        builder: (buildContext) => MapCreateEventPanel()
-    );
-  }
-
-
-   */
 }

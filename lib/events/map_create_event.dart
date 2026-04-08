@@ -17,7 +17,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MapCreateEventPanel extends StatefulWidget{
   void Function() onDismissClicked;
-  void Function(MapEventData) onApplyClicked;
+  void Function(MapEventData , BuildContext) onApplyClicked;
   ServerSportService serverSportService;
 
   @override
@@ -44,8 +44,6 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
   DateTime? eventDate;
   bool eventTimeSelected = false;
   TimeOfDay? eventTime;
-
-  double _currentDraggableSheetSize = 0.5;
 
   FocusNode nameFieldFocusNode = FocusNode(
       debugLabel:  "NameFieldFocusNode"
@@ -95,139 +93,130 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    ColorScheme colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context);
 
-    return DraggableScrollableSheet(
-        minChildSize: 0.2,
-        maxChildSize: 0.9,
-        initialChildSize: _currentDraggableSheetSize,
-        builder: (context, scrollController) {
-          return MapEventPanelContainer(
-            child: Column(
+    return MapEventPanelContainer(
+      child: Column(
+          children: [
+            MapEventTopPanel(_onDismissCreateEvent, l10n?.event_Title_CreateEvent ?? "Create Event"),
+            Expanded(
+              child: ListView(
                 children: [
-                  MapEventTopPanel(_onDismissCreateEvent, l10n?.event_Title_CreateEvent ?? "Create Event"),
-                  Expanded(
-                    child: ListView(
+                  MapEventWidgetContainer(
+                    child: Column(
                       children: [
-                        MapEventWidgetContainer(
-                          child: Column(
-                            children: [
-                              Text(
-                                l10n?.event_Title_EventName ?? "Event Name",
-                                style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
-                              ),
-                              TextField(
-                                focusNode: nameFieldFocusNode,
-                                textAlign: TextAlign.center,
-                                controller: eventNameController,
-                                minLines: 1,
-                                maxLines: null,
-                                maxLength: 50,
-                                inputFormatters: [
-                                  LengthLimitingTextInputFormatter(50)
-                                ],
-                                decoration: InputDecoration(
-                                  label: Text(eventNameController.text.isNotEmpty ? "" : "Event Name"),
-                                  contentPadding: EdgeInsets.only(
-                                    left: 10,
-                                    right: 10,
-                                    top: 0,
-                                    bottom: 5,
-                                  ),
-                                  border: OutlineInputBorder(),
-                                ),
-                                keyboardType: TextInputType.text,
-                              ),
-                            ],
-                          ),
+                        Text(
+                          l10n?.event_Title_EventName ?? "Event Name",
+                          style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
                         ),
-                        MapEventWidgetContainer(
-                          child: Column(
-                            children: [
-                              Text(
-                                l10n?.event_Title_EventDescription ?? "Event Description",
-                                style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
-                              ),
-                              TextField(
-                                focusNode: descriptionFieldFocusNode,
-                                textAlign: TextAlign.center,
-                                controller: eventDescriptionController,
-                                minLines: 1,
-                                maxLines: null,
-                                maxLength: 150,
-                                inputFormatters: [
-                                  LengthLimitingTextInputFormatter(150)
-                                ],
-                                decoration: InputDecoration(
-                                  label: Text(eventDescriptionController.text.isNotEmpty ? "" : "Event Description"),
-                                  contentPadding: EdgeInsets.only(
-                                    left: 10,
-                                    right: 10,
-                                    top: 5,
-                                    bottom: 15,
-                                  ),
-                                  border: OutlineInputBorder(),
-                                ),
-                                keyboardType: TextInputType.text,
-                              ),
-                            ],
-                          ),
-                        ),
-                        MapEventWidgetContainer(
-                          child: Column(
-                            children: [
-                              Text(
-                                l10n?.event_Title_MaxParticipants ?? "Max Participants",
-                                style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
-                              ),
-                              TextField(
-                                focusNode: maxParticipantsFocusNode,
-                                textAlign: TextAlign.center,
-                                controller: eventMaxParticipantsController,
-                                minLines: 1,
-                                maxLines: null,
-                                decoration: InputDecoration(
-                                    label: Text(eventMaxParticipantsController.text.isNotEmpty ? "" : l10n?.event_Title_MaxParticipants ?? "Max Participants"),
-                                    contentPadding: EdgeInsets.only(
-                                      left: 10,
-                                      right: 10,
-                                      top: 5,
-                                      bottom: 15,
-                                    ),
-                                    border: OutlineInputBorder(),
-                                ),
-                                keyboardType: TextInputType.number,
-                              ),
-                            ],
-                          ),
-                        ),
-                        MapEventWidgetContainer(
-                          child:
-                            Column(
-                                children: [
-                                  Text(
-                                    l10n?.event_Title_SportType ?? "Sport Type",
-                                    style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
-                                  ),
-                                  SportEventUtils.getSportTypeDropdownButton_CreateEvent(_onDropdownSportEventTypeChanged , _getSelectedSportEventType ,20 , sportTypeFocusNode , context)
-                                ]
+                        TextField(
+                          focusNode: nameFieldFocusNode,
+                          textAlign: TextAlign.center,
+                          controller: eventNameController,
+                          minLines: 1,
+                          maxLines: null,
+                          maxLength: 50,
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(50)
+                          ],
+                          decoration: InputDecoration(
+                            label: Text(eventNameController.text.isNotEmpty ? "" : "Event Name"),
+                            contentPadding: EdgeInsets.only(
+                              left: 10,
+                              right: 10,
+                              top: 0,
+                              bottom: 5,
                             ),
+                            border: OutlineInputBorder(),
+                          ),
+                          keyboardType: TextInputType.text,
                         ),
-                        MapCreateEventDatePicker(_onEventDateTimeSelected, eventDate, _onEventTimeOfDatSelected , eventTime),
-                        ElevatedButton(
-                            onPressed: _onAppliedCreateEvent,
-                            child: Text(
-                                l10n?.event_Button_Submit ?? "Submit"
-                            ))
                       ],
                     ),
-                  )
-                ]
-            ),
-          );
-        }
+                  ),
+                  MapEventWidgetContainer(
+                    child: Column(
+                      children: [
+                        Text(
+                          l10n?.event_Title_EventDescription ?? "Event Description",
+                          style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
+                        ),
+                        TextField(
+                          focusNode: descriptionFieldFocusNode,
+                          textAlign: TextAlign.center,
+                          controller: eventDescriptionController,
+                          minLines: 1,
+                          maxLines: null,
+                          maxLength: 150,
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(150)
+                          ],
+                          decoration: InputDecoration(
+                            label: Text(eventDescriptionController.text.isNotEmpty ? "" : "Event Description"),
+                            contentPadding: EdgeInsets.only(
+                              left: 10,
+                              right: 10,
+                              top: 5,
+                              bottom: 15,
+                            ),
+                            border: OutlineInputBorder(),
+                          ),
+                          keyboardType: TextInputType.text,
+                        ),
+                      ],
+                    ),
+                  ),
+                  MapEventWidgetContainer(
+                    child: Column(
+                      children: [
+                        Text(
+                          l10n?.event_Title_MaxParticipants ?? "Max Participants",
+                          style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
+                        ),
+                        TextField(
+                          focusNode: maxParticipantsFocusNode,
+                          textAlign: TextAlign.center,
+                          controller: eventMaxParticipantsController,
+                          minLines: 1,
+                          maxLines: null,
+                          decoration: InputDecoration(
+                              label: Text(eventMaxParticipantsController.text.isNotEmpty ? "" : l10n?.event_Title_MaxParticipants ?? "Max Participants"),
+                              contentPadding: EdgeInsets.only(
+                                left: 10,
+                                right: 10,
+                                top: 5,
+                                bottom: 15,
+                              ),
+                              border: OutlineInputBorder(),
+                          ),
+                          keyboardType: TextInputType.number,
+                        ),
+                      ],
+                    ),
+                  ),
+                  MapEventWidgetContainer(
+                    child:
+                      Column(
+                          children: [
+                            Text(
+                              l10n?.event_Title_SportType ?? "Sport Type",
+                              style: Theme.of(context).textTheme.titleMedium?.mapEventWidgetTitle(context),
+                            ),
+                            SportEventUtils.getSportTypeDropdownButton_CreateEvent(_onDropdownSportEventTypeChanged , _getSelectedSportEventType ,20 , sportTypeFocusNode , context)
+                          ]
+                      ),
+                  ),
+                  MapCreateEventDatePicker(_onEventDateTimeSelected, eventDate, _onEventTimeOfDatSelected , eventTime),
+                  ElevatedButton(
+                      onPressed: _onAppliedCreateEvent,
+                      child: Text(
+                          l10n?.event_Button_Submit ?? "Submit"
+                      ))
+                ],
+              ),
+            )
+          ]
+      ),
     );
   }
 
@@ -238,15 +227,6 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
     else{
       focusStack--;
     }
-
-    setState(() {
-      if(focusStack > 0){
-        _currentDraggableSheetSize = 0.9;
-      }
-      else{
-        _currentDraggableSheetSize = 0.5;
-      }
-    });
   }
 
   String _getSelectedSportEventType(){
@@ -275,7 +255,7 @@ class _MapCreateEventPanel extends State<MapCreateEventPanel>{
         eventStartDate: eventDate!,
         eventDuration: eventTime!
     );
-    widget.onApplyClicked(mapEventData);
+    widget.onApplyClicked(mapEventData , context);
     //widget.onApplyClicked();
   }
 
